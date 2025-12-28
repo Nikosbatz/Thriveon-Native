@@ -1,0 +1,125 @@
+import { router } from "expo-router";
+import * as SecureStore from "expo-secure-store";
+import {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { setLogoutHandler } from "../api/authBridge";
+import { login, register } from "../api/requests";
+
+interface UserInterface {
+  email: string;
+  gender: string;
+  age: number;
+  weight: number;
+  height: number;
+  goal: string;
+  isVerified: boolean;
+  onBoardingCompleted: boolean;
+  healthGoals: {
+    weight: number;
+    water: number;
+  };
+  nutritionGoals: {
+    calories: number;
+    protein: number;
+    fats: number;
+    carbs: number;
+  };
+}
+
+type AuthContextType = {
+  user: UserInterface | null;
+  setUser: Dispatch<SetStateAction<UserInterface | null>>;
+  userEmail: string;
+  setUserEmail: Dispatch<SetStateAction<string>>;
+  isLoggedIn: boolean;
+  setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
+  signIn: (email: string, password: string) => Promise<void | null>;
+  signUp: (email: string, password: string) => Promise<void | null>;
+  logOut: () => Promise<void | null>;
+};
+
+export const AuthContext = createContext<AuthContextType | null>(null);
+
+export default function AuthContextProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [user, setUser] = useState<UserInterface | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [userEmail, setUserEmail] = useState<string>("");
+
+  // Set the logoutHandler to the logOut() function's reference
+  // And keep the reference updated at all times through the [logOut] dependency
+  useEffect(() => {
+    setLogoutHandler(logOut);
+  }, [logOut]);
+
+  async function signUp(email: string, password: string) {
+    try {
+      await register(email, password);
+      //setIsLoggedIn(true);
+      router.replace("/(tabs)");
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+    return;
+  }
+
+  async function signIn(email: string, password: string) {
+    try {
+      const data = await login(email, password);
+      console.log("is Verified: " + data.isVerified);
+      setIsLoggedIn(true);
+
+      // if user is verified re-direct to main screen
+      // else re-direct to verification screen
+      if (data.isVerified) {
+        router.replace("/(tabs)");
+      } else {
+        setUserEmail(email);
+        router.replace("/(auth)/verifyUser");
+      }
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async function logOut() {
+    await SecureStore.deleteItemAsync("token");
+    setIsLoggedIn(false);
+  }
+
+  return (
+    <AuthContext.Provider
+      value={{
+        signIn,
+        signUp,
+        user,
+        isLoggedIn,
+        setIsLoggedIn,
+        logOut,
+        setUser,
+        userEmail,
+        setUserEmail,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used inside AuthContextProvider");
+  }
+  return context;
+}
