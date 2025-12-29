@@ -44,8 +44,6 @@ export default function MacrosProgressChart() {
     ],
   };
 
-  //console.log(data);
-
   return (
     <View style={styles.mainContainer}>
       <ProgressChart

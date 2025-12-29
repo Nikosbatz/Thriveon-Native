@@ -1,17 +1,28 @@
+import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
 import { Flame, Plus, Timer } from "lucide-react-native";
+import { useState } from "react";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
+import ExerciseFormModal from "./ExerciseFormModal";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 //TODO: Must subscribe to zustand store and take real data
 export default function ExerciseTrackerCard() {
+  const [modalVisible, setModalVisible] = useState(false);
+  const userActivities = useUserActivitiesStore((s) => s.userActivities);
+  const activitiesLoading = useUserActivitiesStore((s) => s.activitiesLoading);
+  const activitiesCaloriesSum = useUserActivitiesStore(
+    (s) => s.activitiesCaloriesSum
+  );
+
   const caloriesBurned = 123;
   const exerciseTime = 59;
 
   function handlePress() {
     console.log("Exercise View Pressed");
+    setModalVisible(true);
   }
   return (
     <TouchableOpacity
@@ -66,6 +77,7 @@ export default function ExerciseTrackerCard() {
           </View>
         </View>
       </View>
+      <ExerciseFormModal visible={modalVisible} setVisible={setModalVisible} />
     </TouchableOpacity>
   );
 }

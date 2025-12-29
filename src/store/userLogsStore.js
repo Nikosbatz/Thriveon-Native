@@ -2,9 +2,7 @@ import { create } from "zustand";
 import { deleteUserLogsFood, getFoods, postFood } from "../api/requests";
 
 //TODO: define type fo the store (convert the fine to .tsx)
-// TODO: when deleting or adding a food fetch the whole logsFood list from the backend and update the todaysFoods
-// with this list (To make sure that the list is synced accross devices e.g when deleting or adding from another device
-// you should have the same list on all devices)
+// TODO: User food logs list is not synced across web app and react native because of the case of meal types (e.g "BreakFast instead of Breakfast")
 
 export const useUserLogsStore = create((set, get) => ({
   logsLoading: true,
@@ -32,7 +30,6 @@ export const useUserLogsStore = create((set, get) => ({
       set({ foods });
       set({ foodsLoading: false });
     } catch (error) {
-      // console.log("loadFoods error: ", error.message);
       set({ foodsLoading: false });
       throw new Error("Could not communicate with server...");
     }

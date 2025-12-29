@@ -1,5 +1,5 @@
 import CaloriesProgressChart from "@/src/components/dashboard/CaloriesProgressChart";
-import ExerciseTrackerCard from "@/src/components/dashboard/ExerciseTrackerCard";
+import ExerciseTrackerCard from "@/src/components/dashboard/ExerciseTracker/ExerciseTrackerCard";
 import MacrosProgressChart from "@/src/components/dashboard/MacrosProgessChart";
 import WaterCard from "@/src/components/dashboard/WaterCard";
 import WeightHistoryChart from "@/src/components/dashboard/WeightHistoryChart";
