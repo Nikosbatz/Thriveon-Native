@@ -176,14 +176,19 @@ export async function postUserInfo(info: any) {
 }
 
 export async function getUserInfo() {
-  const res = await api.get(`/user/info`, {
-    headers: { Accept: "application/json" },
-  });
-
-  if (res.status === 200) {
-    return res.data;
-  } else {
-    throw new Error("User not Found!");
+  try {
+    const res = await api.get(`${BASE_URI}/user/info`, {
+      headers: { Accept: "application/json" },
+    });
+    if (res.status === 200) {
+      return res.data;
+    }
+  } catch (error: any) {
+    if (error.status === 401) {
+      throw new Error("User not Found!");
+    } else {
+      throw new Error("Uknown Error Code...");
+    }
   }
 }
 

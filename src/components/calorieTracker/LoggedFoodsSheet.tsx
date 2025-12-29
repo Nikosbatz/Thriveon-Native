@@ -165,18 +165,16 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
-                    gap: 15,
                   }}
                 >
-                  {/* <Icon
-                    color={colors[selectedMealType]}
-                    style={{ backgroundColor: "white", borderRadius: 8 }}
-                    size={30}
-                  /> */}
                   <View>
                     <Text
                       variant="headlineSmall"
-                      style={{ fontSize: 22, color: "white" }}
+                      style={{
+                        fontSize: 19,
+                        color: "white",
+                        lineHeight: 23,
+                      }}
                     >
                       {food.name}
                     </Text>
@@ -201,7 +199,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
                     right: 55,
                     top: "50%",
                     transform: [{ translateX: "0%" }, { translateY: "-40%" }],
-                    fontSize: 19,
+                    fontSize: 17,
                     color: "rgba(219, 132, 26, 1)",
                   }}
                 >

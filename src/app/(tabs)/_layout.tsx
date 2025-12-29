@@ -5,7 +5,7 @@ import { Redirect, Tabs } from "expo-router";
 
 export default function TabsLayout() {
   const { isLoggedIn } = useAuth();
-  console.log(isLoggedIn);
+  console.log("isLoggedIn: ", isLoggedIn);
 
   if (!isLoggedIn) {
     return <Redirect href={"/(auth)/auth"} />;

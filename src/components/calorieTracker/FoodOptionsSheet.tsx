@@ -7,13 +7,8 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { Picker } from "@react-native-picker/picker";
 import { Beef, Droplets, PlusCircle, Wheat } from "lucide-react-native";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  TextInput as RNTextInput,
-  StyleSheet,
-  View,
-} from "react-native";
+import React, { useCallback, useRef, useState } from "react";
+import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
 import {
   ActivityIndicator,
   Button,
@@ -21,6 +16,11 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import Toast from "react-native-toast-message";
 
 // const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -53,31 +53,25 @@ export default function FoodOptionsSheet({
   const [sheetOpen, setSheetOpen] = useState(false);
   const handleAddFood = useUserLogsStore((s) => s.handleAddFood);
   const logsLoading = useUserLogsStore((s) => s.logsLoading);
-  const overlayAnim = useRef(new Animated.Value(0)).current;
+  const backdropOpacity = useSharedValue(0);
 
   // trigger animation each time sheetOpen state changes
-  useEffect(() => {
-    Animated.timing(overlayAnim, {
-      toValue: sheetOpen ? 1 : 0,
-      duration: 250,
-      useNativeDriver: false, // required for colors
-    }).start();
-  }, [sheetOpen]);
-
-  const backgroundColor = overlayAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["rgba(0,0,0,0.0)", "rgba(0,0,0,0.4)"],
-  });
+  const backdropStyle = useAnimatedStyle(() => ({
+    backgroundColor: `{rgba(0, 0, 0,${backdropOpacity.value})}`,
+  }));
 
   // Called when Sheet closes or opens
   const handleSheetChanges = useCallback((index: number) => {
     if (index === -1) {
       setSheetOpen(false);
+      backdropOpacity.value = withTiming(0, { duration: 250 });
+
       setQuantityInput("");
       if (quantityInputRef.current?.isFocused()) {
         quantityInputRef.current.blur();
       }
     } else {
+      backdropOpacity.value = withTiming(0.5, { duration: 250 });
       setSheetOpen(true);
     }
   }, []);
@@ -116,20 +110,23 @@ export default function FoodOptionsSheet({
   return (
     <Animated.View
       pointerEvents={sheetOpen ? "auto" : "none"}
-      style={{
-        position: "absolute",
-        height: SCREEN_HEIGHT,
-        bottom: 0,
-        width: SCREEN_WIDTH,
-        backgroundColor,
-      }}
+      style={[
+        {
+          position: "absolute",
+          height: SCREEN_HEIGHT,
+          bottom: 0,
+          width: SCREEN_WIDTH,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        backdropStyle,
+      ]}
     >
       <BottomSheet
         ref={bottomSheetRef}
         onChange={handleSheetChanges}
         index={-1}
         backgroundStyle={{
-          backgroundColor: colors.deepNavy,
+          backgroundColor: colors.lvBackground,
           elevation: 10,
         }}
         enablePanDownToClose
@@ -152,7 +149,10 @@ export default function FoodOptionsSheet({
                 style={{ fontSize: 20, color: "rgba(162, 162, 162, 1)" }}
               >
                 cal{" "}
-                <Text variant="headlineSmall" style={{ color: "white" }}>
+                <Text
+                  variant="headlineSmall"
+                  style={{ color: "rgba(219, 132, 26, 1)" }}
+                >
                   {currentCalories}
                 </Text>
               </Text>
@@ -171,7 +171,8 @@ export default function FoodOptionsSheet({
                   selectedValue={selectedMealType}
                   onValueChange={(itemValue) => setselectedMealType(itemValue)}
                   style={styles.picker}
-                  mode="dialog"
+                  mode="dropdown"
+                  onPointerDown={() => console.log("asd")}
                 >
                   <Picker.Item label="Breakfast" value="Breakfast" />
                   <Picker.Item label="Lunch" value="Lunch" />
@@ -192,6 +193,8 @@ export default function FoodOptionsSheet({
                 onChangeText={setQuantityInput}
                 placeholder="Grams"
                 style={styles.textInput}
+                placeholderTextColor={colors.lightGrayText}
+                textColor={"white"}
               ></TextInput>
             </View>
           </View>
@@ -235,7 +238,7 @@ export default function FoodOptionsSheet({
           {logsLoading ? (
             <ActivityIndicator
               animating={true}
-              color={"rgba(0, 132, 255, 1)"}
+              color={colors.lvPrimary80}
               size={45}
               style={{ alignSelf: "center" }}
             />
@@ -245,7 +248,7 @@ export default function FoodOptionsSheet({
               textColor="white"
               style={{
                 alignSelf: "stretch",
-                backgroundColor: "rgba(0, 132, 255, 1)",
+                backgroundColor: colors.lvPrimary80,
                 alignContent: "center",
               }}
               icon={() => <PlusCircle color={"white"}></PlusCircle>}
@@ -272,19 +275,20 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 6,
     paddingHorizontal: 10,
-    alignItems: "flex-start",
     minHeight: SCREEN_HEIGHT - 300,
     gap: 15,
   },
   picker: {
     height: 51,
     width: SCREEN_WIDTH / 2 - 25,
-    backgroundColor: "rgba(255, 255, 255, 1)",
+    backgroundColor: colors.lvSecondary,
+    color: "white",
   },
   textInput: {
     width: SCREEN_WIDTH / 2 - 25,
     height: 53,
-    backgroundColor: "white",
+    backgroundColor: colors.lvSecondary,
+    fontSize: 18,
   },
   divider: {
     width: SCREEN_WIDTH - 20,

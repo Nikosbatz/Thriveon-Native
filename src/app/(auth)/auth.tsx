@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/context/authContext";
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
@@ -25,7 +25,6 @@ export default function AuthScreen() {
       setErrorText("Password must contain more than 6 characters");
       return;
     }
-
     if (isSignUp) {
       try {
         await signUp(emailInput, passwordInput);
@@ -37,7 +36,6 @@ export default function AuthScreen() {
     } else {
       try {
         await signIn(emailInput, passwordInput);
-        console.log("");
       } catch (error: any) {
         setErrorText(error.message);
         return;
@@ -46,6 +44,12 @@ export default function AuthScreen() {
 
     setErrorText(null);
   }
+
+  // Redirect user if he is already Logged in
+  if (isLoggedIn) {
+    return <Redirect href={"/(tabs)"} />;
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "padding"}

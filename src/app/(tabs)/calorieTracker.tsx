@@ -99,7 +99,6 @@ export default function CalorieTrackerScreen() {
           borderBottomRightRadius: 0,
           overflow: "hidden",
           flex: 1,
-          elevation: 10,
           marginHorizontal: 0,
           marginBottom: 0,
         }}

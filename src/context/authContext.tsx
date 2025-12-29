@@ -8,8 +8,9 @@ import {
   useEffect,
   useState,
 } from "react";
+import Toast from "react-native-toast-message";
 import { setLogoutHandler } from "../api/authBridge";
-import { login, register } from "../api/requests";
+import { getUserInfo, login, register } from "../api/requests";
 
 interface UserInterface {
   email: string;
@@ -55,6 +56,17 @@ export default function AuthContextProvider({
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string>("");
+  const [loadingUserInfo, setLoadingUserInfo] = useState<boolean>(false);
+
+  console.log("userInf:", user);
+
+  // Auto Log in user if he has a token
+  useEffect(() => {
+    const token = SecureStore.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   // Set the logoutHandler to the logOut() function's reference
   // And keep the reference updated at all times through the [logOut] dependency
@@ -78,6 +90,22 @@ export default function AuthContextProvider({
       const data = await login(email, password);
       console.log("is Verified: " + data.isVerified);
       setIsLoggedIn(true);
+
+      try {
+        setLoadingUserInfo(true);
+        //TODO: returns sensitive fields that need excluding from the backend
+        const userData = await getUserInfo();
+        setUser(userData);
+        setLoadingUserInfo(false);
+      } catch (error: any) {
+        // Acts as Safeguard, if servers returns error then logOut
+        setLoadingUserInfo(false);
+        await logOut();
+        Toast.show({
+          type: "error",
+          text1: error.message,
+        });
+      }
 
       // if user is verified re-direct to main screen
       // else re-direct to verification screen
