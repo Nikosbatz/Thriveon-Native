@@ -1,27 +1,38 @@
+import { useAuth } from "@/src/context/authContext";
+import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { StyleSheet, View } from "react-native";
 import { ProgressChart } from "react-native-chart-kit";
 import { Text } from "react-native-paper";
-import { useUserStore } from "../../store/userStore";
 
-type Props = {
-  protein: number;
-  fats: number;
-  carbs: number;
-};
-//TODO: Must subscribe to zustand store and take real data
-export default function MacrosProgressChart(props: Props) {
-  const userProfile = useUserStore((s) => s.userProfile);
-  const goals = [120, 80, 250];
-  const { protein, fats, carbs } = props;
+export default function MacrosProgressChart() {
+  const { user } = useAuth();
+  const todaysMacros = useUserLogsStore((s) => s.todaysMacros);
 
-  const macros = [protein, fats, carbs];
+  const macros = [todaysMacros.protein, todaysMacros.fats, todaysMacros.carbs];
+
+  const targets = [
+    user?.nutritionGoals.protein ?? 0,
+    user?.nutritionGoals.fats ?? 0,
+    user?.nutritionGoals.carbs ?? 0,
+  ];
 
   const macroPercentages = [
-    protein / goals[0],
-    fats / goals[1],
-    carbs / goals[2],
+    user?.nutritionGoals.protein
+      ? todaysMacros.protein / user.nutritionGoals.protein > 1
+        ? 1
+        : todaysMacros.protein / user.nutritionGoals.protein
+      : 0,
+    user?.nutritionGoals.fats
+      ? todaysMacros.fats / user.nutritionGoals.fats > 1
+        ? 1
+        : todaysMacros.fats / user.nutritionGoals.fats
+      : 0,
+    user?.nutritionGoals.carbs
+      ? todaysMacros.carbs / user.nutritionGoals.carbs > 1
+        ? 1
+        : todaysMacros.carbs / user.nutritionGoals.carbs
+      : 0,
   ];
-  //console.log(macroPercentages);
 
   const data = {
     labels: ["Protein", "Fats", "Carbs"],
@@ -80,7 +91,7 @@ export default function MacrosProgressChart(props: Props) {
                     color: "rgba(159, 159, 159, 0.56)",
                   }}
                 >
-                  /{goals[index]}g
+                  /{targets[index]}g
                 </Text>
               </Text>
             </Text>
@@ -93,15 +104,12 @@ export default function MacrosProgressChart(props: Props) {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    //backgroundColor: "gray",
     flexDirection: "row",
-    //alignSelf: "flex-start",
     paddingEnd: 5,
     gap: 10,
     padding: 5,
   },
   labelsContainer: {
-    //backgroundColor: "rgba(86, 86, 86, 1)",
     justifyContent: "center",
     gap: 12,
   },

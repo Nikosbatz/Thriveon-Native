@@ -5,6 +5,7 @@ import WaterCard from "@/src/components/dashboard/WaterCard";
 import WeightHistoryChart from "@/src/components/dashboard/WeightHistoryChart";
 import PagerDots from "@/src/components/UI/PagerDots";
 import { useAuth } from "@/src/context/authContext";
+import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
@@ -27,6 +28,10 @@ export default function Dashboard() {
   const loadFoods = useUserLogsStore((s) => s.loadFoods);
   const todaysFoods = useUserLogsStore((s) => s.todaysFoods);
   const getTodayFoods = useUserLogsStore((s) => s.getTodayFoods);
+  const fetchUserActivites = useUserActivitiesStore(
+    (s) => s.fetchUserActivites
+  );
+
   const { logOut } = useAuth();
   const theme = useTheme();
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -63,6 +68,21 @@ export default function Dashboard() {
       }
     };
     fetchFoods();
+  }, []);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        await fetchUserActivites();
+      } catch (error: any) {
+        Toast.show({
+          type: "error",
+          text1: "Error!",
+          text2: error.message,
+        });
+      }
+    };
+    fetchActivities();
   }, []);
 
   return (
@@ -102,11 +122,7 @@ export default function Dashboard() {
             <Text variant="headlineMedium" style={mainStyles.cardTitle}>
               Macros
             </Text>
-            <MacrosProgressChart
-              fats={48}
-              protein={67}
-              carbs={200}
-            ></MacrosProgressChart>
+            <MacrosProgressChart />
           </View>
         </Animated.ScrollView>
         <PagerDots scrollX={scrollX} itemWidth={ITEM_WIDTH} itemCount={2} />

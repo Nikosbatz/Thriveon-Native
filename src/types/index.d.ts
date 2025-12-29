@@ -15,3 +15,9 @@ type LoggedFoodType = FoodType & {
   _id: string;
   mealType: mealType;
 };
+
+type userActivity = {
+  activityType: string;
+  duration: number;
+  calories: number;
+};

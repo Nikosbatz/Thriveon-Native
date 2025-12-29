@@ -58,8 +58,6 @@ export default function AuthContextProvider({
   const [userEmail, setUserEmail] = useState<string>("");
   const [loadingUserInfo, setLoadingUserInfo] = useState<boolean>(false);
 
-  console.log("userInf:", user);
-
   // Auto Log in user if he has a token
   useEffect(() => {
     const token = SecureStore.getItem("token");
@@ -88,17 +86,17 @@ export default function AuthContextProvider({
   async function signIn(email: string, password: string) {
     try {
       const data = await login(email, password);
-      console.log("is Verified: " + data.isVerified);
       setIsLoggedIn(true);
 
+      // try to fetch user info
       try {
         setLoadingUserInfo(true);
-        //TODO: returns sensitive fields that need excluding from the backend
         const userData = await getUserInfo();
         setUser(userData);
         setLoadingUserInfo(false);
       } catch (error: any) {
         // Acts as Safeguard, if servers returns error then logOut
+        console.log(error);
         setLoadingUserInfo(false);
         await logOut();
         Toast.show({

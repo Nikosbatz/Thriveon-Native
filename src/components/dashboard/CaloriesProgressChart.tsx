@@ -1,8 +1,9 @@
+import { useAuth } from "@/src/context/authContext";
+import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { useUserStore } from "@/src/store/userStore";
 import { colors } from "@/src/theme/colors";
 import { Apple, CircleEqual, Flame, Target } from "lucide-react-native";
-import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { ProgressChart } from "react-native-chart-kit";
 import { Text } from "react-native-paper";
@@ -15,53 +16,68 @@ type chartInfoItem = {
 };
 //TODO: Must subscribe to zustand store and take real data
 export default function CaloriesProgressChart() {
+  const { user } = useAuth();
   const userProfile = useUserStore((s) => s.userProfile);
   const mealCalories = useUserLogsStore((s) => s.mealCalories);
+  const todaysMacros = useUserLogsStore((s) => s.todaysMacros);
+  const userActivities: userActivity[] = useUserActivitiesStore(
+    (s) => s.userActivities
+  );
+  const activitiesCaloriesSum = useUserActivitiesStore(
+    (s) => s.activitiesCaloriesSum
+  );
 
-  const totalCalories = useMemo(() => {
-    let sum = 0;
-    for (const meal of mealCalories) {
-      sum += meal.value;
-    }
-    return sum;
-  }, [mealCalories]);
+  // Calculate remaining Calories
+  let remainingCalDecimal = 0;
+  let remainingCal = 0;
+  if (user?.nutritionGoals.calories) {
+    // Calculate remaining calories decimal for chart
+    remainingCalDecimal =
+      todaysMacros.calories / user.nutritionGoals.calories <= 1
+        ? todaysMacros.calories / user.nutritionGoals.calories
+        : 1;
+    // Calculate remaining calories for text in center of the chart
+    remainingCal =
+      user.nutritionGoals.calories -
+        (todaysMacros.calories - activitiesCaloriesSum) >=
+      0
+        ? user.nutritionGoals.calories -
+          (todaysMacros.calories - activitiesCaloriesSum)
+        : 0;
+  }
 
   const chartInfo: chartInfoItem[] = [
     {
       title: "Goal",
       Icon: Target,
-      value: 2000,
+      value: user?.nutritionGoals.calories ?? 0,
       color: "rgba(222, 222, 222, 1)",
     },
     {
       title: "Calories",
       Icon: Apple,
-      value: 1133,
+      value: todaysMacros.calories,
       color: "green",
     },
     {
       title: "Burned",
       Icon: Flame,
-      value: 400,
+      value: activitiesCaloriesSum,
       color: "rgba(246, 193, 20, 1)",
     },
     {
       title: "Total Calories",
       Icon: CircleEqual,
-      value: 1133 - 400,
+      value: todaysMacros.calories - activitiesCaloriesSum,
       color: colors.primary,
     },
   ];
-
-  const data = {
-    data: [0.5],
-  };
 
   return (
     <View style={styles.mainContainer}>
       <View>
         <ProgressChart
-          data={data}
+          data={[remainingCalDecimal]}
           width={160}
           height={160}
           strokeWidth={14}
@@ -89,7 +105,7 @@ export default function CaloriesProgressChart() {
             variant="headlineMedium"
             style={{ fontSize: 27, color: colors.primary }}
           >
-            253
+            {remainingCal}
           </Text>
           <Text style={{ color: "white" }}>kcal</Text>
         </View>

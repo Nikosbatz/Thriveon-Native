@@ -153,7 +153,6 @@ export async function postResetPassword(password: string, token: string) {
   if (res.status === 200) {
     return;
   } else if (res.status === 400) {
-    console.log("asdadas");
     throw new Error("Invalid password reset token.");
   }
 }
@@ -180,10 +179,13 @@ export async function getUserInfo() {
     const res = await api.get(`${BASE_URI}/user/info`, {
       headers: { Accept: "application/json" },
     });
+    console.log("katw apo to res getUserInfo");
     if (res.status === 200) {
+      console.log("res.data: ", res.data);
       return res.data;
     }
   } catch (error: any) {
+    console.log("getUserInfo error: ", error);
     if (error.status === 401) {
       throw new Error("User not Found!");
     } else {
@@ -289,14 +291,16 @@ export async function postUserWaterIntake(water: number) {
 }
 
 export async function getUserActivities() {
-  const res = await api.get(`/activities/user-logs`, {
-    headers: { Accept: "application/json" },
-  });
+  try {
+    const res = await api.get(`/activities/user-logs`, {
+      headers: { Accept: "application/json" },
+    });
 
-  if (res.status === 200) {
-    return res.data;
-  } else {
-    throw new Error(`Error fetching user water intake: ${res.status}`);
+    if (res.status === 200) {
+      return res.data;
+    }
+  } catch (error: any) {
+    throw new Error(`Error fetching user activites: ${error.status}`);
   }
 }
 
