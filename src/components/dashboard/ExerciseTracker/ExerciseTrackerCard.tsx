@@ -11,17 +11,12 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 //TODO: Must subscribe to zustand store and take real data
 export default function ExerciseTrackerCard() {
   const [modalVisible, setModalVisible] = useState(false);
-  const userActivities = useUserActivitiesStore((s) => s.userActivities);
-  const activitiesLoading = useUserActivitiesStore((s) => s.activitiesLoading);
   const activitiesDurationSum = useUserActivitiesStore(
     (s) => s.activitiesDurationSum
   );
   const activitiesCaloriesSum = useUserActivitiesStore(
     (s) => s.activitiesCaloriesSum
   );
-
-  const caloriesBurned = 123;
-  const exerciseTime = 59;
 
   function handlePress() {
     setModalVisible(true);

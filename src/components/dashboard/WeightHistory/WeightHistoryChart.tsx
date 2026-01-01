@@ -1,30 +1,52 @@
+import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
 import { ArrowDown, ArrowUp, Plus } from "lucide-react-native";
+import { useState } from "react";
 import { Dimensions, TouchableOpacity, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { Text } from "react-native-paper";
+import WeightFormModal from "./WeightFormModal";
 
 const screenWidth = Dimensions.get("window").width;
 
 export default function WeightHistoryChart() {
+  const [modalVisible, setModalVisible] = useState(false);
+  const weightLogs = useUserLogsStore((s) => s.weightLogs);
+
+  // Build arrays for chart data
+  const labels = [];
+  const weights = [];
+  for (let log of weightLogs) {
+    labels.push(log.date.slice(5));
+    weights.push(log.weight);
+  }
+
+  const safeWeights = weights.length > 0 ? weights : [0];
+  const safeLabels = labels.length > 0 ? labels : [""];
   const data = {
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    labels: safeLabels,
     datasets: [
       {
-        data: [20, 45, 28, 80, 99, 43],
-        color: (opacity = 1) => `rgba(37, 228, 228, ${opacity})`, // optional
-        strokeWidth: 4, // optional
+        data: safeWeights,
+        color: (opacity = 1) => `rgba(37, 228, 228, ${opacity})`,
+        strokeWidth: 4,
       },
     ],
-    //legend: ["Weight"], // optional
   };
 
-  const currentWeight = 58;
-  const weightTrend = 7;
+  // Calculate current weight and weight trend
+  const currentWeight = weightLogs?.at(-1)?.weight ?? 0;
+  let weightTrend = 0;
+  for (let log of weightLogs) {
+    if (log.weight !== null) {
+      weightTrend = currentWeight - log.weight;
+      break;
+    }
+  }
 
   function handlePress() {
-    console.log("Weight History View Pressed");
+    setModalVisible(true);
   }
 
   return (
@@ -49,7 +71,7 @@ export default function WeightHistoryChart() {
             <Text variant="headlineSmall" style={{ color: colors.lvPrimary }}>
               {currentWeight} Kg
             </Text>
-            {weightTrend >= 0 ? (
+            {weightTrend <= 0 ? (
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <ArrowDown color={"rgba(42, 213, 19, 1)"} />
                 <Text
@@ -92,6 +114,7 @@ export default function WeightHistoryChart() {
           />
         </View>
       </View>
+      <WeightFormModal visible={modalVisible} setVisible={setModalVisible} />
     </TouchableOpacity>
   );
 }

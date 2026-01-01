@@ -81,7 +81,6 @@ export default function AuthContextProvider({
       setLoadingUserInfo(false);
     } catch (error: any) {
       // Acts as Safeguard, if servers returns error then logOut
-      console.log(error);
       setLoadingUserInfo(false);
       await logOut();
       Toast.show({

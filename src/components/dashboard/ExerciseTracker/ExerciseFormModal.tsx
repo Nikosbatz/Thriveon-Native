@@ -75,7 +75,7 @@ export default function ExerciseFormModal(props: Props) {
           <Text
             variant="labelLarge"
             style={{
-              color: "white",
+              color: colors.primary,
               fontSize: 20,
               textAlign: "center",
               marginBottom: 10,
@@ -157,7 +157,7 @@ export default function ExerciseFormModal(props: Props) {
             mode="contained"
             style={{
               marginTop: 20,
-              backgroundColor: colors.lvPrimary50,
+              backgroundColor: colors.lvPrimary80,
             }}
             onPress={() => handleLogActivity()}
             icon={() => <BookmarkPlus color={"white"} />}
@@ -192,7 +192,9 @@ const styles = StyleSheet.create({
     width: "80%",
     backgroundColor: colors.lvGradientCard,
     padding: 20,
-    borderRadius: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(61, 61, 61, 1)",
   },
 
   title: {

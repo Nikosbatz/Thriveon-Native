@@ -8,7 +8,6 @@ import { Text } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import ProgressBar from "../UI/ProgressBar";
 
-//TODO: replace mock data with real from zustand
 export default function WaterCard() {
   const [cardWidth, setCardWidth] = useState<number>(0);
   const [waterIntake, setWaterIntake] = useState<number>(0);
@@ -26,7 +25,7 @@ export default function WaterCard() {
       }
     };
     fetchWaterIntake();
-  }, []);
+  }, [user]);
 
   async function handlePress() {
     const next = Number((waterIntake + 0.2).toFixed(1));
@@ -34,7 +33,6 @@ export default function WaterCard() {
     const water = await postUserWaterIntake(next);
     //TODO: need to debounce the code in the if to avoid setting stale state
     if (water) {
-      console.log("water value returned: ", water);
       setWaterIntake(water);
     }
   }

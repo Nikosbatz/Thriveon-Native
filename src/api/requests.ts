@@ -179,9 +179,7 @@ export async function getUserInfo() {
     const res = await api.get(`${BASE_URI}/user/info`, {
       headers: { Accept: "application/json" },
     });
-    console.log("katw apo to res getUserInfo");
     if (res.status === 200) {
-      console.log("res.data: ", res.data);
       return res.data;
     }
   } catch (error: any) {
@@ -286,7 +284,6 @@ export async function postUserWaterIntake(water: number) {
     );
 
     if (res.status === 200 || res.status === 201) {
-      console.log("postWater status 200", res.data);
       return res.data;
     }
   } catch (error) {
@@ -322,41 +319,36 @@ export async function postUserActivity(activityValues: any) {
 }
 
 export async function getUserWeightLogs() {
-  let res = await api.get(`/health/weight-logs`, {
-    headers: { Accept: "application/json" },
-  });
+  try {
+    let res = await api.get(`/health/weight-logs`, {
+      headers: { Accept: "application/json" },
+    });
 
-  if (res.status === 200) {
-    return res.data;
-  } else {
-    throw new Error();
+    if (res.status === 200) {
+      return res.data.data;
+    }
+  } catch (error) {
+    throw new Error("Could not get weight logs");
   }
 }
 
 export async function postUserWeightLogs(weight: number) {
-  const options = {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ weight: weight }),
-  };
+  try {
+    const res = await api.post(
+      `/health/weight-logs`,
+      { weight: weight },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-  const res = await api.post(
-    `/health/weight-logs`,
-    { weight: weight },
-    {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
+    if (res.status === 200 || res.status === 201) {
+      return res.data;
     }
-  );
-
-  if (res.status === 200 || res.status === 201) {
-    return res.data;
-  } else {
+  } catch (error) {
     throw Error();
   }
 }

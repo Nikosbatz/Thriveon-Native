@@ -1,5 +1,11 @@
 import { create } from "zustand";
-import { deleteUserLogsFood, getFoods, postFood } from "../api/requests";
+import {
+  deleteUserLogsFood,
+  getFoods,
+  getUserWeightLogs,
+  postFood,
+  postUserWeightLogs,
+} from "../api/requests";
 
 //TODO: define type fo the store (convert the fine to .tsx)
 // TODO: User food logs list is not synced across web app and react native because of the case of meal types (e.g "BreakFast instead of Breakfast")
@@ -7,6 +13,8 @@ import { deleteUserLogsFood, getFoods, postFood } from "../api/requests";
 export const useUserLogsStore = create((set, get) => ({
   logsLoading: true,
   foodsLoading: true,
+  weightLogsLoading: false,
+  weightLogs: [],
   foods: [],
   todaysFoods: [],
   todaysMacros: {
@@ -22,6 +30,31 @@ export const useUserLogsStore = create((set, get) => ({
     { name: "Snacks", value: 0 },
   ],
 
+  fetchUserWeightLogs: async () => {
+    console.log("fetchUserWeightLogs");
+    set({ weightLogsLoading: true });
+    try {
+      const logs = await getUserWeightLogs();
+      set({ weightLogs: logs });
+      set({ weightLogsLoading: false });
+    } catch (error) {
+      set({ weightLogsLoading: false });
+      throw new Error(error.message);
+    }
+  },
+  postUserWeight: async (weight) => {
+    console.log("postUserWeight");
+    set({ weightLogsLoading: true });
+    try {
+      const weightLogs = await postUserWeightLogs(weight);
+      console.log("weightLogs: ", weightLogs);
+      set({ weightLogs: weightLogs });
+      set({ weightLogsLoading: false });
+    } catch (error) {
+      set({ weightLogsLoading: false });
+      throw new Error("Could not post weight...\nPlease try later!");
+    }
+  },
   // Fetch all foods
   loadFoods: async () => {
     set({ foodsLoading: true });

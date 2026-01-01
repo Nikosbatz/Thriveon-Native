@@ -2,7 +2,7 @@ import CaloriesProgressChart from "@/src/components/dashboard/CaloriesProgressCh
 import ExerciseTrackerCard from "@/src/components/dashboard/ExerciseTracker/ExerciseTrackerCard";
 import MacrosProgressChart from "@/src/components/dashboard/MacrosProgessChart";
 import WaterCard from "@/src/components/dashboard/WaterCard";
-import WeightHistoryChart from "@/src/components/dashboard/WeightHistoryChart";
+import WeightHistoryChart from "@/src/components/dashboard/WeightHistory/WeightHistoryChart";
 import PagerDots from "@/src/components/UI/PagerDots";
 import { useAuth } from "@/src/context/authContext";
 import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
@@ -28,6 +28,7 @@ export default function Dashboard() {
   const loadFoods = useUserLogsStore((s) => s.loadFoods);
   const todaysFoods = useUserLogsStore((s) => s.todaysFoods);
   const getTodayFoods = useUserLogsStore((s) => s.getTodayFoods);
+  const fetchUserWeightLogs = useUserLogsStore((s) => s.fetchUserWeightLogs);
   const fetchUserActivites = useUserActivitiesStore(
     (s) => s.fetchUserActivites
   );
@@ -45,6 +46,7 @@ export default function Dashboard() {
           getTodayFoods(),
           foods.length === 0 ? loadFoods() : Promise.resolve(),
           fetchUserActivites(),
+          fetchUserWeightLogs(),
         ]);
       } catch (error: any) {
         Toast.show({
@@ -117,6 +119,7 @@ export default function Dashboard() {
           <WeightHistoryChart />
         </View>
       </View>
+      <Text> </Text>
     </ScrollView>
   );
 }
@@ -124,7 +127,9 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: colors.lvBackground,
-    paddingBottom: 30,
+    paddingBottom: 100,
+    paddingVertical: 0,
+    // marginBottom: 30,
   },
   cardsContainer: {
     paddingLeft: 15,

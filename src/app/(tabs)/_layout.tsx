@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/context/authContext";
+import { colors } from "@/src/theme/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Redirect, router, Tabs } from "expo-router";
@@ -21,15 +22,32 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "rgba(2, 57, 96, 1)",
+        tabBarActiveTintColor: colors.lvPrimary80,
+        tabBarStyle: { backgroundColor: colors.lvSecondary, marginBottom: 0 },
         freezeOnBlur: true,
+        headerShown: true,
+        headerStatusBarHeight: 35,
+        headerStyle: {
+          backgroundColor: colors.lvBackground,
+          elevation: 0, // 👈 this is the real header background
+        },
+        lazy: false,
+        headerTitleStyle: {
+          color: colors.lvBackground,
+          textAlign: "center",
+          fontSize: 25,
+          backgroundColor: colors.primary,
+          padding: 5,
+          borderRadius: 25,
+        },
+        headerTitleAlign: "center",
       }}
     >
       <Tabs.Protected guard={isLoggedIn}>
         <Tabs.Screen
           name="index"
           options={{
-            title: "dashboard",
+            title: "Thriveon",
             tabBarIcon: ({ color, size }) => (
               <MaterialIcons name="dashboard" size={size} color={color} />
             ),
@@ -54,6 +72,15 @@ export default function TabsLayout() {
                 size={size}
                 color={color}
               />
+            ),
+          }}
+        ></Tabs.Screen>
+        <Tabs.Screen
+          name="test"
+          options={{
+            title: "test",
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name="dashboard" size={size} color={color} />
             ),
           }}
         ></Tabs.Screen>
