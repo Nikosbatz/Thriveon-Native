@@ -1,17 +1,30 @@
 import { useAuth } from "@/src/context/authContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Redirect, Tabs } from "expo-router";
+import { Redirect, router, Tabs } from "expo-router";
+import { useEffect, useState } from "react";
 
 export default function TabsLayout() {
   const { isLoggedIn } = useAuth();
-  console.log("isLoggedIn: ", isLoggedIn);
+  const [loadingTabs, setLoadingTabs] = useState(false);
+
+  useEffect(() => {
+    router.prefetch("/(tabs)");
+    router.prefetch("/(tabs)/calorieTracker");
+    router.prefetch("/(tabs)/profile");
+  }, []);
 
   if (!isLoggedIn) {
     return <Redirect href={"/(auth)/auth"} />;
   }
+
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "rgba(2, 57, 96, 1)" }}>
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: "rgba(2, 57, 96, 1)",
+        freezeOnBlur: true,
+      }}
+    >
       <Tabs.Protected guard={isLoggedIn}>
         <Tabs.Screen
           name="index"

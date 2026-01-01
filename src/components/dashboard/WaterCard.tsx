@@ -1,18 +1,42 @@
+import { getUserWaterIntake, postUserWaterIntake } from "@/src/api/requests";
+import { useAuth } from "@/src/context/authContext";
 import { mainStyles } from "@/src/theme/styles";
 import { Droplet, Plus } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
+import Toast from "react-native-toast-message";
 import ProgressBar from "../UI/ProgressBar";
 
 //TODO: replace mock data with real from zustand
 export default function WaterCard() {
   const [cardWidth, setCardWidth] = useState<number>(0);
-  const waterGoal = 5;
-  const waterIntake = 3.2;
+  const [waterIntake, setWaterIntake] = useState<number>(0);
+  const { user } = useAuth();
 
-  function handlePress() {
-    console.log("Water View Pressed");
+  useEffect(() => {
+    const fetchWaterIntake = async () => {
+      try {
+        const data = await getUserWaterIntake();
+        if (user) {
+          setWaterIntake(data);
+        }
+      } catch (error: any) {
+        Toast.show({ type: "error", text1: "Error", text2: error.message });
+      }
+    };
+    fetchWaterIntake();
+  }, []);
+
+  async function handlePress() {
+    const next = Number((waterIntake + 0.2).toFixed(1));
+    setWaterIntake(next);
+    const water = await postUserWaterIntake(next);
+    //TODO: need to debounce the code in the if to avoid setting stale state
+    if (water) {
+      console.log("water value returned: ", water);
+      setWaterIntake(water);
+    }
   }
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
@@ -71,7 +95,7 @@ export default function WaterCard() {
                 fontSize: 17,
               }}
             >
-              /{waterGoal} L
+              /{user?.healthGoals.water ?? 3.5} L
             </Text>
           </Text>
         </View>
@@ -82,7 +106,7 @@ export default function WaterCard() {
             height={10}
             filledColor="rgba(0, 182, 167, 1)"
             unfilledColor="rgba(199, 199, 199, 1)"
-            targetValue={waterGoal}
+            targetValue={user?.healthGoals.water ?? 3.5}
             currentValue={waterIntake}
           />
         </View>

@@ -4,6 +4,7 @@ import { BookmarkPlus } from "lucide-react-native";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import Toast from "react-native-toast-message";
 import MenuPicker from "../../UI/MenuPicker";
 
 type Props = {
@@ -13,7 +14,7 @@ type Props = {
 
 export default function ExerciseFormModal(props: Props) {
   const theme = useTheme();
-  const [activityType, setActivityType] = useState("Strength");
+  const [activityType, setActivityType] = useState("strength");
   const [loading, setLoading] = useState(false);
   const [inputValues, setInputValues] = useState({
     duration: "",
@@ -24,13 +25,13 @@ export default function ExerciseFormModal(props: Props) {
   const postUserActivity = useUserActivitiesStore((s) => s.postUserActivity);
 
   async function handleLogActivity() {
-    setLoading(true);
-
+    // Initialize a singular object
     const activityValues = {
       ...inputValues,
       activityType: activityType,
     };
 
+    // Validate form data
     if (
       activityTypes.includes(activityType) ||
       activityValues.calories === "" ||
@@ -41,10 +42,26 @@ export default function ExerciseFormModal(props: Props) {
     }
 
     try {
-      postUserActivity();
-    } catch (error) {}
-    setLoading(false);
-    // props.setVisible(false);
+      setFormError(false);
+      postUserActivity(activityValues);
+      setInputValues({
+        duration: "",
+        calories: "",
+      });
+      setActivityType("");
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Activity Logged Successfully.",
+      });
+      props.setVisible(false);
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.message,
+      });
+    }
   }
   return (
     <Modal
@@ -148,7 +165,7 @@ export default function ExerciseFormModal(props: Props) {
             loading={activitiesLoading}
             disabled={activitiesLoading}
           >
-            {loading ? "Logging..." : "Log Activity"}
+            {activitiesLoading ? "Logging..." : "Log Activity"}
           </Button>
         </Pressable>
       </Pressable>
@@ -158,7 +175,7 @@ export default function ExerciseFormModal(props: Props) {
 
 const activityTypes = ["Cardiovascular", "Strength", "Flexibility", "Balance"];
 
-const inputBackground = "rgba(59, 52, 80, 1)";
+const inputBackground = "rgba(34, 34, 42, 1)";
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -176,7 +193,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lvGradientCard,
     padding: 20,
     borderRadius: 12,
-    elevation: 5,
   },
 
   title: {
@@ -198,5 +214,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     backgroundColor: inputBackground,
     color: "white",
+    borderRadius: 10,
   },
 });

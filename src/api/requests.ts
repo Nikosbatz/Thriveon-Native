@@ -258,34 +258,38 @@ export async function deleteUserLogsFood(food: LoggedFoodType) {
 }
 
 export async function getUserWaterIntake() {
-  const res = await api.get(`/health/water-logs`, {
-    headers: { Accept: "application/json" },
-  });
-
-  if (res.status === 200) {
-    return res.data.water;
-  } else {
-    throw new Error(`Error fetching user water intake: ${res.status}`);
+  try {
+    const res = await api.get(`/health/water-logs`, {
+      headers: { Accept: "application/json" },
+    });
+    if (res.status === 200) {
+      return res.data.water;
+    }
+  } catch (error: any) {
+    throw new Error(`Error fetching user water intake: ${error.status}`);
   }
 }
 
 export async function postUserWaterIntake(water: number) {
   console.log("water " + water);
 
-  const res = await api.post(
-    `/health/water-logs`,
-    { water: water },
-    {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  try {
+    const res = await api.post(
+      `/health/water-logs`,
+      { water: water },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-  if (res.status === 200 || res.status === 201) {
-    return water;
-  } else {
+    if (res.status === 200 || res.status === 201) {
+      console.log("postWater status 200", res.data);
+      return res.data;
+    }
+  } catch (error) {
     throw Error("Could not find userId...");
   }
 }

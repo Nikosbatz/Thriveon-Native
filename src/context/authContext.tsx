@@ -43,6 +43,7 @@ type AuthContextType = {
   signIn: (email: string, password: string) => Promise<void | null>;
   signUp: (email: string, password: string) => Promise<void | null>;
   logOut: () => Promise<void | null>;
+  fetchUserInfo: () => Promise<void | null>;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -72,6 +73,24 @@ export default function AuthContextProvider({
     setLogoutHandler(logOut);
   }, [logOut]);
 
+  async function fetchUserInfo() {
+    try {
+      setLoadingUserInfo(true);
+      const userData = await getUserInfo();
+      setUser(userData);
+      setLoadingUserInfo(false);
+    } catch (error: any) {
+      // Acts as Safeguard, if servers returns error then logOut
+      console.log(error);
+      setLoadingUserInfo(false);
+      await logOut();
+      Toast.show({
+        type: "error",
+        text1: error.message,
+      });
+    }
+  }
+
   async function signUp(email: string, password: string) {
     try {
       await register(email, password);
@@ -87,23 +106,6 @@ export default function AuthContextProvider({
     try {
       const data = await login(email, password);
       setIsLoggedIn(true);
-
-      // try to fetch user info
-      try {
-        setLoadingUserInfo(true);
-        const userData = await getUserInfo();
-        setUser(userData);
-        setLoadingUserInfo(false);
-      } catch (error: any) {
-        // Acts as Safeguard, if servers returns error then logOut
-        console.log(error);
-        setLoadingUserInfo(false);
-        await logOut();
-        Toast.show({
-          type: "error",
-          text1: error.message,
-        });
-      }
 
       // if user is verified re-direct to main screen
       // else re-direct to verification screen
@@ -135,6 +137,7 @@ export default function AuthContextProvider({
         setUser,
         userEmail,
         setUserEmail,
+        fetchUserInfo,
       }}
     >
       {children}

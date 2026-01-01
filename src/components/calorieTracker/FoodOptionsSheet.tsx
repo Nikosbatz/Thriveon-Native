@@ -9,13 +9,7 @@ import { Picker } from "@react-native-picker/picker";
 import { Beef, Droplets, PlusCircle, Wheat } from "lucide-react-native";
 import React, { useCallback, useRef, useState } from "react";
 import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
-import {
-  ActivityIndicator,
-  Button,
-  Divider,
-  Text,
-  TextInput,
-} from "react-native-paper";
+import { Button, Divider, Text, TextInput } from "react-native-paper";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -235,31 +229,25 @@ export default function FoodOptionsSheet({
               );
             })}
           </View>
-          {logsLoading ? (
-            <ActivityIndicator
-              animating={true}
-              color={colors.lvPrimary80}
-              size={45}
-              style={{ alignSelf: "center" }}
-            />
-          ) : (
-            <Button
-              mode="contained-tonal"
-              textColor="white"
-              style={{
-                alignSelf: "stretch",
-                backgroundColor: colors.lvPrimary80,
-                alignContent: "center",
-              }}
-              icon={() => <PlusCircle color={"white"}></PlusCircle>}
-              onPress={() => {
-                // bottomSheetRef.current?.;
-                handleLogFood();
-              }}
-            >
-              Add
-            </Button>
-          )}
+
+          <Button
+            mode="contained-tonal"
+            textColor="white"
+            style={{
+              alignSelf: "stretch",
+              backgroundColor: colors.lvPrimary80,
+              alignContent: "center",
+            }}
+            icon={() => <PlusCircle color={"white"}></PlusCircle>}
+            onPress={() => {
+              // bottomSheetRef.current?.;
+              handleLogFood();
+            }}
+            loading={logsLoading}
+            disabled={logsLoading}
+          >
+            Log Food
+          </Button>
         </BottomSheetView>
       </BottomSheet>
     </Animated.View>

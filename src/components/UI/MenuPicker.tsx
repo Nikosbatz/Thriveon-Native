@@ -16,7 +16,12 @@ export default function MenuPicker(props: Props) {
   const [selectedValue, setSelectedValue] = useState("");
   // renders
   return (
-    <View>
+    <View
+      style={{
+        borderRadius: 5,
+        overflow: "hidden",
+      }}
+    >
       <Picker
         selectedValue={props.selectedValue}
         onValueChange={(itemValue, itemIndex) =>

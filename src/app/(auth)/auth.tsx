@@ -9,6 +9,7 @@ export default function AuthScreen() {
   const [emailInput, setEmailInput] = useState<string>("");
   const [passwordInput, setPasswordInput] = useState<string>("");
   const [errorText, setErrorText] = useState<string | null>("");
+  const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
   const { signUp, signIn, user, isLoggedIn, setIsLoggedIn } = useAuth();
   const router = useRouter();
@@ -18,11 +19,14 @@ export default function AuthScreen() {
   }
 
   async function handleAuth() {
+    setIsLoading(true);
     if (!emailInput || !passwordInput) {
       setErrorText("Please fill all the form fields");
+      setIsLoading(false);
       return;
     } else if (passwordInput.length < 6) {
       setErrorText("Password must contain more than 6 characters");
+      setIsLoading(false);
       return;
     }
     if (isSignUp) {
@@ -31,6 +35,7 @@ export default function AuthScreen() {
         //setIsLoggedIn(true);
       } catch (error: any) {
         setErrorText(error.message);
+        setIsLoading(false);
         return;
       }
     } else {
@@ -38,6 +43,7 @@ export default function AuthScreen() {
         await signIn(emailInput, passwordInput);
       } catch (error: any) {
         setErrorText(error.message);
+        setIsLoading(false);
         return;
       }
     }
@@ -82,6 +88,8 @@ export default function AuthScreen() {
           icon={isSignUp ? "account-plus" : "login"}
           style={styles.button}
           onPress={handleAuth}
+          loading={isLoading}
+          disabled={isLoading}
         >
           {" "}
           {isSignUp ? "Sign Up" : "Sign In"}{" "}

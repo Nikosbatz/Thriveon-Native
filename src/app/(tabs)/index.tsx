@@ -32,57 +32,29 @@ export default function Dashboard() {
     (s) => s.fetchUserActivites
   );
 
-  const { logOut } = useAuth();
+  const { logOut, fetchUserInfo } = useAuth();
   const theme = useTheme();
   const scrollX = useRef(new Animated.Value(0)).current;
 
-  // Fetch todaysFoods
+  // Bootstrap app by fetching all required data
   useEffect(() => {
-    const fetchTodaysFoods = async () => {
+    const bootstrap = async () => {
       try {
-        await getTodayFoods();
+        await Promise.all([
+          fetchUserInfo(),
+          getTodayFoods(),
+          foods.length === 0 ? loadFoods() : Promise.resolve(),
+          fetchUserActivites(),
+        ]);
       } catch (error: any) {
         Toast.show({
           type: "error",
-          text1: error.message,
-          text2: "Error Fetching Foods",
-        });
-      }
-    };
-    fetchTodaysFoods();
-  }, []);
-
-  // Fetch foods
-  useEffect(() => {
-    const fetchFoods = async () => {
-      if (foods.length === 0) {
-        try {
-          await loadFoods();
-        } catch (error: any) {
-          Toast.show({
-            type: "error",
-            text1: error.message,
-            text2: "Error Fetching Foods",
-          });
-        }
-      }
-    };
-    fetchFoods();
-  }, []);
-
-  useEffect(() => {
-    const fetchActivities = async () => {
-      try {
-        await fetchUserActivites();
-      } catch (error: any) {
-        Toast.show({
-          type: "error",
-          text1: "Error!",
+          text1: "Error",
           text2: error.message,
         });
       }
     };
-    fetchActivities();
+    bootstrap();
   }, []);
 
   return (

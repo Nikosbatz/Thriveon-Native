@@ -13,6 +13,9 @@ export default function ExerciseTrackerCard() {
   const [modalVisible, setModalVisible] = useState(false);
   const userActivities = useUserActivitiesStore((s) => s.userActivities);
   const activitiesLoading = useUserActivitiesStore((s) => s.activitiesLoading);
+  const activitiesDurationSum = useUserActivitiesStore(
+    (s) => s.activitiesDurationSum
+  );
   const activitiesCaloriesSum = useUserActivitiesStore(
     (s) => s.activitiesCaloriesSum
   );
@@ -21,7 +24,6 @@ export default function ExerciseTrackerCard() {
   const exerciseTime = 59;
 
   function handlePress() {
-    console.log("Exercise View Pressed");
     setModalVisible(true);
   }
   return (
@@ -62,7 +64,8 @@ export default function ExerciseTrackerCard() {
           <View style={styles.infoContainer}>
             <Flame size={30} color={"white"} style={styles.infoIcon} />
             <Text variant="headlineSmall" style={styles.valueText}>
-              {caloriesBurned} <Text style={styles.infoMetriUnitText}>cal</Text>
+              {activitiesCaloriesSum}{" "}
+              <Text style={styles.infoMetriUnitText}>cal</Text>
             </Text>
           </View>
           <View style={styles.infoContainer}>
@@ -72,7 +75,8 @@ export default function ExerciseTrackerCard() {
               style={styles.infoIcon}
             />
             <Text variant="headlineSmall" style={styles.valueText}>
-              {exerciseTime} <Text style={styles.infoMetriUnitText}>min</Text>{" "}
+              {activitiesDurationSum}{" "}
+              <Text style={styles.infoMetriUnitText}>min</Text>{" "}
             </Text>
           </View>
         </View>

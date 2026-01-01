@@ -10,9 +10,10 @@ type ProgressBarProps = {
 };
 
 export default function ProgressBar(props: ProgressBarProps) {
-  const currentValuePercentage = Math.floor(
-    (props.currentValue / props.targetValue) * 100
-  );
+  const currentValuePercentage =
+    Math.floor((props.currentValue / props.targetValue) * 100) > 100
+      ? 100
+      : Math.floor((props.currentValue / props.targetValue) * 100);
 
   return (
     <View style={{ flexDirection: "row", alignItems: "center" }}>
