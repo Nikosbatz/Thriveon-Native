@@ -9,7 +9,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { ListCheck } from "lucide-react-native";
 import { useRef, useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Button, Divider, Text, TextInput } from "react-native-paper";
 
 export default function CalorieTrackerScreen() {
@@ -115,27 +115,20 @@ export default function CalorieTrackerScreen() {
           {searchInput.length < 2 ? "History" : "Search Results"}
         </Text>
         <Divider />
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ gap: 2, paddingBottom: 10 }}
-          style={styles.foodCardsContainer}
-        >
-          {/* Render Food List */}
-
-          {(searchInput.length < 2 ? foodHistory : filteredFoods).map(
-            (food, index) => (
-              <View key={index}>
-                <FoodCard
-                  food={food}
-                  index={index}
-                  setSelectedFood={setSelectedFood}
-                  bottomSheetRef={bottomSheetRef}
-                ></FoodCard>
-                {/* <Divider style={styles.foodCardDivider} /> */}
-              </View>
-            )
+        <FlatList
+          data={searchInput.length < 2 ? foodHistory : filteredFoods}
+          keyExtractor={(item, i) => i.toString()}
+          renderItem={({ item, index }) => (
+            <FoodCard
+              food={item}
+              index={index}
+              setSelectedFood={setSelectedFood}
+              bottomSheetRef={bottomSheetRef}
+            />
           )}
-        </ScrollView>
+          contentContainerStyle={{ gap: 2, paddingBottom: 10 }}
+          showsVerticalScrollIndicator={false}
+        />
       </View>
 
       <Button
