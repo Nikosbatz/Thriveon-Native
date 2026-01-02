@@ -5,7 +5,6 @@ import BottomSheet, {
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
 } from "@gorhom/bottom-sheet";
-import { Picker } from "@react-native-picker/picker";
 import { Beef, Droplets, PlusCircle, Wheat } from "lucide-react-native";
 import React, { useCallback, useRef, useState } from "react";
 import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
@@ -160,7 +159,7 @@ export default function FoodOptionsSheet({
                 Meal Type
               </Text>
 
-              <View>
+              {/* <View>
                 <Picker
                   selectedValue={selectedMealType}
                   onValueChange={(itemValue) => setselectedMealType(itemValue)}
@@ -173,7 +172,7 @@ export default function FoodOptionsSheet({
                   <Picker.Item label="Dinner" value="Dinner" />
                   <Picker.Item label="Snack" value="Snack" />
                 </Picker>
-              </View>
+              </View> */}
             </View>
             <View>
               <Text variant="labelLarge" style={{ color: "white" }}>

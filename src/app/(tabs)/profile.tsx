@@ -4,7 +4,6 @@ import BottomSheet, {
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
 } from "@gorhom/bottom-sheet";
-import { Picker } from "@react-native-picker/picker";
 import { StyleSheet, View } from "react-native";
 import { Divider, Text, TextInput } from "react-native-paper";
 import Animated from "react-native-reanimated";
@@ -63,21 +62,6 @@ export default function ProfileScreen() {
               <Text variant="labelLarge" style={{ color: "white" }}>
                 Meal Type
               </Text>
-
-              <View>
-                <Picker
-                  selectedValue={"selected"}
-                  onValueChange={() => console.log("onValueChange")}
-                  style={styles.picker}
-                  mode="dropdown"
-                  onPointerDown={() => console.log("asd")}
-                >
-                  <Picker.Item label="Breakfast" value="Breakfast" />
-                  <Picker.Item label="Lunch" value="Lunch" />
-                  <Picker.Item label="Dinner" value="Dinner" />
-                  <Picker.Item label="Snack" value="Snack" />
-                </Picker>
-              </View>
             </View>
             <View>
               <Text variant="labelLarge" style={{ color: "white" }}>
@@ -93,20 +77,7 @@ export default function ProfileScreen() {
               ></TextInput>
             </View>
           </View>
-          <View>
-            <Picker
-              selectedValue={"selected"}
-              onValueChange={() => console.log("onValueChange")}
-              style={styles.picker}
-              mode="dropdown"
-              onPointerDown={() => console.log("asd")}
-            >
-              <Picker.Item label="Breakfast" value="Breakfast" />
-              <Picker.Item label="Lunch" value="Lunch" />
-              <Picker.Item label="Dinner" value="Dinner" />
-              <Picker.Item label="Snack" value="Snack" />
-            </Picker>
-          </View>
+          <View></View>
           <Divider style={styles.divider} />
           {/* Macros Values Container */}
         </BottomSheetView>

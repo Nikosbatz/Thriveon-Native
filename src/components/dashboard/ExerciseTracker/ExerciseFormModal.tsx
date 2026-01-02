@@ -5,7 +5,6 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import Toast from "react-native-toast-message";
-import MenuPicker from "../../UI/MenuPicker";
 
 type Props = {
   visible: boolean;
@@ -90,7 +89,7 @@ export default function ExerciseFormModal(props: Props) {
               <Text variant="labelLarge" style={styles.label}>
                 Exercise Type:
               </Text>
-              <MenuPicker
+              {/* <MenuPicker
                 width={"100%"}
                 height={55}
                 labels={["Strength", "Balance", "Cardio"]}
@@ -98,7 +97,7 @@ export default function ExerciseFormModal(props: Props) {
                 setSelectedValue={setActivityType}
                 backgroundColor={inputBackground}
                 textColor={"white"}
-              ></MenuPicker>
+              ></MenuPicker> */}
             </View>
 
             <View style={styles.formPair}>

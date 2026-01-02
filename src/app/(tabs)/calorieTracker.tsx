@@ -23,6 +23,8 @@ export default function CalorieTrackerScreen() {
   const loggedFoodsSheetRef = useRef<BottomSheet>(null);
   const foods: FoodType[] = useUserLogsStore((s) => s.foods);
 
+  console.log("JS Memory:", (globalThis.performance as any).memory);
+
   function handleSearchInputChange(text: string) {
     setSearchInput(text);
     if (text.length > 1) {
