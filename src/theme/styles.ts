@@ -24,4 +24,12 @@ export const mainStyles = StyleSheet.create({
     fontSize: 17,
     color: "rgba(255, 255, 255, 1)",
   },
+  headerTitleStyle: {
+    color: colors.lvPrimaryLight,
+    textAlign: "center",
+    fontSize: 20,
+  },
+  stackHeaderStyle: {
+    backgroundColor: colors.lvBackground,
+  },
 });
