@@ -18,6 +18,7 @@ export const colors = {
   deepNavy: "#091636",
   lvBackground: "#191d24",
   lvPrimary: "rgb(37, 228, 228)",
+  lvPrimaryLight: "rgba(170, 247, 247, 1)",
   lvPrimary20: "hsla(180, 78%, 52%, 0.2)",
   lvPrimary50: "hsla(180, 78%, 52%, 0.5)",
   lvPrimary80: "hsla(180, 78%, 52%, 0.8)",

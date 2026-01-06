@@ -23,8 +23,6 @@ export default function CalorieTrackerScreen() {
   const loggedFoodsSheetRef = useRef<BottomSheet>(null);
   const foods: FoodType[] = useUserLogsStore((s) => s.foods);
 
-  console.log("JS Memory:", (globalThis.performance as any).memory);
-
   function handleSearchInputChange(text: string) {
     setSearchInput(text);
     if (text.length > 1) {
@@ -91,6 +89,7 @@ export default function CalorieTrackerScreen() {
           //error={hasEmailError()}
         />
       </View>
+
       {/* Food History and Search Results */}
       <View
         style={{
@@ -137,7 +136,7 @@ export default function CalorieTrackerScreen() {
         icon={() => <ListCheck color={colors.lvBackground}></ListCheck>}
         style={{
           position: "absolute",
-          bottom: 5,
+          bottom: 15,
           left: "50%",
           transform: [{ translateX: "-50%" }, { translateY: "0%" }],
           width: 150,

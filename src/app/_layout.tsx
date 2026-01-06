@@ -26,52 +26,6 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  const fontConfig = {
-    fontFamily: "QuicksandRegular",
-    bodyLarge: { fontFamily: "QuicksandRegular" },
-    bodyMedium: { fontFamily: "QuicksandRegular" },
-    bodySmall: { fontFamily: "QuicksandRegular" },
-
-    headlineLarge: { fontFamily: "QuicksandBold" },
-    headlineMedium: { fontFamily: "QuicksandBold" },
-    headlineSmall: { fontFamily: "QuicksandBold" },
-    labelLarge: { fontFamily: "QuicksandBold" },
-    labelMedium: { fontFamily: "QuicksandBold" },
-    labelSmall: { fontFamily: "QuicksandBold" },
-  };
-
-  const theme = {
-    ...DefaultTheme,
-    fonts: configureFonts({ config: fontConfig }),
-  };
-
-  const toastConfig = {
-    success: (props: any) => (
-      <BaseToast
-        {...props}
-        style={{
-          borderLeftColor: "rgba(30, 215, 6, 1)",
-          borderLeftWidth: 15,
-          backgroundColor: "rgba(51, 51, 51, 1)",
-        }}
-        text1Style={{ fontSize: 17, color: "white" }}
-        text2Style={{ fontSize: 13, color: "rgba(192, 192, 192, 1)" }}
-      />
-    ),
-    error: (props: any) => (
-      <ErrorToast
-        {...props}
-        style={{
-          borderLeftColor: theme.colors.error,
-          borderLeftWidth: 15,
-          backgroundColor: "rgba(51, 51, 51, 1)",
-        }}
-        text1Style={{ fontSize: 17, color: "white" }}
-        text2Style={{ fontSize: 13, color: "rgba(192, 192, 192, 1)" }}
-      />
-    ),
-  };
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider theme={theme}>
@@ -86,3 +40,49 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
+
+const fontConfig = {
+  fontFamily: "QuicksandRegular",
+  bodyLarge: { fontFamily: "QuicksandRegular" },
+  bodyMedium: { fontFamily: "QuicksandRegular" },
+  bodySmall: { fontFamily: "QuicksandRegular" },
+
+  headlineLarge: { fontFamily: "QuicksandBold" },
+  headlineMedium: { fontFamily: "QuicksandBold" },
+  headlineSmall: { fontFamily: "QuicksandBold" },
+  labelLarge: { fontFamily: "QuicksandBold" },
+  labelMedium: { fontFamily: "QuicksandBold" },
+  labelSmall: { fontFamily: "QuicksandBold" },
+};
+
+const theme = {
+  ...DefaultTheme,
+  fonts: configureFonts({ config: fontConfig }),
+};
+
+const toastConfig = {
+  success: (props: any) => (
+    <BaseToast
+      {...props}
+      style={{
+        borderLeftColor: "rgba(30, 215, 6, 1)",
+        borderLeftWidth: 15,
+        backgroundColor: "rgba(51, 51, 51, 1)",
+      }}
+      text1Style={{ fontSize: 17, color: "white" }}
+      text2Style={{ fontSize: 13, color: "rgba(192, 192, 192, 1)" }}
+    />
+  ),
+  error: (props: any) => (
+    <ErrorToast
+      {...props}
+      style={{
+        borderLeftColor: theme.colors.error,
+        borderLeftWidth: 15,
+        backgroundColor: "rgba(51, 51, 51, 1)",
+      }}
+      text1Style={{ fontSize: 17, color: "white" }}
+      text2Style={{ fontSize: 13, color: "rgba(192, 192, 192, 1)" }}
+    />
+  ),
+};

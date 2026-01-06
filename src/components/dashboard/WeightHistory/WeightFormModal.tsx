@@ -1,3 +1,4 @@
+import { useAuth } from "@/src/context/authContext";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import DateTimePicker, {
@@ -24,6 +25,7 @@ export default function WeightFormModal(props: Props) {
   });
   const weightLogsLoading = useUserLogsStore((s) => s.weightLogsLoading);
   const postUserWeight = useUserLogsStore((s) => s.postUserWeight);
+  const { fetchUserInfo } = useAuth();
   const theme = useTheme();
 
   const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
@@ -45,7 +47,10 @@ export default function WeightFormModal(props: Props) {
     }
 
     try {
+      // POST request call to log weight
       await postUserWeight(weightNum);
+      // Update the user info in authContext
+      await fetchUserInfo();
       setFormError("");
       Toast.show({
         type: "success",

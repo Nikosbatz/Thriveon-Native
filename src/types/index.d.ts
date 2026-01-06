@@ -1,4 +1,23 @@
-type User = {};
+interface UserInterface {
+  email: string;
+  gender: string;
+  age: number;
+  weight: number;
+  height: number;
+  goal: string;
+  isVerified: boolean;
+  onBoardingCompleted: boolean;
+  healthGoals: {
+    weight: number;
+    water: number;
+  };
+  nutritionGoals: {
+    calories: number;
+    protein: number;
+    fats: number;
+    carbs: number;
+  };
+}
 
 type mealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
 

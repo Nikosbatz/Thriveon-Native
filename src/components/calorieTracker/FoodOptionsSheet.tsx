@@ -5,7 +5,7 @@ import BottomSheet, {
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
 } from "@gorhom/bottom-sheet";
-import { Beef, Droplets, PlusCircle, Wheat } from "lucide-react-native";
+import { Beef, Check, Droplets, Wheat } from "lucide-react-native";
 import React, { useCallback, useRef, useState } from "react";
 import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
 import { Button, Divider, Text, TextInput } from "react-native-paper";
@@ -142,40 +142,28 @@ export default function FoodOptionsSheet({
                 style={{ fontSize: 20, color: "rgba(162, 162, 162, 1)" }}
               >
                 cal{" "}
-                <Text
-                  variant="headlineSmall"
-                  style={{ color: "rgba(219, 132, 26, 1)" }}
-                >
+                <Text variant="headlineSmall" style={{ color: colors.primary }}>
                   {currentCalories}
                 </Text>
               </Text>
             </View>
-            <Divider style={styles.divider} />
+            {/* <Divider style={styles.divider} /> */}
           </View>
           {/* Picker and TextInput Container */}
           <View style={styles.flexRowView}>
             <View>
-              <Text variant="labelLarge" style={{ color: "white" }}>
+              <Text
+                variant="labelLarge"
+                style={{ color: colors.lightGrayText }}
+              >
                 Meal Type
               </Text>
-
-              {/* <View>
-                <Picker
-                  selectedValue={selectedMealType}
-                  onValueChange={(itemValue) => setselectedMealType(itemValue)}
-                  style={styles.picker}
-                  mode="dropdown"
-                  onPointerDown={() => console.log("asd")}
-                >
-                  <Picker.Item label="Breakfast" value="Breakfast" />
-                  <Picker.Item label="Lunch" value="Lunch" />
-                  <Picker.Item label="Dinner" value="Dinner" />
-                  <Picker.Item label="Snack" value="Snack" />
-                </Picker>
-              </View> */}
             </View>
             <View>
-              <Text variant="labelLarge" style={{ color: "white" }}>
+              <Text
+                variant="labelLarge"
+                style={{ color: colors.lightGrayText }}
+              >
                 Quantity (Grams)
               </Text>
               <TextInput
@@ -201,7 +189,7 @@ export default function FoodOptionsSheet({
                   key={macro}
                   style={[
                     styles.macroTextContainer,
-                    { backgroundColor: colors[macro] },
+                    { borderColor: colors[macro] },
                   ]}
                 >
                   <IconElement
@@ -212,18 +200,26 @@ export default function FoodOptionsSheet({
                       borderRadius: 5,
                     }}
                   />
-                  <Text
-                    variant="labelLarge"
-                    style={{ fontSize: 16, color: "rgba(225, 225, 225, 1)" }}
+                  <View
+                    style={{ flexDirection: "column", alignContent: "center" }}
                   >
-                    {macrosInfo.macrosLabels[index]}:{" "}
-                  </Text>
-                  <Text
-                    variant="labelLarge"
-                    style={{ fontSize: 20, color: "white" }}
-                  >
-                    {currentMacros[index]}
-                  </Text>
+                    <Text
+                      variant="labelLarge"
+                      style={{
+                        fontSize: 22,
+                        color: "white",
+                        textAlign: "center",
+                      }}
+                    >
+                      {currentMacros[index]}
+                    </Text>
+                    <Text
+                      variant="labelLarge"
+                      style={{ fontSize: 15, color: "rgba(225, 225, 225, 1)" }}
+                    >
+                      {macrosInfo.macrosLabels[index]}
+                    </Text>
+                  </View>
                 </View>
               );
             })}
@@ -237,7 +233,7 @@ export default function FoodOptionsSheet({
               backgroundColor: colors.lvPrimary80,
               alignContent: "center",
             }}
-            icon={() => <PlusCircle color={"white"}></PlusCircle>}
+            icon={() => <Check color={colors.lvBackground}></Check>}
             onPress={() => {
               // bottomSheetRef.current?.;
               handleLogFood();
@@ -245,7 +241,12 @@ export default function FoodOptionsSheet({
             loading={logsLoading}
             disabled={logsLoading}
           >
-            Log Food
+            <Text
+              variant="labelLarge"
+              style={{ color: colors.lvBackground, fontSize: 17 }}
+            >
+              Log Food
+            </Text>
           </Button>
         </BottomSheetView>
       </BottomSheet>
@@ -285,6 +286,7 @@ const styles = StyleSheet.create({
   flexRowView: {
     flexDirection: "row",
     alignItems: "flex-start",
+    flexWrap: "wrap",
     gap: 10,
     backgroundColor: "",
     width: "100%",
@@ -298,7 +300,9 @@ const styles = StyleSheet.create({
   macroTextContainer: {
     alignItems: "center",
     flexDirection: "row",
-    padding: 5,
-    borderRadius: 10,
+    padding: 10,
+    borderRadius: 20,
+    backgroundColor: colors.lvGradientCard,
+    borderWidth: 1.5,
   },
 });

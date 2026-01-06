@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/context/authContext";
+import { colors } from "@/src/theme/colors";
 import { Redirect, useRouter } from "expo-router";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
@@ -108,7 +109,7 @@ export default function AuthScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: colors.lvBackground,
   },
   content: {
     flex: 1,

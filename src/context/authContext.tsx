@@ -12,27 +12,6 @@ import Toast from "react-native-toast-message";
 import { setLogoutHandler } from "../api/authBridge";
 import { getUserInfo, login, register } from "../api/requests";
 
-interface UserInterface {
-  email: string;
-  gender: string;
-  age: number;
-  weight: number;
-  height: number;
-  goal: string;
-  isVerified: boolean;
-  onBoardingCompleted: boolean;
-  healthGoals: {
-    weight: number;
-    water: number;
-  };
-  nutritionGoals: {
-    calories: number;
-    protein: number;
-    fats: number;
-    carbs: number;
-  };
-}
-
 type AuthContextType = {
   user: UserInterface | null;
   setUser: Dispatch<SetStateAction<UserInterface | null>>;
@@ -108,6 +87,7 @@ export default function AuthContextProvider({
 
       // if user is verified re-direct to main screen
       // else re-direct to verification screen
+      Toast.show({ type: "success", text1: data });
       if (data.isVerified) {
         router.replace("/(tabs)");
       } else {
