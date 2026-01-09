@@ -36,6 +36,7 @@ export default function MacroHealthGoalsCard() {
         <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
           {Object.entries(user?.healthGoals ?? {}).map(([key, value]) => (
             <GoalTextPair
+              key={key}
               goalKey={key as keyof UserInterface["healthGoals"]}
               value={value}
               unit={units[key as keyof typeof units]}

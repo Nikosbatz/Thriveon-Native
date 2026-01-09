@@ -19,6 +19,8 @@ interface UserInterface {
   };
 }
 
+type MacrosKeys = { protein: number; fats: number; carbs: number };
+
 type mealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
 
 type FoodType = {
