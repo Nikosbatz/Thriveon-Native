@@ -1,12 +1,12 @@
 import { colors } from "@/src/theme/colors";
 import Slider from "@react-native-community/slider";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 
 type SliderProps = {
   value: number;
-  setValue: Dispatch<SetStateAction<MacrosKeys>>;
+  onChangeValue: (num: number) => void;
   maxValue?: number;
   minValue?: number;
   objectKey: keyof MacrosKeys;
@@ -14,7 +14,7 @@ type SliderProps = {
 
 export default function AppSlider({
   value,
-  setValue,
+  onChangeValue,
   maxValue = 300,
   minValue = 0,
   objectKey,
@@ -22,8 +22,9 @@ export default function AppSlider({
   const theme = useTheme();
   const [localValue, setLocalValue] = useState(value);
 
-  function handleSlidingComplete() {
-    setValue((prev) => ({ ...prev, [objectKey]: localValue }));
+  function handleSlidingComplete(val: number) {
+    setLocalValue(val);
+    onChangeValue(Number(localValue.toFixed(0)));
   }
 
   return (
@@ -49,9 +50,10 @@ export default function AppSlider({
         style={{ width: "100%", height: 20 }}
         minimumValue={minValue}
         maximumValue={maxValue}
-        value={value}
-        onValueChange={setLocalValue}
-        onSlidingComplete={handleSlidingComplete}
+        value={localValue}
+        onValueChange={(value) => handleSlidingComplete(value)}
+        // onSlidingComplete={handleSlidingComplete}
+
         // Material Design Styling:
         minimumTrackTintColor={colors.lvPrimaryLight}
         maximumTrackTintColor={theme.colors.surfaceVariant}

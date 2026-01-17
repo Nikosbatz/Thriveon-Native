@@ -10,7 +10,7 @@ import {
 } from "react";
 import Toast from "react-native-toast-message";
 import { setLogoutHandler } from "../api/authBridge";
-import { getUserInfo, login, register } from "../api/requests";
+import { getUserInfo, login, postUserInfo, register } from "../api/requests";
 
 type AuthContextType = {
   user: UserInterface | null;
@@ -23,6 +23,8 @@ type AuthContextType = {
   signUp: (email: string, password: string) => Promise<void | null>;
   logOut: () => Promise<void | null>;
   fetchUserInfo: () => Promise<void | null>;
+  loadingUserInfo: boolean;
+  updateUserInfo: (info: UserInterface) => void;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -66,6 +68,20 @@ export default function AuthContextProvider({
         type: "error",
         text1: error.message,
       });
+    }
+  }
+
+  async function updateUserInfo(info: UserInterface) {
+    setLoadingUserInfo(true);
+
+    try {
+      const newUser = await postUserInfo(info);
+      setUser(newUser);
+      setLoadingUserInfo(false);
+      return;
+    } catch (error) {
+      setLoadingUserInfo(false);
+      throw new Error("Could not update user information!");
     }
   }
 
@@ -117,6 +133,8 @@ export default function AuthContextProvider({
         userEmail,
         setUserEmail,
         fetchUserInfo,
+        loadingUserInfo,
+        updateUserInfo,
       }}
     >
       {children}

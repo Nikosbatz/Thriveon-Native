@@ -1,39 +1,71 @@
 import { useAuth } from "@/src/context/authContext";
 import { colors } from "@/src/theme/colors";
+import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { Pressable, StyleSheet, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Button, Text } from "react-native-paper";
+import Toast from "react-native-toast-message";
 import AppSlider from "../../UI/Slider";
 import { profileStyles } from "../profile.styles";
+import { nestedSchema } from "./../../../utilities/formSchemaValidation";
 import CustomNumInput from "./CustomNumInput";
 import CustomTextInput from "./CustomTextInput";
 
 export default function EditUserInfo() {
-  const { user } = useAuth();
-  const [selectedGoal, setSelectedGoal] = useState(user?.goal ?? 0);
-  const [emailInput, setEmailInput] = useState(user?.email ?? "");
-  const [macrosInputs, setMacrosInputs] = useState({
-    protein: user?.nutritionGoals.protein ?? 0,
-    fats: user?.nutritionGoals.fats ?? 0,
-    carbs: user?.nutritionGoals.carbs ?? 0,
-  });
-  const [caloriesInput, setCaloriesInput] = useState(
-    user?.nutritionGoals.calories ?? 0
+  const { user, loadingUserInfo, updateUserInfo } = useAuth();
+  const [userInfoInputs, setUserInfoInputs] = useState<UserInterface | null>(
+    user
   );
-  const [waterInput, setWaterInput] = useState(user?.healthGoals.water ?? 0);
-  const [weightInput, setWeightInput] = useState(user?.healthGoals.weight ?? 0);
+  const router = useRouter();
 
-  // Add Keyboard avoiding scrollview library to avoid keyboard overlaping with textinputs
+  async function handleFormSubmission() {
+    if (userInfoInputs) {
+      try {
+        nestedSchema.validateSync(userInfoInputs, { abortEarly: false });
+        await updateUserInfo(userInfoInputs);
+        Toast.show({
+          type: "success",
+          text1: "Profile Updated",
+          text2: "Your info has been changed succeSssfully",
+        });
+        router.back();
+      } catch (error: any) {
+        if (error.inner && error.inner.length > 0) {
+          error.inner.forEach((err: any) =>
+            Toast.show({
+              type: "error",
+              text1: "Update Failed",
+              text2: err.message,
+            })
+          );
+        } else {
+          Toast.show({
+            type: "error",
+            text1: "Update Failed",
+            text2: error.message,
+          });
+        }
+      }
+    }
+  }
 
   return (
-    <ScrollView
+    <KeyboardAwareScrollView
+      extraScrollHeight={50}
+      enableOnAndroid={true}
+      enableAutomaticScroll={true}
+      enableResetScrollToCoords={false}
       style={{ backgroundColor: colors.lvBackground, flex: 1 }}
       contentContainerStyle={styles.scrollViewContainer}
     >
       {/* Email Input */}
       <CustomTextInput
-        value={emailInput}
-        setValue={setEmailInput}
+        disabled={true}
+        value={userInfoInputs?.email ?? ""}
+        onChangeText={(text) =>
+          setUserInfoInputs((prev) => (prev ? { ...prev, email: text } : null))
+        }
         label="EMAIL"
       ></CustomTextInput>
 
@@ -44,7 +76,14 @@ export default function EditUserInfo() {
         </Text>
         <View style={profileStyles.card}>
           {goals.map((goal, index) => (
-            <Pressable onPress={() => setSelectedGoal(index)}>
+            <Pressable
+              key={index}
+              onPress={() =>
+                setUserInfoInputs((prev) =>
+                  prev ? { ...prev, goal: String(index) } : null
+                )
+              }
+            >
               <Text
                 variant="labelLarge"
                 style={{
@@ -54,11 +93,11 @@ export default function EditUserInfo() {
                   paddingVertical: 7,
                   borderRadius: 10,
                   color:
-                    selectedGoal == index
+                    Number(userInfoInputs?.goal) == index
                       ? colors.lvBackground
                       : colors.lightGrayText,
                   backgroundColor:
-                    selectedGoal == index
+                    Number(userInfoInputs?.goal) == index
                       ? colors.lvPrimary
                       : colors.lvGradientCard,
                 }}
@@ -78,22 +117,50 @@ export default function EditUserInfo() {
           {/* Calories Text Input */}
           <CustomNumInput
             label={"Daily Calories"}
-            value={caloriesInput}
-            setValue={setCaloriesInput}
+            value={userInfoInputs?.nutritionGoals.calories ?? 0}
+            onChangeText={(text) =>
+              setUserInfoInputs((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      nutritionGoals: {
+                        ...prev.nutritionGoals,
+                        calories: Number(text),
+                      },
+                    }
+                  : null
+              )
+            }
             unit={"kcal"}
           />
 
           {/* Render all the macros EXCEPT 'calories' */}
-          {Object.entries(macrosInputs).map(([key, value]) => (
+          {macros.map((macro, index) => (
             <AppSlider
-              key={key}
-              value={macrosInputs[key as keyof MacrosKeys]}
-              setValue={setMacrosInputs}
-              objectKey={key as keyof MacrosKeys}
+              key={index}
+              value={
+                userInfoInputs?.nutritionGoals[macro.key as keyof MacrosKeys] ??
+                0
+              }
+              onChangeValue={(num) =>
+                setUserInfoInputs((prev) =>
+                  prev
+                    ? {
+                        ...prev,
+                        nutritionGoals: {
+                          ...prev.nutritionGoals,
+                          [macro.key]: num,
+                        },
+                      }
+                    : null
+                )
+              }
+              objectKey={macro.key as keyof MacrosKeys}
             />
           ))}
         </View>
       </View>
+      {/* Health Goals Inputs */}
       <View style={{ gap: 5 }}>
         <Text style={styles.cardTitle} variant="labelLarge">
           Health Goals
@@ -102,23 +169,66 @@ export default function EditUserInfo() {
           {/* Calories Text Input */}
           <CustomNumInput
             label={"Weight"}
-            value={weightInput}
-            setValue={setWeightInput}
+            value={userInfoInputs?.healthGoals.weight ?? 0}
             unit={"Kg"}
+            onChangeText={(text) =>
+              setUserInfoInputs((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      healthGoals: {
+                        ...prev.healthGoals,
+                        weight: Number(text),
+                      },
+                    }
+                  : null
+              )
+            }
           />
+          {/* Water Text Input */}
           <CustomNumInput
             label={"Water Intake "}
-            value={waterInput}
-            setValue={setWaterInput}
+            value={userInfoInputs?.healthGoals.water ?? 0}
             unit={"Liters"}
+            onChangeText={(text) =>
+              setUserInfoInputs((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      healthGoals: {
+                        ...prev.healthGoals,
+                        water: Number(text),
+                      },
+                    }
+                  : null
+              )
+            }
           />
         </View>
       </View>
-    </ScrollView>
+
+      {/* Form Submission button */}
+      <Button
+        style={{ backgroundColor: colors.lvPrimary }}
+        textColor={colors.lvBackground}
+        mode="contained"
+        loading={loadingUserInfo}
+        onPress={handleFormSubmission}
+        disabled={loadingUserInfo}
+      >
+        {loadingUserInfo ? "Saving" : "Save"}
+      </Button>
+    </KeyboardAwareScrollView>
   );
 }
 
 const goals = ["Lose Weight", "Gain Mass", "Maintain Weight"];
+
+const macros = [
+  { label: "Daily Protein", key: "protein", unit: "G" },
+  { label: "Daily Carbs", key: "carbs", unit: "G" },
+  { label: "Daily Fats", key: "fats", unit: "G" },
+];
 
 const styles = StyleSheet.create({
   scrollViewContainer: {

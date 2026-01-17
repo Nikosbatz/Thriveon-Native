@@ -20,7 +20,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.thriveonnative"
+      "package": "com.anonymous.thriveonnative",
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "output": "static",

@@ -1,13 +1,14 @@
 import useDebounce from "@/src/hooks/useDebounce";
 import { colors } from "@/src/theme/colors";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 
 type Props = {
   label: string;
   value: string;
-  setValue: Dispatch<SetStateAction<string>>;
+  onChangeText: (text: string) => void;
+  disabled?: boolean;
 };
 
 export default function CustomTextInput(props: Props) {
@@ -18,7 +19,8 @@ export default function CustomTextInput(props: Props) {
   });
 
   useEffect(() => {
-    props.setValue(debouncedEmail);
+    props.onChangeText(debouncedEmail);
+    console.log(debouncedEmail);
   }, [debouncedEmail]);
 
   return (
@@ -31,6 +33,7 @@ export default function CustomTextInput(props: Props) {
       </Text>
       <View style={styles.textInputContainer}>
         <TextInput
+          disabled={props.disabled ?? false}
           value={localValue}
           onChangeText={setLocalValue}
           mode="outlined"

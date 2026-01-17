@@ -1,13 +1,12 @@
 import { colors } from "@/src/theme/colors";
-import { Dispatch, SetStateAction } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 
 type CustomNumInput = {
   value: number;
-  setValue: Dispatch<SetStateAction<number>>;
   label: string;
   unit: string;
+  onChangeText: (txt: string) => void;
 };
 
 export default function CustomNumInput(props: CustomNumInput) {
@@ -41,6 +40,8 @@ export default function CustomNumInput(props: CustomNumInput) {
           cursorColor="white"
           keyboardType="number-pad"
           placeholderTextColor={colors.lightGrayText}
+          value={props.value ? String(props.value) : ""}
+          onChangeText={(text) => props.onChangeText(text)}
         ></TextInput>
         <Text variant="labelLarge" style={{ color: "white", fontSize: 17 }}>
           {props.unit}
