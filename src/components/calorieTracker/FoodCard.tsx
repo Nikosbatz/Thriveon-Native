@@ -27,7 +27,7 @@ export default function FoodCard({
       // activeOpacity={0.5}
       underlayColor={colors.primary20}
       onPress={handleOnPress}
-      style={{ backgroundColor: "rgba(51, 57, 69, 1)", borderRadius: 10 }}
+      style={{ backgroundColor: colors.lvGradientCard, borderRadius: 10 }}
     >
       <View style={styles.foodCard}>
         {/* Food Name and Calories Text */}
@@ -74,7 +74,7 @@ export default function FoodCard({
         {/* Plus Icon */}
         <View
           style={{
-            backgroundColor: colors.lvGradientCard,
+            backgroundColor: colors.lvBackground,
             borderRadius: 30,
             padding: 5,
             position: "absolute",
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 0,
     padding: 5,
+    paddingHorizontal: 10,
     borderWidth: 0,
     borderColor: "rgba(135, 191, 244, 0)",
   },

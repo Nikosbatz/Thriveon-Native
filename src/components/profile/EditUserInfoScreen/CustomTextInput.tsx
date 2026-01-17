@@ -20,7 +20,6 @@ export default function CustomTextInput(props: Props) {
 
   useEffect(() => {
     props.onChangeText(debouncedEmail);
-    console.log(debouncedEmail);
   }, [debouncedEmail]);
 
   return (

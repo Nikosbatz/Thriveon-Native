@@ -11,6 +11,11 @@ import { Apple, EggFried, Salad, Soup, Trash2 } from "lucide-react-native";
 import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Divider, Text, useTheme } from "react-native-paper";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import Toast from "react-native-toast-message";
 
 // const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -45,8 +50,14 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
   const removeFood = useUserLogsStore((s) => s.removeFood);
   const headerHeight = useHeaderHeight();
   const bottomBarHeight = useBottomTabBarHeight();
-  const snapPoints = useMemo(() => ["30%", "80%"], []);
+  const snapPoints = useMemo(() => ["50%", "80%"], []);
   const paperTheme = useTheme();
+  const backdropOpacity = useSharedValue(0);
+
+  // trigger animation each time sheetOpen state changes
+  const backdropStyle = useAnimatedStyle(() => ({
+    backgroundColor: `{rgba(0, 0, 0,${backdropOpacity.value})}`,
+  }));
 
   //TODO: maybe add todaysFoodsByMeal property to Zustand store (It should be calculated when todaysFoods changes)
   const todaysFoodsByMeal = useMemo<todaysFoodsByMealType>(() => {
@@ -66,12 +77,15 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
   const handleSheetChanges = useCallback(
     (index: number) => {
       if (index === -1) {
+        backdropOpacity.value = withTiming(0, { duration: 250 });
         setSheetOpen(false);
       } else {
+        backdropOpacity.value = withTiming(0.5, { duration: 250 });
+
         setSheetOpen(true);
       }
     },
-    [todaysFoods]
+    [todaysFoods],
   );
 
   async function handleFoodRemoval(food: LoggedFoodType) {
@@ -87,14 +101,18 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
   }
 
   return (
-    <View
-      style={{
-        position: "absolute",
-        height: SCREEN_HEIGHT,
-        bottom: 0,
-        width: SCREEN_WIDTH,
-        backgroundColor: "",
-      }}
+    <Animated.View
+      pointerEvents={sheetOpen ? "auto" : "none"}
+      style={[
+        {
+          position: "absolute",
+          height: SCREEN_HEIGHT,
+          bottom: 0,
+          width: SCREEN_WIDTH,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+        backdropStyle,
+      ]}
     >
       <BottomSheet
         ref={sheetRef}
@@ -104,6 +122,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
         backgroundStyle={{
           backgroundColor: colors.lvBackground,
           elevation: 10,
+          borderColor: "white",
         }}
         enablePanDownToClose
         enableDynamicSizing={false}
@@ -224,7 +243,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
           })}
         </BottomSheetScrollView>
       </BottomSheet>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -263,5 +282,5 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0)",
     color: "white",
   },
-  selectedMealTab: { backgroundColor: "white", color: "black" },
+  selectedMealTab: { backgroundColor: colors.lvPrimary, color: "black" },
 });

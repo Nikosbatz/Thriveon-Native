@@ -9,6 +9,7 @@ import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
+import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import {
   Animated,
@@ -17,7 +18,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Button, Text, useTheme } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import Toast from "react-native-toast-message";
 
 const ITEM_WIDTH = Dimensions.get("window").width - 50;
@@ -30,11 +31,11 @@ export default function Dashboard() {
   const getTodayFoods = useUserLogsStore((s) => s.getTodayFoods);
   const fetchUserWeightLogs = useUserLogsStore((s) => s.fetchUserWeightLogs);
   const fetchUserActivites = useUserActivitiesStore(
-    (s) => s.fetchUserActivites
+    (s) => s.fetchUserActivites,
   );
 
   const { logOut, fetchUserInfo } = useAuth();
-  const theme = useTheme();
+  const router = useRouter();
   const scrollX = useRef(new Animated.Value(0)).current;
 
   // Bootstrap app by fetching all required data
@@ -80,7 +81,7 @@ export default function Dashboard() {
           }}
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-            { useNativeDriver: true }
+            { useNativeDriver: true },
           )}
           scrollEventThrottle={16}
         >
@@ -102,6 +103,9 @@ export default function Dashboard() {
         <PagerDots scrollX={scrollX} itemWidth={ITEM_WIDTH} itemCount={2} />
       </View>
       <Button onPress={() => logOut()}>log out</Button>
+      <Button onPress={() => router.navigate("/welcomeScreen")}>
+        Go to onboarding
+      </Button>
 
       {/* Cards container (Every card but those from Horizontal ScrollView) */}
       <View style={styles.cardsContainer}>

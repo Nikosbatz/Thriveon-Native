@@ -10,7 +10,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { ListCheck } from "lucide-react-native";
 import { useRef, useState } from "react";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Button, Divider, Text, TextInput } from "react-native-paper";
+import { Button, Text, TextInput } from "react-native-paper";
 
 export default function CalorieTrackerScreen() {
   const [selectedMealType, setselectedMealType] = useState<string>("Breakfast");
@@ -62,9 +62,12 @@ export default function CalorieTrackerScreen() {
         ))}
       </View>
       {/* Food Search*/}
-      <View>
+      <View style={{ backgroundColor: "" }}>
         <TextInput
           mode="outlined"
+          activeOutlineColor={colors.lvPrimary50}
+          cursorColor="white"
+          outlineColor={colors.lvPrimary20}
           keyboardType="default"
           autoCapitalize="none"
           placeholder="Search Food..."
@@ -81,7 +84,8 @@ export default function CalorieTrackerScreen() {
             fontSize: 17,
             padding: 0,
             height: 45,
-            backgroundColor: colors.lvHeader,
+            borderWidth: 0,
+            backgroundColor: colors.lvBackground,
           }}
           placeholderTextColor={colors.lightWhiteText}
           textColor={"white"}
@@ -94,7 +98,6 @@ export default function CalorieTrackerScreen() {
       <View
         style={{
           gap: 5,
-          backgroundColor: colors.lvGradientCard,
           borderRadius: 20,
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
@@ -107,15 +110,16 @@ export default function CalorieTrackerScreen() {
         <Text
           variant="headlineSmall"
           style={{
-            fontSize: 22,
-            paddingLeft: 0,
-            alignSelf: "center",
-            color: "rgba(250, 242, 255, 1)",
+            fontSize: 21,
+            paddingLeft: 15,
+            alignSelf: "flex-start",
+            color: colors.lvPrimaryLight,
           }}
         >
           {searchInput.length < 2 ? "History" : "Search Results"}
         </Text>
-        <Divider />
+        {/* <Divider /> */}
+        {/* Foods List */}
         <FlatList
           data={searchInput.length < 2 ? foodHistory : filteredFoods}
           keyExtractor={(item, i) => i.toString()}
@@ -127,7 +131,11 @@ export default function CalorieTrackerScreen() {
               bottomSheetRef={bottomSheetRef}
             />
           )}
-          contentContainerStyle={{ gap: 2, paddingBottom: 10 }}
+          contentContainerStyle={{
+            gap: 2,
+            paddingBottom: 10,
+            paddingHorizontal: 5,
+          }}
           showsVerticalScrollIndicator={false}
         />
       </View>
@@ -189,7 +197,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "rgba(178, 22, 22, 0)",
   },
-  selectedMealTab: { backgroundColor: colors.frostWhite, color: "black" },
+  selectedMealTab: { backgroundColor: colors.lvPrimary, color: "black" },
   foodCardsContainer: {
     paddingHorizontal: 7,
   },

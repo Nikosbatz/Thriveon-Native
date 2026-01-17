@@ -97,7 +97,7 @@ export default function FoodOptionsSheet({
     return Math.floor((macroValue / grams) * Number(quantityInput));
   });
   const currentCalories = Math.floor(
-    ((food?.calories ?? 0) / (food?.grams ?? 0)) * Number(quantityInput)
+    ((food?.calories ?? 0) / (food?.grams ?? 0)) * Number(quantityInput),
   );
 
   return (
@@ -117,6 +117,7 @@ export default function FoodOptionsSheet({
       <BottomSheet
         ref={bottomSheetRef}
         onChange={handleSheetChanges}
+        handleIndicatorStyle={{ backgroundColor: "white" }}
         index={-1}
         backgroundStyle={{
           backgroundColor: colors.lvBackground,
@@ -151,15 +152,15 @@ export default function FoodOptionsSheet({
           </View>
           {/* Picker and TextInput Container */}
           <View style={styles.flexRowView}>
-            <View>
+            {/* <View>
               <Text
                 variant="labelLarge"
                 style={{ color: colors.lightGrayText }}
               >
                 Meal Type
               </Text>
-            </View>
-            <View>
+            </View> */}
+            <View style={{ flex: 1 }}>
               <Text
                 variant="labelLarge"
                 style={{ color: colors.lightGrayText }}
@@ -174,6 +175,9 @@ export default function FoodOptionsSheet({
                 onChangeText={setQuantityInput}
                 placeholder="Grams"
                 style={styles.textInput}
+                outlineColor="transparent"
+                activeOutlineColor="transparent"
+                cursorColor="white"
                 placeholderTextColor={colors.lightGrayText}
                 textColor={"white"}
               ></TextInput>
@@ -273,9 +277,9 @@ const styles = StyleSheet.create({
     color: "white",
   },
   textInput: {
-    width: SCREEN_WIDTH / 2 - 25,
+    // width: SCREEN_WIDTH / 2 - 25,
     height: 53,
-    backgroundColor: colors.lvSecondary,
+    backgroundColor: colors.lvPrimary20,
     fontSize: 18,
   },
   divider: {

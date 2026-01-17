@@ -16,6 +16,7 @@ export const colors = {
   frostWhite: "#f2fdff",
   articSky: "#7bbcfe",
   deepNavy: "#091636",
+  cardBorderColor: "#454545ff",
   lvBackground: "#191d24",
   lvPrimary: "rgb(37, 228, 228)",
   lvPrimaryLight: "rgba(170, 247, 247, 1)",

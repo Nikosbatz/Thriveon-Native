@@ -15,20 +15,24 @@ import CustomTextInput from "./CustomTextInput";
 export default function EditUserInfo() {
   const { user, loadingUserInfo, updateUserInfo } = useAuth();
   const [userInfoInputs, setUserInfoInputs] = useState<UserInterface | null>(
-    user
+    user,
   );
   const router = useRouter();
 
+  // Submit Form Data
   async function handleFormSubmission() {
     if (userInfoInputs) {
       try {
+        // Input Validation
         nestedSchema.validateSync(userInfoInputs, { abortEarly: false });
+        // Auth Context function call
         await updateUserInfo(userInfoInputs);
         Toast.show({
           type: "success",
           text1: "Profile Updated",
           text2: "Your info has been changed succeSssfully",
         });
+        // Navigate back to profile screen
         router.back();
       } catch (error: any) {
         if (error.inner && error.inner.length > 0) {
@@ -37,7 +41,7 @@ export default function EditUserInfo() {
               type: "error",
               text1: "Update Failed",
               text2: err.message,
-            })
+            }),
           );
         } else {
           Toast.show({
@@ -80,7 +84,7 @@ export default function EditUserInfo() {
               key={index}
               onPress={() =>
                 setUserInfoInputs((prev) =>
-                  prev ? { ...prev, goal: String(index) } : null
+                  prev ? { ...prev, goal: String(index) } : null,
                 )
               }
             >
@@ -128,7 +132,7 @@ export default function EditUserInfo() {
                         calories: Number(text),
                       },
                     }
-                  : null
+                  : null,
               )
             }
             unit={"kcal"}
@@ -152,7 +156,7 @@ export default function EditUserInfo() {
                           [macro.key]: num,
                         },
                       }
-                    : null
+                    : null,
                 )
               }
               objectKey={macro.key as keyof MacrosKeys}
@@ -181,7 +185,7 @@ export default function EditUserInfo() {
                         weight: Number(text),
                       },
                     }
-                  : null
+                  : null,
               )
             }
           />
@@ -200,7 +204,7 @@ export default function EditUserInfo() {
                         water: Number(text),
                       },
                     }
-                  : null
+                  : null,
               )
             }
           />

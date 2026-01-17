@@ -3,7 +3,7 @@ import { useAuth } from "@/src/context/authContext";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Redirect, Tabs } from "expo-router";
 
 export default function TabsLayout() {
@@ -17,13 +17,18 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: colors.lvPrimary,
-        tabBarStyle: { backgroundColor: colors.lvSecondary, marginBottom: 0 },
+        tabBarStyle: {
+          backgroundColor: colors.lvSecondary,
+          marginBottom: 0,
+          borderTopColor: "rgba(91, 91, 91, 1)",
+        },
         freezeOnBlur: true,
         headerStatusBarHeight: 20,
         headerStyle: {
           backgroundColor: colors.lvBackground,
           elevation: 0,
         },
+
         lazy: true,
         headerTitleStyle: mainStyles.headerTitleStyle,
         headerTitleAlign: "center",
@@ -34,9 +39,21 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: "Dashboard",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="dashboard" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size, focused }) =>
+            focused ? (
+              // <MaterialIcons name="dashboard" size={size} color={color} />
+              <MaterialCommunityIcons
+                name="view-dashboard"
+                size={size}
+                color={color}
+              />
+            ) : (
+              <MaterialCommunityIcons
+                name="view-dashboard-outline"
+                size={size}
+                color={color}
+              />
+            ),
         }}
       ></Tabs.Screen>
       <Tabs.Screen
@@ -52,9 +69,16 @@ export default function TabsLayout() {
         options={{
           title: "My Profile",
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-circle-outline" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size, focused }) =>
+            focused ? (
+              <Ionicons name="person-circle-sharp" size={size} color={color} />
+            ) : (
+              <Ionicons
+                name="person-circle-outline"
+                size={size}
+                color={color}
+              />
+            ),
         }}
       ></Tabs.Screen>
     </Tabs>

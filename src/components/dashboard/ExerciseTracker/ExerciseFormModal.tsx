@@ -81,25 +81,10 @@ export default function ExerciseFormModal(props: Props) {
               lineHeight: 25,
             }}
           >
-            Log Your Activity 🏋️
+            Log Your Activity
           </Text>
 
           <View style={{ gap: 10 }}>
-            <View style={styles.formPair}>
-              <Text variant="labelLarge" style={styles.label}>
-                Exercise Type:
-              </Text>
-              {/* <MenuPicker
-                width={"100%"}
-                height={55}
-                labels={["Strength", "Balance", "Cardio"]}
-                selectedValue={activityType}
-                setSelectedValue={setActivityType}
-                backgroundColor={inputBackground}
-                textColor={"white"}
-              ></MenuPicker> */}
-            </View>
-
             <View style={styles.formPair}>
               <Text variant="labelLarge" style={styles.label}>
                 Burned Calories:
