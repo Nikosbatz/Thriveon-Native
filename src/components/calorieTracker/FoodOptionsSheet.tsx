@@ -213,9 +213,10 @@ export default function FoodOptionsSheet({
                         fontSize: 22,
                         color: "white",
                         textAlign: "center",
+                        lineHeight: 25,
                       }}
                     >
-                      {currentMacros[index]}
+                      {currentMacros[index]}g
                     </Text>
                     <Text
                       variant="labelLarge"

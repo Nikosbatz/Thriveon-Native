@@ -4,8 +4,10 @@ import {
   createContext,
   Dispatch,
   SetStateAction,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import Toast from "react-native-toast-message";
@@ -42,19 +44,31 @@ export default function AuthContextProvider({
 
   // Auto Log in user if he has a token
   useEffect(() => {
-    const token = SecureStore.getItem("token");
-    if (token) {
-      setIsLoggedIn(true);
-    }
+    (async () => {
+      try {
+        const token = await SecureStore.getItemAsync("token");
+        if (token) {
+          setIsLoggedIn(true);
+        }
+      } catch (err) {
+        // ignore errors retrieving token
+      }
+    })();
   }, []);
 
   // Set the logoutHandler to the logOut() function's reference
   // And keep the reference updated at all times through the [logOut] dependency
+  // keep logout handler reference stable
+  const logOut = useCallback(async () => {
+    await SecureStore.deleteItemAsync("token");
+    setIsLoggedIn(false);
+  }, []);
+
   useEffect(() => {
     setLogoutHandler(logOut);
   }, [logOut]);
 
-  async function fetchUserInfo() {
+  const fetchUserInfo = useCallback(async () => {
     try {
       setLoadingUserInfo(true);
       const userData = await getUserInfo();
@@ -69,9 +83,9 @@ export default function AuthContextProvider({
         text1: error.message,
       });
     }
-  }
+  }, [logOut]);
 
-  async function updateUserInfo(info: UserInterface) {
+  const updateUserInfo = useCallback(async (info: UserInterface) => {
     setLoadingUserInfo(true);
 
     try {
@@ -83,9 +97,9 @@ export default function AuthContextProvider({
       setLoadingUserInfo(false);
       throw new Error("Could not update user information!");
     }
-  }
+  }, []);
 
-  async function signUp(email: string, password: string) {
+  const signUp = useCallback(async (email: string, password: string) => {
     try {
       await register(email, password);
       //setIsLoggedIn(true);
@@ -94,9 +108,9 @@ export default function AuthContextProvider({
       throw new Error(error.message);
     }
     return;
-  }
+  }, []);
 
-  async function signIn(email: string, password: string) {
+  const signIn = useCallback(async (email: string, password: string) => {
     try {
       const data = await login(email, password);
       setIsLoggedIn(true);
@@ -113,29 +127,40 @@ export default function AuthContextProvider({
     } catch (error: any) {
       throw new Error(error.message);
     }
-  }
-
-  async function logOut() {
-    await SecureStore.deleteItemAsync("token");
-    setIsLoggedIn(false);
-  }
+  }, []);
 
   return (
     <AuthContext.Provider
-      value={{
-        signIn,
-        signUp,
-        user,
-        isLoggedIn,
-        setIsLoggedIn,
-        logOut,
-        setUser,
-        userEmail,
-        setUserEmail,
-        fetchUserInfo,
-        loadingUserInfo,
-        updateUserInfo,
-      }}
+      value={useMemo(
+        () => ({
+          signIn,
+          signUp,
+          user,
+          isLoggedIn,
+          setIsLoggedIn,
+          logOut,
+          setUser,
+          userEmail,
+          setUserEmail,
+          fetchUserInfo,
+          loadingUserInfo,
+          updateUserInfo,
+        }),
+        [
+          signIn,
+          signUp,
+          user,
+          isLoggedIn,
+          setIsLoggedIn,
+          logOut,
+          setUser,
+          userEmail,
+          setUserEmail,
+          fetchUserInfo,
+          loadingUserInfo,
+          updateUserInfo,
+        ],
+      )}
     >
       {children}
     </AuthContext.Provider>

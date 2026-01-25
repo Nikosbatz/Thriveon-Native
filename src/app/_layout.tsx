@@ -36,7 +36,7 @@ export default function RootLayout() {
             <Stack.Screen name="(onBoarding)" />
           </Stack>
         </AuthContextProvider>
-        <Toast visibilityTime={2500} config={toastConfig} />
+        <Toast visibilityTime={3000} config={toastConfig} />
       </PaperProvider>
     </GestureHandlerRootView>
   );
@@ -72,6 +72,8 @@ const toastConfig = {
       }}
       text1Style={{ fontSize: 17, color: "white" }}
       text2Style={{ fontSize: 13, color: "rgba(192, 192, 192, 1)" }}
+      text2NumberOfLines={5}
+      text1NumberOfLines={3}
     />
   ),
   error: (props: any) => (
@@ -84,6 +86,8 @@ const toastConfig = {
       }}
       text1Style={{ fontSize: 17, color: "white" }}
       text2Style={{ fontSize: 13, color: "rgba(192, 192, 192, 1)" }}
+      text2NumberOfLines={5}
+      text1NumberOfLines={3}
     />
   ),
 };

@@ -23,6 +23,10 @@ export default function onBoardingLayout() {
         name="infoFormScreen"
         options={{ headerShown: false, statusBarHidden: true }}
       />
+      <Stack.Screen
+        name="activityFreqScreen"
+        options={{ headerShown: false, statusBarHidden: true }}
+      />
     </Stack>
   );
 }

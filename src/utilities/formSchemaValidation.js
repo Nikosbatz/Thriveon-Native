@@ -19,7 +19,11 @@ setLocale({
 
 export const schemaRequired = yup.object().shape({
   goal: yup.number().label("Goal").oneOf([0, 1, 2]).required(),
-  gender: yup.string().label("Gender").oneOf(["male", "female"]).required(),
+  gender: yup
+    .string()
+    .label("Gender")
+    .oneOf(["male", "female", "other"])
+    .required(),
   height: yup.number().label("Height").min(100).max(250).required(),
   weight: yup.number().label("Weight").min(30).max(180).required(),
   age: yup.number().label("Age").min(13).max(120).required(),
