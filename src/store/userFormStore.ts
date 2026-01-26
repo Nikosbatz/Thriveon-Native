@@ -1,27 +1,27 @@
 import { create } from "zustand";
 
 interface FormData {
-  age?: string;
-  weight?: string;
-  height?: string;
-  goal?: number;
-  gender?: string;
-  activity?: string;
+  age: number;
+  weight: number;
+  height: number;
+  goal: number;
+  gender: string;
+  activity: number;
 }
 
 interface onBoardingFormState {
   formData: FormData;
-  updateForm: (partialData: FormData) => void;
+  updateForm: (partialData: Partial<FormData>) => void;
 }
 
 export const useOnBoardingFormStore = create<onBoardingFormState>((set) => ({
   formData: {
     goal: -1,
-    age: "",
-    weight: "",
-    height: "",
+    age: 0,
+    weight: 0,
+    height: 0,
     gender: "",
-    activity: "",
+    activity: 0,
   },
   updateForm: (partialData) => {
     set((state) => ({

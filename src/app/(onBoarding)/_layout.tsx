@@ -27,6 +27,10 @@ export default function onBoardingLayout() {
         name="activityFreqScreen"
         options={{ headerShown: false, statusBarHidden: true }}
       />
+      <Stack.Screen
+        name="planScreen"
+        options={{ headerShown: false, statusBarHidden: true }}
+      />
     </Stack>
   );
 }

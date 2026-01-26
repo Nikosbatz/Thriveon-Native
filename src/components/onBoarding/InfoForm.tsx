@@ -38,8 +38,6 @@ export default function InfoForm() {
   });
   const router = useRouter();
 
-  console.log("onBoardingFormData: ", onBoardingFormData);
-
   function handleFormSubmit() {
     const formattedFormInputs = {
       ...formInputs,
@@ -50,7 +48,7 @@ export default function InfoForm() {
     };
     try {
       // schema.validateSync(formattedFormInputs, { abortEarly: false });
-      storeUpdateForm(formInputs);
+      storeUpdateForm(formattedFormInputs);
       router.push("/(onBoarding)/activityFreqScreen");
     } catch (error: any) {
       error.inner.forEach((err: any) =>

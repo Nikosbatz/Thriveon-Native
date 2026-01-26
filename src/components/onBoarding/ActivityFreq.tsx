@@ -1,6 +1,10 @@
+import { useOnBoardingFormStore } from "@/src/store/userFormStore";
+import { useUserStore } from "@/src/store/userStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
+import calculateNutrition from "@/src/utilities/calculateGoals";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { useRouter } from "expo-router";
 import {
   Activity,
   Apple,
@@ -12,9 +16,41 @@ import {
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Text, TouchableRipple } from "react-native-paper";
+import Toast from "react-native-toast-message";
 
 export default function ActivityFreq() {
+  const onBoardingFormData = useOnBoardingFormStore((state) => state.formData);
+  const storeUpdateForm = useOnBoardingFormStore((state) => state.updateForm);
+  const updateInfo = useUserStore((state) => state.updateInfo);
   const [selectedActivity, setSelectedActivity] = useState(-1);
+  const [buildingPlan, setBuildingPlan] = useState(false);
+  const router = useRouter();
+
+  async function handleFormSubmit() {
+    setBuildingPlan(true);
+    storeUpdateForm({ activity: selectedActivity });
+    const goals = calculateNutrition(onBoardingFormData);
+    const userPlan = {
+      ...onBoardingFormData,
+      ...goals,
+    };
+    // console.log("userPlan", userPlan);
+    try {
+      await updateInfo(userPlan);
+      setTimeout(() => {
+        setBuildingPlan(false);
+        router.navigate("/(onBoarding)/planScreen");
+      }, 1500);
+    } catch (error: any) {
+      setBuildingPlan(false);
+      Toast.show({
+        type: "error",
+        text1: "An Error Occured",
+        text2: error.message,
+      });
+    }
+  }
+
   return (
     <View
       style={{
@@ -143,7 +179,9 @@ export default function ActivityFreq() {
       </View>
       <Button
         mode="contained"
-        onPress={() => console.log("button pressed")}
+        onPress={handleFormSubmit}
+        loading={buildingPlan}
+        disabled={buildingPlan}
         icon={() => <Apple />}
         style={{
           backgroundColor: colors.lvPrimary,
