@@ -85,7 +85,7 @@ export default function AuthContextProvider({
     }
   }, [logOut]);
 
-  const updateUserInfo = useCallback(async (info: UserInterface) => {
+  const updateUserInfo = useCallback(async (info: Partial<UserInterface>) => {
     setLoadingUserInfo(true);
 
     try {

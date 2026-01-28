@@ -19,6 +19,11 @@ interface UserInterface {
   };
 }
 
+type UserInterfaceKeys =
+  | keyof UserInterface
+  | keyof UserInterface["healthGoals"]
+  | keyof UserInterface["nutritionGoals"];
+
 type MacrosKeys = { protein: number; fats: number; carbs: number };
 
 type mealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";

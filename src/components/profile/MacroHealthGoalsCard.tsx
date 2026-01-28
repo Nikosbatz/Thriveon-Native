@@ -7,7 +7,11 @@ import { Divider, Text } from "react-native-paper";
 import GoalTextPair from "./GoalTextPair";
 import { profileStyles } from "./profile.styles";
 
-export default function MacroHealthGoalsCard() {
+export default function MacroHealthGoalsCard({
+  showEdit,
+}: {
+  showEdit?: boolean;
+}) {
   const { user } = useAuth();
 
   return (
@@ -45,21 +49,23 @@ export default function MacroHealthGoalsCard() {
           ))}
         </View>
       </View>
-      <Link
-        href={"/(tabs)/profile/editUserInfo"}
-        style={{
-          position: "absolute",
-          right: 12,
-          top: 10,
-          borderWidth: 1,
-          borderColor: colors.lvPrimary50,
-          borderRadius: 50,
-          backgroundColor: colors.lvPrimary20,
-          padding: 4,
-        }}
-      >
-        <Edit2 size={22} color={colors.lvPrimary}></Edit2>
-      </Link>
+      {showEdit ? (
+        <Link
+          href={"/(tabs)/profile/editUserInfo"}
+          style={{
+            position: "absolute",
+            right: 12,
+            top: 10,
+            borderWidth: 1,
+            borderColor: colors.lvPrimary50,
+            borderRadius: 50,
+            backgroundColor: colors.lvPrimary20,
+            padding: 4,
+          }}
+        >
+          <Edit2 size={22} color={colors.lvPrimary}></Edit2>
+        </Link>
+      ) : null}
     </View>
   );
 }

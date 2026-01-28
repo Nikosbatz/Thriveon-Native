@@ -19,11 +19,14 @@ export default function EditUserInfo() {
   );
   const router = useRouter();
 
+  console.log("user: ", user);
+
   // Submit Form Data
   async function handleFormSubmission() {
     if (userInfoInputs) {
       try {
         // Input Validation
+        // console.log(userInfoInputs);
         nestedSchema.validateSync(userInfoInputs, { abortEarly: false });
         // Auth Context function call
         await updateUserInfo(userInfoInputs);

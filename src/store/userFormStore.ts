@@ -4,7 +4,7 @@ interface FormData {
   age: number;
   weight: number;
   height: number;
-  goal: number;
+  goal: string;
   gender: string;
   activity: number;
 }
@@ -16,7 +16,7 @@ interface onBoardingFormState {
 
 export const useOnBoardingFormStore = create<onBoardingFormState>((set) => ({
   formData: {
-    goal: -1,
+    goal: "",
     age: 0,
     weight: 0,
     height: 0,

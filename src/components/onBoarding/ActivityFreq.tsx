@@ -1,5 +1,5 @@
+import { useAuth } from "@/src/context/authContext";
 import { useOnBoardingFormStore } from "@/src/store/userFormStore";
-import { useUserStore } from "@/src/store/userStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
 import calculateNutrition from "@/src/utilities/calculateGoals";
@@ -21,7 +21,7 @@ import Toast from "react-native-toast-message";
 export default function ActivityFreq() {
   const onBoardingFormData = useOnBoardingFormStore((state) => state.formData);
   const storeUpdateForm = useOnBoardingFormStore((state) => state.updateForm);
-  const updateInfo = useUserStore((state) => state.updateInfo);
+  const { updateUserInfo, user } = useAuth();
   const [selectedActivity, setSelectedActivity] = useState(-1);
   const [buildingPlan, setBuildingPlan] = useState(false);
   const router = useRouter();
@@ -30,13 +30,15 @@ export default function ActivityFreq() {
     setBuildingPlan(true);
     storeUpdateForm({ activity: selectedActivity });
     const goals = calculateNutrition(onBoardingFormData);
-    const userPlan = {
-      ...onBoardingFormData,
-      ...goals,
-    };
-    // console.log("userPlan", userPlan);
+    const userPlan = user ? { ...user, ...onBoardingFormData, ...goals } : null;
+    if (!userPlan) {
+      return;
+    }
+
+    console.log("userPlan", userPlan);
+
     try {
-      await updateInfo(userPlan);
+      await updateUserInfo(userPlan);
       setTimeout(() => {
         setBuildingPlan(false);
         router.navigate("/(onBoarding)/planScreen");

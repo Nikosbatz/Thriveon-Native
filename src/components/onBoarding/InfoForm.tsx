@@ -30,7 +30,7 @@ export default function InfoForm() {
   const onBoardingFormData = useOnBoardingFormStore((state) => state.formData);
   const storeUpdateForm = useOnBoardingFormStore((state) => state.updateForm);
   const [formInputs, setFormInputs] = useState<FormInputs>({
-    goal: -1,
+    goal: "",
     age: "",
     weight: "",
     height: "",
@@ -90,7 +90,9 @@ export default function InfoForm() {
             // Goal Card
             <TouchableRipple
               key={index}
-              onPress={() => setFormInputs({ ...formInputs, goal: index })}
+              onPress={() =>
+                setFormInputs({ ...formInputs, goal: String(index) })
+              }
               rippleColor={"rgba(8, 147, 159, 0.52)"}
               style={[
                 mainStyles.card,
@@ -101,7 +103,7 @@ export default function InfoForm() {
                   padding: 10,
                   borderWidth: 1,
                   borderColor:
-                    formInputs.goal === index
+                    Number(formInputs.goal) === index
                       ? colors.lvPrimary80
                       : "transparent",
                 },
@@ -235,7 +237,7 @@ export default function InfoForm() {
 }
 
 type FormInputs = {
-  goal: number;
+  goal: string;
   age: string;
   weight: string;
   height: string;

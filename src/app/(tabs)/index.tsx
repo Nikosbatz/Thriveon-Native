@@ -106,7 +106,9 @@ export default function Dashboard() {
       <Button onPress={() => router.navigate("/welcomeScreen")}>
         Go to onboarding
       </Button>
-
+      <Button onPress={() => router.navigate("/(onBoarding)/planScreen")}>
+        Go to onboarding/Plan
+      </Button>
       {/* Cards container (Every card but those from Horizontal ScrollView) */}
       <View style={styles.cardsContainer}>
         {/* Row 2-Cards Container */}

@@ -4,7 +4,7 @@ type parameters = {
   height: number;
   age: number;
   activity: number;
-  goal: number;
+  goal: string;
 };
 
 export default function calculateNutrition({
@@ -29,14 +29,14 @@ export default function calculateNutrition({
   let TDEE = BMR * activityMultipliers[activity];
 
   //if goal === "Lose Weight"
-  if (goal === 0) {
+  if (Number(goal) === 0) {
     TDEE *= 0.85;
 
     healthGoals.weight =
       healthGoals.weight - Math.floor(healthGoals.weight * 0.05); // Decrease weight by 5%
   }
   //if goal === "Gain Mass"
-  else if (goal === 2) {
+  else if (Number(goal) === 2) {
     TDEE *= 1.15;
     healthGoals.weight =
       healthGoals.weight + Math.floor(healthGoals.weight * 0.05); // Increase weight by 5%
