@@ -43,7 +43,6 @@ export default function Dashboard() {
     const bootstrap = async () => {
       try {
         await Promise.all([
-          fetchUserInfo(),
           getTodayFoods(),
           foods.length === 0 ? loadFoods() : Promise.resolve(),
           fetchUserActivites(),
@@ -102,13 +101,8 @@ export default function Dashboard() {
         </Animated.ScrollView>
         <PagerDots scrollX={scrollX} itemWidth={ITEM_WIDTH} itemCount={2} />
       </View>
+      {/* FOR TESTING */}
       <Button onPress={() => logOut()}>log out</Button>
-      <Button onPress={() => router.navigate("/welcomeScreen")}>
-        Go to onboarding
-      </Button>
-      <Button onPress={() => router.navigate("/(onBoarding)/planScreen")}>
-        Go to onboarding/Plan
-      </Button>
       {/* Cards container (Every card but those from Horizontal ScrollView) */}
       <View style={styles.cardsContainer}>
         {/* Row 2-Cards Container */}

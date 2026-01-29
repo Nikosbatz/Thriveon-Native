@@ -75,7 +75,7 @@ export default function ProfileScreen() {
         {/* Main Goal Card  */}
         <MainCardGoal />
         {/* Macros and Health Goals Card */}
-        <MacroHealthGoalsCard />
+        <MacroHealthGoalsCard showEdit={true} />
       </ScrollView>
     </View>
   );

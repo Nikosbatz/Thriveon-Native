@@ -7,10 +7,12 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Redirect, Tabs } from "expo-router";
 
 export default function TabsLayout() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
 
   if (!isLoggedIn) {
     return <Redirect href={"/(auth)/auth"} />;
+  } else if (!user?.onBoardingCompleted) {
+    return <Redirect href={"/(onBoarding)/welcomeScreen"} />;
   }
 
   return (

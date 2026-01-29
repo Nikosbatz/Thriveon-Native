@@ -5,8 +5,6 @@ import { api, BASE_URI } from "./axiosApi";
 export async function login(email: string, password: string) {
   const loginData = { email: email, password: password };
 
-  console.log(loginData);
-
   try {
     const res = await axios.post(`${BASE_URI}/user/login`, loginData, {
       headers: {
@@ -15,7 +13,6 @@ export async function login(email: string, password: string) {
       },
     });
     if (res.status === 200) {
-      console.log("login code 200");
       if (res.data.accessToken) {
         await SecureStore.setItemAsync("token", res.data.accessToken);
       } else {
@@ -36,8 +33,6 @@ export async function login(email: string, password: string) {
 
 export async function register(email: string, password: string) {
   const registerData = { email: email, password: password };
-
-  console.log("register data:" + registerData);
 
   try {
     const res = await axios.post(`${BASE_URI}/user/register`, registerData, {
@@ -70,7 +65,7 @@ export async function getEmailVerificationToken(email: string) {
           Accept: "application/json",
           "Content-Type": "application/json;charset=UTF-8",
         },
-      }
+      },
     );
     if (res.status === 200) {
       return;
@@ -85,8 +80,6 @@ export async function getEmailVerificationToken(email: string) {
 }
 
 export async function postEmailVerificationToken(verificationToken: string) {
-  console.log("Verify Email");
-
   try {
     const res = await axios.post(
       `${BASE_URI}/user/verify-email`,
@@ -98,7 +91,7 @@ export async function postEmailVerificationToken(verificationToken: string) {
           Accept: "application/json",
           "Content-Type": "application/json;charset=UTF-8",
         },
-      }
+      },
     );
     if (res.status === 200) {
       await SecureStore.setItemAsync("token", res.data.accessToken);
@@ -113,7 +106,6 @@ export async function postEmailVerificationToken(verificationToken: string) {
 }
 
 export async function postForgotPasswordEmail(email: string) {
-  console.log("Verify Email");
   const res = await axios.post(
     `${BASE_URI}/user/forgot-password`,
     {
@@ -124,7 +116,7 @@ export async function postForgotPasswordEmail(email: string) {
         Accept: "application/json",
         "Content-Type": "application/json;charset=UTF-8",
       },
-    }
+    },
   );
 
   if (res.status === 200) {
@@ -135,8 +127,6 @@ export async function postForgotPasswordEmail(email: string) {
 }
 
 export async function postResetPassword(password: string, token: string) {
-  console.log("Reset Password");
-
   const res = await axios.post(
     `${BASE_URI}/user/reset-password/${token}`,
     {
@@ -147,7 +137,7 @@ export async function postResetPassword(password: string, token: string) {
         Accept: "application/json",
         "Content-Type": "application/json;charset=UTF-8",
       },
-    }
+    },
   );
 
   if (res.status === 200) {
@@ -169,7 +159,7 @@ export async function postUserInfo(info: any) {
     return res.data;
   } else {
     throw new Error(
-      "Something went wrong. If the error persists please contact support"
+      "Something went wrong. If the error persists please contact support",
     );
   }
 }
@@ -183,7 +173,6 @@ export async function getUserInfo() {
       return res.data;
     }
   } catch (error: any) {
-    console.log("getUserInfo error: ", error);
     if (error.status === 401) {
       throw new Error("User not Found!");
     } else {
@@ -223,13 +212,12 @@ export async function postFood(data: FoodType, path: string) {
     });
 
     if (res.status === 201 || res.status === 200) {
-      console.log(res.data);
       return res.data;
     }
   } catch (error: any) {
     if (error.response.status === 409) {
       throw new Error(
-        `Error: ${error.response.status}\nAn Item with this name already exists! `
+        `Error: ${error.response.status}\nAn Item with this name already exists! `,
       );
     } else {
       // console.log(error.response.status);
@@ -240,7 +228,6 @@ export async function postFood(data: FoodType, path: string) {
 
 //TODO:change any type
 export async function deleteUserLogsFood(food: LoggedFoodType) {
-  console.log(food);
   const res = await api.delete(`/foods/userlogs/${food._id}`, {
     headers: {
       Accept: "application/json",
@@ -269,8 +256,6 @@ export async function getUserWaterIntake() {
 }
 
 export async function postUserWaterIntake(water: number) {
-  console.log("water " + water);
-
   try {
     const res = await api.post(
       `/health/water-logs`,
@@ -280,7 +265,7 @@ export async function postUserWaterIntake(water: number) {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (res.status === 200 || res.status === 201) {
@@ -342,7 +327,7 @@ export async function postUserWeightLogs(weight: number) {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (res.status === 200 || res.status === 201) {
@@ -351,4 +336,13 @@ export async function postUserWeightLogs(weight: number) {
   } catch (error) {
     throw Error();
   }
+}
+
+export async function authToken() {
+  const res = await api.get("/user/auth");
+  console.log("authToken: ", res.status);
+  if (res.status === 200) {
+    return;
+  }
+  throw new Error();
 }

@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 
-export default function AuthScreen() {
+export default function RegisterScreen() {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [emailInput, setEmailInput] = useState<string>("");
   const [passwordInput, setPasswordInput] = useState<string>("");
@@ -88,21 +88,30 @@ export default function AuthScreen() {
             source={require("@/assets/images/logo_chat.png")}
             style={{ width: 150, height: 90, alignSelf: "center" }}
           ></Image>
+        </View>
+
+        <View>
           <Text
-            variant="headlineLarge"
+            variant="headlineMedium"
             style={{ color: colors.lvPrimaryLight, alignSelf: "center" }}
           >
-            Thriveon
+            Create an account
           </Text>
           <Text
             variant="labelLarge"
             style={{
               color: colors.lightWhiteText,
               alignSelf: "center",
-              fontSize: 17,
+              fontSize: 15,
             }}
           >
-            Track Grow Thriveon
+            Begin your welness journey with{" "}
+            <Text
+              variant="labelLarge"
+              style={{ color: colors.lvPrimary80, fontSize: 18 }}
+            >
+              Thriveon
+            </Text>
           </Text>
         </View>
 
@@ -159,19 +168,38 @@ export default function AuthScreen() {
               />
             }
           ></TextInput>
-          {/* Forgot Password button */}
-          <Text
-            variant="labelLarge"
-            onPress={() => console.log("Forgot Password pressed")}
-            style={{
-              color: colors.lightGrayText,
-              marginTop: 5,
-              alignSelf: "flex-end",
-              textDecorationLine: "underline",
-            }}
-          >
-            Forgot Password?
+        </View>
+        <View>
+          <Text variant="labelLarge" style={styles.textInputLabel}>
+            Confirm Password
           </Text>
+          <TextInput
+            disabled={false}
+            value={passwordInput}
+            onChangeText={setPasswordInput}
+            mode="outlined"
+            style={styles.textInput}
+            secureTextEntry={!passwordVisible}
+            activeOutlineColor={colors.lvPrimary50}
+            outlineColor={colors.lvPrimary20}
+            outlineStyle={{ borderRadius: 25 }}
+            placeholder={"********"}
+            textColor="white"
+            cursorColor="white"
+            placeholderTextColor={colors.lightGrayText}
+            right={
+              <TextInput.Icon
+                icon={() =>
+                  passwordVisible ? (
+                    <Eye color={colors.lvPrimary80} size={20} />
+                  ) : (
+                    <EyeOff color={colors.lvPrimary80} size={20} />
+                  )
+                }
+                onPress={() => setPasswordVisible((prev) => !prev)}
+              />
+            }
+          ></TextInput>
         </View>
 
         {errorText ? (
@@ -183,7 +211,7 @@ export default function AuthScreen() {
           onPress={handleAuth}
           loading={isLoading}
           disabled={isLoading}
-          icon={"login"}
+          icon={isSignUp ? "account-plus" : "login"}
           style={{
             backgroundColor: colors.lvPrimary,
             width: "80%",
@@ -191,27 +219,27 @@ export default function AuthScreen() {
           }}
           textColor={colors.lvBackground}
         >
-          Sign In
+          {isSignUp ? "Sign Up" : "Sign In"}
         </Button>
 
         <Button
           mode="text"
           style={
             {
-              // position: "absolute",
+              // // position: "sticky",
               // bottom: 30,
               // left: "50%",
               // transform: [{ translateX: "-50%" }],
             }
           }
           textColor={colors.lvPrimary80}
-          onPress={() => router.navigate("/(auth)/register")}
+          onPress={() => router.navigate("/(auth)/auth")}
         >
           <Text variant="labelLarge" style={{ color: colors.lightWhiteText }}>
-            {"Don't have an account?"}
+            {"Already have an account?"}
             <Text variant="labelLarge" style={{ color: colors.lvPrimary80 }}>
               {" "}
-              {"Sign Up"}
+              {"Sign In"}
             </Text>
           </Text>
         </Button>
@@ -224,7 +252,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.lvBackground,
-    paddingVertical: 20,
     // justifyContent: "center",
     // alignItems: "center",
   },

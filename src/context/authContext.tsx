@@ -12,7 +12,13 @@ import {
 } from "react";
 import Toast from "react-native-toast-message";
 import { setLogoutHandler } from "../api/authBridge";
-import { getUserInfo, login, postUserInfo, register } from "../api/requests";
+import {
+  authToken,
+  getUserInfo,
+  login,
+  postUserInfo,
+  register,
+} from "../api/requests";
 
 type AuthContextType = {
   user: UserInterface | null;
@@ -36,18 +42,22 @@ export default function AuthContextProvider({
 }: {
   children: React.ReactNode;
 }) {
+  // States are set to false | null because
   const [user, setUser] = useState<UserInterface | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [isVerified, setIsVerified] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string>("");
   const [loadingUserInfo, setLoadingUserInfo] = useState<boolean>(false);
 
-  // Auto Log in user if he has a token
+  // Auto Log in user if he has a token and fetchUserInfo
+  // else do not do anything
   useEffect(() => {
     (async () => {
       try {
         const token = await SecureStore.getItemAsync("token");
+        console.log("token", token);
         if (token) {
+          await authToken();
+          await fetchUserInfo();
           setIsLoggedIn(true);
         }
       } catch (err) {
@@ -72,6 +82,7 @@ export default function AuthContextProvider({
     try {
       setLoadingUserInfo(true);
       const userData = await getUserInfo();
+      console.log("fetchUserInfo", userData);
       setUser(userData);
       setLoadingUserInfo(false);
     } catch (error: any) {
@@ -113,7 +124,9 @@ export default function AuthContextProvider({
   const signIn = useCallback(async (email: string, password: string) => {
     try {
       const data = await login(email, password);
+      // console.log("signIn data: ", data.user);
       setIsLoggedIn(true);
+      setUser(data.user);
 
       // if user is verified re-direct to main screen
       // else re-direct to verification screen
