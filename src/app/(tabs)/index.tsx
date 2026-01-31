@@ -9,7 +9,6 @@ import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
-import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import {
   Animated,
@@ -34,8 +33,7 @@ export default function Dashboard() {
     (s) => s.fetchUserActivites,
   );
 
-  const { logOut, fetchUserInfo } = useAuth();
-  const router = useRouter();
+  const { logOut } = useAuth();
   const scrollX = useRef(new Animated.Value(0)).current;
 
   // Bootstrap app by fetching all required data

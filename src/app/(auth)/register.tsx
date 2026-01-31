@@ -11,21 +11,23 @@ import {
   View,
 } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import Toast from "react-native-toast-message";
 
 export default function RegisterScreen() {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [emailInput, setEmailInput] = useState<string>("");
   const [passwordInput, setPasswordInput] = useState<string>("");
+  const [verifyPasswdInput, setVerifyPasswdInput] = useState<string>("");
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [errorText, setErrorText] = useState<string | null>("");
   const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
-  const { signUp, signIn, isLoggedIn } = useAuth();
+  const { signUp, isLoggedIn } = useAuth();
   const router = useRouter();
 
-  async function handleAuth() {
+  async function handleSignUp() {
     setIsLoading(true);
-    if (!emailInput || !passwordInput) {
+    if (!emailInput || !passwordInput || !verifyPasswdInput) {
       setErrorText("Please fill all the form fields");
       setIsLoading(false);
       return;
@@ -33,27 +35,24 @@ export default function RegisterScreen() {
       setErrorText("Password must contain more than 6 characters");
       setIsLoading(false);
       return;
+    } else if (passwordInput !== verifyPasswdInput) {
+      setErrorText("Passwords must match");
+      setIsLoading(false);
+      return;
     }
-    if (isSignUp) {
-      try {
-        await signUp(emailInput, passwordInput);
-        //setIsLoggedIn(true);
-      } catch (error: any) {
-        setErrorText(error.message);
-        setIsLoading(false);
-        return;
-      }
-    } else {
-      try {
-        await signIn(emailInput, passwordInput);
-      } catch (error: any) {
-        setErrorText(error.message);
-        setIsLoading(false);
-        return;
-      }
-    }
-
+    //TODO: send sign up data to backend and navigate to verifyUser
     setErrorText(null);
+    try {
+      await signUp(emailInput, passwordInput);
+      router.navigate("/(auth)/verifyUser");
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: "Sign Up Error",
+        text2: error.message,
+      });
+      setIsLoading(false);
+    }
   }
 
   // Redirect user if he is already Logged in
@@ -175,8 +174,8 @@ export default function RegisterScreen() {
           </Text>
           <TextInput
             disabled={false}
-            value={passwordInput}
-            onChangeText={setPasswordInput}
+            value={verifyPasswdInput}
+            onChangeText={setVerifyPasswdInput}
             mode="outlined"
             style={styles.textInput}
             secureTextEntry={!passwordVisible}
@@ -208,10 +207,10 @@ export default function RegisterScreen() {
 
         <Button
           mode="contained"
-          onPress={handleAuth}
+          onPress={handleSignUp}
           loading={isLoading}
           disabled={isLoading}
-          icon={isSignUp ? "account-plus" : "login"}
+          icon={"account-plus"}
           style={{
             backgroundColor: colors.lvPrimary,
             width: "80%",
@@ -219,19 +218,11 @@ export default function RegisterScreen() {
           }}
           textColor={colors.lvBackground}
         >
-          {isSignUp ? "Sign Up" : "Sign In"}
+          {"Sign Up"}
         </Button>
 
         <Button
           mode="text"
-          style={
-            {
-              // // position: "sticky",
-              // bottom: 30,
-              // left: "50%",
-              // transform: [{ translateX: "-50%" }],
-            }
-          }
           textColor={colors.lvPrimary80}
           onPress={() => router.navigate("/(auth)/auth")}
         >
@@ -242,6 +233,19 @@ export default function RegisterScreen() {
               {"Sign In"}
             </Text>
           </Text>
+        </Button>
+
+        <Button
+          mode="text"
+          textColor={colors.lvPrimary80}
+          onPress={() =>
+            router.navigate({
+              params: { email: emailInput },
+              pathname: "/(auth)/verifyUser",
+            })
+          }
+        >
+          /verifyuser
         </Button>
       </View>
     </KeyboardAvoidingView>

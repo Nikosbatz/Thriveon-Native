@@ -1,8 +1,15 @@
+import { useAuth } from "@/src/context/authContext";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 
 export default function onBoardingLayout() {
+  const { isLoggedIn } = useAuth();
+
+  if (!isLoggedIn) {
+    return <Redirect href={"/(auth)/auth"} />;
+  }
+
   return (
     <Stack
       screenOptions={{

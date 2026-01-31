@@ -16,6 +16,7 @@ import {
   authToken,
   getUserInfo,
   login,
+  postEmailVerificationToken,
   postUserInfo,
   register,
 } from "../api/requests";
@@ -33,6 +34,7 @@ type AuthContextType = {
   fetchUserInfo: () => Promise<void | null>;
   loadingUserInfo: boolean;
   updateUserInfo: (info: UserInterface) => void;
+  verifyUserEmail: (verificationCode: string) => void;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -47,6 +49,8 @@ export default function AuthContextProvider({
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string>("");
   const [loadingUserInfo, setLoadingUserInfo] = useState<boolean>(false);
+
+  console.log(isLoggedIn);
 
   // Auto Log in user if he has a token and fetchUserInfo
   // else do not do anything
@@ -96,6 +100,16 @@ export default function AuthContextProvider({
     }
   }, [logOut]);
 
+  const verifyUserEmail = useCallback(async (verificationCode: string) => {
+    try {
+      await postEmailVerificationToken(verificationCode);
+      await fetchUserInfo();
+      setIsLoggedIn(true);
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }, []);
+
   const updateUserInfo = useCallback(async (info: Partial<UserInterface>) => {
     setLoadingUserInfo(true);
 
@@ -114,11 +128,10 @@ export default function AuthContextProvider({
     try {
       await register(email, password);
       //setIsLoggedIn(true);
-      router.replace("/(tabs)");
+      return;
     } catch (error: any) {
       throw new Error(error.message);
     }
-    return;
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
@@ -158,6 +171,7 @@ export default function AuthContextProvider({
           fetchUserInfo,
           loadingUserInfo,
           updateUserInfo,
+          verifyUserEmail,
         }),
         [
           signIn,
@@ -172,6 +186,7 @@ export default function AuthContextProvider({
           fetchUserInfo,
           loadingUserInfo,
           updateUserInfo,
+          verifyUserEmail,
         ],
       )}
     >

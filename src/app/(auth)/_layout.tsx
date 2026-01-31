@@ -19,7 +19,10 @@ export default function AuthLayout() {
         name={"register"}
         options={{ headerShown: false }}
       ></Stack.Screen>
-      <Stack.Screen name={"verifyUser"}></Stack.Screen>
+      <Stack.Screen
+        name={"verifyUser"}
+        options={{ headerShown: false }}
+      ></Stack.Screen>
     </Stack>
   );
 }

@@ -1,9 +1,8 @@
-import {
-  getEmailVerificationToken,
-  postEmailVerificationToken,
-} from "@/src/api/requests";
+import { getEmailVerificationToken } from "@/src/api/requests";
 import { useAuth } from "@/src/context/authContext";
-import { useRouter } from "expo-router";
+import { colors } from "@/src/theme/colors";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { Mail } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import {
   NativeSyntheticEvent,
@@ -22,7 +21,10 @@ export default function VerifyUser() {
   const { userEmail, setUser } = useAuth();
   const theme = useTheme();
   const router = useRouter();
+  const { email } = useLocalSearchParams();
+  const { verifyUserEmail } = useAuth();
 
+  console.log(email);
   useEffect(() => {
     if (code.every((digit) => digit !== "")) {
       handleSubmit();
@@ -33,25 +35,23 @@ export default function VerifyUser() {
     const verificationCode = code.join("");
 
     try {
-      await postEmailVerificationToken(verificationCode);
+      await verifyUserEmail(verificationCode);
       Toast.show({
         type: "success",
-        text1: "Email sent!",
-        text2: "Please check your inbox.",
+        text1: "Successful verification!",
       });
       router.replace("/(tabs)");
     } catch (error: any) {
       Toast.show({
         type: "error",
         text1: error.message,
-        text2: "Please request a new password",
       });
     }
   }
 
   function handleKeyDown(
     index: number,
-    e: NativeSyntheticEvent<TextInputKeyPressEventData>
+    e: NativeSyntheticEvent<TextInputKeyPressEventData>,
   ) {
     console.log(e.nativeEvent.key);
     if (e.nativeEvent.key === "Backspace" && !code[index] && index > 0) {
@@ -93,19 +93,36 @@ export default function VerifyUser() {
   }
   return (
     <View style={styles.outerContainer}>
+      <View
+        style={{
+          backgroundColor: colors.lvPrimary20,
+          borderWidth: 2,
+          borderColor: colors.lvPrimary,
+          padding: 10,
+          borderRadius: 20,
+        }}
+      >
+        <Mail size={54} color={colors.lvPrimary80}></Mail>
+      </View>
       <Text
         style={{
-          color: theme.colors.primary,
+          color: "white",
           fontSize: 30,
           padding: 0,
           lineHeight: 40,
         }}
-        variant="bodyLarge"
+        variant="headlineLarge"
       >
         Verify Your Email
       </Text>
       <View style={styles.mainContainer}>
-        <Text variant="bodyLarge">Enter your One Time Password here:</Text>
+        <Text variant="bodyLarge" style={{ color: colors.lightWhiteText }}>
+          We have sent a one time password (OTP) to:{" "}
+          <Text style={{ color: colors.lvPrimary }}>
+            {"asdasd@sdasda.asda"}
+          </Text>{" "}
+          Please enter it below to verify your account
+        </Text>
         <View style={styles.inputsContainer}>
           {code.map((digit, index) => (
             <TextInput
@@ -125,13 +142,13 @@ export default function VerifyUser() {
           ))}
         </View>
         <Button
-          textColor={"rgba(6, 151, 151, 1)"}
-          style={styles.button}
+          textColor={colors.lvBackground}
+          style={{ backgroundColor: colors.lvPrimary }}
           mode="contained"
           disabled={codeResent}
           onPress={handleRequestVerificationCode}
         >
-          Get new OTP
+          Resend code
         </Button>
       </View>
 
@@ -144,7 +161,7 @@ export default function VerifyUser() {
 
 const styles = StyleSheet.create({
   outerContainer: {
-    backgroundColor: "",
+    backgroundColor: colors.lvBackground,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -155,7 +172,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   mainContainer: {
-    backgroundColor: "rgba(215, 215, 215, 1)",
+    backgroundColor: "transparent",
     padding: 0,
     alignItems: "center",
     justifyContent: "center",
@@ -164,15 +181,10 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 5,
   },
-  button: {
-    backgroundColor: "rgba(238, 238, 238, 1)",
-    borderRadius: 10,
-    height: 40,
-    padding: 0,
-  },
+
   textInput: {
     flex: 1,
-    backgroundColor: "rgba(189, 189, 189, 1)",
+    backgroundColor: colors.lvPrimary10,
     borderRadius: 20,
     textAlign: "center",
     fontSize: 20,

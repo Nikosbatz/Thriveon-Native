@@ -25,6 +25,7 @@ export default function ActivityFreq() {
   const [selectedActivity, setSelectedActivity] = useState(-1);
   const [buildingPlan, setBuildingPlan] = useState(false);
   const router = useRouter();
+  const { logOut } = useAuth();
 
   async function handleFormSubmit() {
     setBuildingPlan(true);

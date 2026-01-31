@@ -34,23 +34,13 @@ export default function AuthScreen() {
       setIsLoading(false);
       return;
     }
-    if (isSignUp) {
-      try {
-        await signUp(emailInput, passwordInput);
-        //setIsLoggedIn(true);
-      } catch (error: any) {
-        setErrorText(error.message);
-        setIsLoading(false);
-        return;
-      }
-    } else {
-      try {
-        await signIn(emailInput, passwordInput);
-      } catch (error: any) {
-        setErrorText(error.message);
-        setIsLoading(false);
-        return;
-      }
+
+    try {
+      await signIn(emailInput, passwordInput);
+    } catch (error: any) {
+      setErrorText(error.message);
+      setIsLoading(false);
+      return;
     }
 
     setErrorText(null);
@@ -90,7 +80,11 @@ export default function AuthScreen() {
           ></Image>
           <Text
             variant="headlineLarge"
-            style={{ color: colors.lvPrimaryLight, alignSelf: "center" }}
+            style={{
+              color: colors.lvPrimaryLight,
+              alignSelf: "center",
+              fontSize: 30,
+            }}
           >
             Thriveon
           </Text>
@@ -99,7 +93,7 @@ export default function AuthScreen() {
             style={{
               color: colors.lightWhiteText,
               alignSelf: "center",
-              fontSize: 17,
+              fontSize: 16,
             }}
           >
             Track Grow Thriveon
@@ -168,6 +162,7 @@ export default function AuthScreen() {
               marginTop: 5,
               alignSelf: "flex-end",
               textDecorationLine: "underline",
+              fontSize: 13,
             }}
           >
             Forgot Password?
@@ -191,7 +186,7 @@ export default function AuthScreen() {
           }}
           textColor={colors.lvBackground}
         >
-          Sign In
+          <Text variant="labelLarge">Sign In</Text>
         </Button>
 
         <Button
@@ -209,7 +204,10 @@ export default function AuthScreen() {
         >
           <Text variant="labelLarge" style={{ color: colors.lightWhiteText }}>
             {"Don't have an account?"}
-            <Text variant="labelLarge" style={{ color: colors.lvPrimary80 }}>
+            <Text
+              variant="labelLarge"
+              style={{ color: colors.lvPrimary80, fontSize: 15 }}
+            >
               {" "}
               {"Sign Up"}
             </Text>
