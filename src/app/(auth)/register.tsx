@@ -14,7 +14,6 @@ import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import Toast from "react-native-toast-message";
 
 export default function RegisterScreen() {
-  const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [emailInput, setEmailInput] = useState<string>("");
   const [passwordInput, setPasswordInput] = useState<string>("");
   const [verifyPasswdInput, setVerifyPasswdInput] = useState<string>("");
@@ -44,7 +43,10 @@ export default function RegisterScreen() {
     setErrorText(null);
     try {
       await signUp(emailInput, passwordInput);
-      router.navigate("/(auth)/verifyUser");
+      router.navigate({
+        params: { email: emailInput },
+        pathname: "/(auth)/verifyUser",
+      });
     } catch (error: any) {
       Toast.show({
         type: "error",

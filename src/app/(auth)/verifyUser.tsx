@@ -11,20 +11,17 @@ import {
   TextInputKeyPressEventData,
   View,
 } from "react-native";
-import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import { Button, Text, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
 
 export default function VerifyUser() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [codeResent, setCodeResent] = useState<boolean>(false);
   const inputRefs = useRef<Array<RNTextInput | null>>([]);
-  const { userEmail, setUser } = useAuth();
-  const theme = useTheme();
   const router = useRouter();
-  const { email } = useLocalSearchParams();
-  const { verifyUserEmail } = useAuth();
+  const { email }: { email: string } = useLocalSearchParams();
+  const { verifyUserEmail, userEmail, isLoggedIn, logOut } = useAuth();
 
-  console.log(email);
   useEffect(() => {
     if (code.every((digit) => digit !== "")) {
       handleSubmit();
@@ -53,7 +50,6 @@ export default function VerifyUser() {
     index: number,
     e: NativeSyntheticEvent<TextInputKeyPressEventData>,
   ) {
-    console.log(e.nativeEvent.key);
     if (e.nativeEvent.key === "Backspace" && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -62,7 +58,7 @@ export default function VerifyUser() {
   async function handleRequestVerificationCode() {
     setCodeResent(true);
     try {
-      const res = await getEmailVerificationToken(userEmail);
+      const res = await getEmailVerificationToken(email);
     } catch (error: any) {
       Toast.show({
         type: "error",
@@ -91,6 +87,13 @@ export default function VerifyUser() {
       }
     }
   }
+
+  async function handleBackToLogin() {
+    if (isLoggedIn) {
+      await logOut();
+    }
+    router.replace("/(auth)/auth");
+  }
   return (
     <View style={styles.outerContainer}>
       <View
@@ -116,11 +119,12 @@ export default function VerifyUser() {
         Verify Your Email
       </Text>
       <View style={styles.mainContainer}>
-        <Text variant="bodyLarge" style={{ color: colors.lightWhiteText }}>
+        <Text
+          variant="bodyLarge"
+          style={{ color: colors.lightWhiteText, textAlign: "center" }}
+        >
           We have sent a one time password (OTP) to:{" "}
-          <Text style={{ color: colors.lvPrimary }}>
-            {"asdasd@sdasda.asda"}
-          </Text>{" "}
+          <Text style={{ color: colors.lvPrimary }}>{email ?? userEmail}</Text>{" "}
           Please enter it below to verify your account
         </Text>
         <View style={styles.inputsContainer}>
@@ -152,8 +156,13 @@ export default function VerifyUser() {
         </Button>
       </View>
 
-      <Button icon="backburger" onPress={() => router.replace("/(auth)/auth")}>
-        Login Screen
+      <Button
+        icon="backburger"
+        style={{}}
+        textColor={colors.lvPrimary80}
+        onPress={handleBackToLogin}
+      >
+        back to login
       </Button>
     </View>
   );

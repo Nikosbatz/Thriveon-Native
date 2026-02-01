@@ -46,6 +46,10 @@ export default function AuthScreen() {
     setErrorText(null);
   }
 
+  function handleForgotPassword() {
+    console.log("forgotn pass pressed");
+  }
+
   // Redirect user if he is already Logged in
   if (isLoggedIn) {
     return <Redirect href={"/(tabs)"} />;
@@ -156,7 +160,7 @@ export default function AuthScreen() {
           {/* Forgot Password button */}
           <Text
             variant="labelLarge"
-            onPress={() => console.log("Forgot Password pressed")}
+            onPress={handleForgotPassword}
             style={{
               color: colors.lightGrayText,
               marginTop: 5,

@@ -11,6 +11,8 @@ export default function TabsLayout() {
 
   if (!isLoggedIn) {
     return <Redirect href={"/(auth)/auth"} />;
+  } else if (!user?.isVerified) {
+    return <Redirect href={"/(auth)/verifyUser"} />;
   } else if (!user?.onBoardingCompleted) {
     return <Redirect href={"/(onBoarding)/welcomeScreen"} />;
   }
