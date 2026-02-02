@@ -23,6 +23,10 @@ export default function AuthLayout() {
         name={"verifyUser"}
         options={{ headerShown: false }}
       ></Stack.Screen>
+      <Stack.Screen
+        name={"forgotPassword"}
+        options={{ headerShown: false }}
+      ></Stack.Screen>
     </Stack>
   );
 }

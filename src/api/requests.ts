@@ -54,6 +54,7 @@ export async function register(email: string, password: string) {
 }
 
 export async function getEmailVerificationToken(email: string) {
+  console.log("email in getEmailVerififcationcomde:", email);
   try {
     const res = await axios.post(
       `${BASE_URI}/user/resend-verification-code`,
