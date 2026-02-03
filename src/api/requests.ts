@@ -106,11 +106,12 @@ export async function postEmailVerificationToken(verificationToken: string) {
   }
 }
 
-export async function postForgotPasswordEmail(email: string) {
+export async function postForgotPasswordEmail(email: string, platform: string) {
   const res = await axios.post(
     `${BASE_URI}/user/forgot-password`,
     {
       email: email,
+      platform: platform,
     },
     {
       headers: {

@@ -43,6 +43,7 @@ export default function RegisterScreen() {
     setErrorText(null);
     try {
       await signUp(emailInput, passwordInput);
+      setIsLoading(false);
       router.navigate({
         params: { email: emailInput },
         pathname: "/(auth)/verifyUser",

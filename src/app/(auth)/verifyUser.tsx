@@ -134,6 +134,8 @@ export default function VerifyUser() {
             <TextInput
               mode="outlined"
               outlineColor="gray"
+              textColor="white"
+              cursorColor="white"
               activeOutlineColor="rgba(77, 77, 77, 1)"
               style={styles.textInput}
               key={index}
