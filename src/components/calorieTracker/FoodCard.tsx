@@ -18,6 +18,7 @@ export default function FoodCard({
   bottomSheetRef,
 }: FoodCardProps) {
   function handleOnPress() {
+    console.log(food);
     setSelectedFood(food);
     bottomSheetRef.current?.expand();
   }
@@ -30,45 +31,50 @@ export default function FoodCard({
       style={{ backgroundColor: colors.lvGradientCard, borderRadius: 10 }}
     >
       <View style={styles.foodCard}>
-        {/* Food Name and Calories Text */}
+        {/* Food Name Text */}
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
             gap: 0,
+            maxWidth: "90%",
           }}
         >
           <Text
             variant="headlineMedium"
             style={{
-              fontSize: 19,
+              fontSize: 18,
               color: "white",
+              lineHeight: 21,
             }}
           >
             {food.name}
           </Text>
-          {/* <Text
-            variant="labelLarge"
-            style={{ color: "rgba(255, 255, 255, 1)" }}
-          >
-            {" "}
-            ({food.calories}cal/{food.grams}g)
-          </Text> */}
         </View>
         {/* Food Macro Info Text*/}
-        <View style={{ flexDirection: "row", gap: 7 }}>
-          <Text style={styles.foodMacroText}>
-            protein: <Text style={styles.foodMacroValue}>{food.protein}g</Text>
-          </Text>
-          <Text style={styles.foodMacroText}>
-            carbs: <Text style={styles.foodMacroValue}>{food.carbs}g</Text>
-          </Text>
-          <Text style={styles.foodMacroText}>
-            fats: <Text style={styles.foodMacroValue}>{food.fats}g</Text>
-          </Text>
-          <Text style={styles.foodMacroText}>
-            cal:{" "}
-            <Text style={styles.foodMacroValue}>{food.calories}, 100g</Text>
+        <View
+          style={{
+            flexDirection: "column",
+            gap: 7,
+            // alignSelf: "flex-end",
+            // marginRight: 40,
+          }}
+        >
+          {/* <View style={{ flexDirection: "row", gap: 5 }}>
+            <Text variant="labelLarge" style={[{ color: colors.protein }]}>
+              p <Text style={{ color: "white" }}>{food.protein}g</Text>
+            </Text>
+            <Text variant="labelLarge" style={{ color: colors.carbs }}>
+              c <Text style={{ color: "white" }}>{food.carbs}g</Text>
+            </Text>
+            <Text variant="labelLarge" style={{ color: colors.fats }}>
+              f <Text style={{ color: "white" }}>{food.fats}g</Text>
+            </Text>
+          </View> */}
+
+          <Text variant="labelLarge" style={styles.foodMacroValue}>
+            {food.calories} kcal
+            <Text style={styles.foodMacroText}> / 100g</Text>
           </Text>
         </View>
         {/* Plus Icon */}
@@ -99,11 +105,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderWidth: 0,
     borderColor: "rgba(135, 191, 244, 0)",
+    gap: 5,
   },
   foodMacroText: {
-    color: colors.lightGrayText,
+    color: colors.lightWhiteText,
   },
   foodMacroValue: {
-    color: "white",
+    color: colors.lvPrimary,
+    fontSize: 16,
   },
 });

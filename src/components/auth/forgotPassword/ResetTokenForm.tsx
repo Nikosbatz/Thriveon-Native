@@ -1,4 +1,6 @@
+import { postResetPassword } from "@/src/api/requests";
 import { colors } from "@/src/theme/colors";
+import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -18,6 +20,8 @@ export default function ResetTokenForm() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [resetCodeFull, setResetCodeFull] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setResetCodeFull(false);
@@ -27,6 +31,7 @@ export default function ResetTokenForm() {
   }, [code]);
 
   async function handleSubmit() {
+    setLoading(true);
     if (password.length < 8) {
       Toast.show({
         type: "error",
@@ -38,7 +43,20 @@ export default function ResetTokenForm() {
         text1: "Passwords should match",
       });
     }
-    console.log("Submit");
+    try {
+      await postResetPassword(password, code.join(""));
+      Toast.show({
+        type: "success",
+        text1: "Successful password reset!",
+        text2: "You can now login with your new password",
+      });
+      setLoading(false);
+
+      router.replace("/(auth)/auth");
+    } catch (error: any) {
+      Toast.show({ type: "error", text1: error.message });
+      setLoading(false);
+    }
   }
 
   function handleInputChange(index: number, value: string) {
@@ -176,7 +194,8 @@ export default function ResetTokenForm() {
         textColor={colors.lvBackground}
         style={{ backgroundColor: colors.lvPrimary, marginTop: 20 }}
         mode="contained"
-        disabled={!resetCodeFull}
+        disabled={!resetCodeFull || loading}
+        loading={loading}
         onPress={handleSubmit}
       >
         Reset password

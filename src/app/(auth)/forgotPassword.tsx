@@ -5,7 +5,7 @@ import { colors } from "@/src/theme/colors";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import Toast from "react-native-toast-message";
 
 export default function ForgotPasswordScreen() {
@@ -73,10 +73,6 @@ export default function ForgotPasswordScreen() {
       ) : (
         <ResetTokenForm />
       )}
-
-      <Button onPress={() => setShowTokenForm((prev) => !prev)}>
-        show form
-      </Button>
     </View>
   );
 }

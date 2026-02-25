@@ -1,6 +1,7 @@
 import { useOnBoardingFormStore } from "@/src/store/userFormStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
+import { schema } from "@/src/utilities/formSchemaValidation";
 import { useRouter } from "expo-router";
 import {
   ArrowRight,
@@ -47,7 +48,7 @@ export default function InfoForm() {
       gender: formInputs.gender.toLowerCase(),
     };
     try {
-      // schema.validateSync(formattedFormInputs, { abortEarly: false });
+      schema.validateSync(formattedFormInputs, { abortEarly: false });
       storeUpdateForm(formattedFormInputs);
       router.push("/(onBoarding)/activityFreqScreen");
     } catch (error: any) {

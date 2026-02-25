@@ -5,6 +5,7 @@ import { mainStyles } from "@/src/theme/styles";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Redirect, Tabs } from "expo-router";
+import { Platform, Pressable, StyleProp, ViewStyle } from "react-native";
 
 export default function TabsLayout() {
   const { isLoggedIn, user } = useAuth();
@@ -20,6 +21,36 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
+        tabBarButton: (props) => {
+          // Destructure to separate the problematic 'style' and 'children'
+          // from the rest of the navigation props.
+          const { style, children, ...rest } = props;
+
+          return (
+            <Pressable
+              {...rest} // Spread the navigation logic (onPress, etc.)
+              android_ripple={{
+                color: "rgba(125, 125, 125, 0.52)",
+                borderless: false,
+                foreground: true,
+                radius: 60,
+              }}
+              // Map the style correctly to the Pressable state
+              style={({ pressed }): StyleProp<ViewStyle> => [
+                style as ViewStyle, // Cast the incoming style from the tab bar
+                {
+                  opacity: pressed && Platform.OS === "ios" ? 0.6 : 1,
+                  // Ensure the button fills the space correctly
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+              ]}
+            >
+              {children}
+            </Pressable>
+          );
+        },
         tabBarActiveTintColor: colors.lvPrimary,
         tabBarStyle: {
           backgroundColor: colors.lvSecondary,
@@ -83,6 +114,12 @@ export default function TabsLayout() {
                 color={color}
               />
             ),
+        }}
+      ></Tabs.Screen>
+      <Tabs.Screen
+        name="cameraScreen"
+        options={{
+          href: null,
         }}
       ></Tabs.Screen>
     </Tabs>

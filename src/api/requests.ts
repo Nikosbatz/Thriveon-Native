@@ -107,45 +107,55 @@ export async function postEmailVerificationToken(verificationToken: string) {
 }
 
 export async function postForgotPasswordEmail(email: string, platform: string) {
-  const res = await axios.post(
-    `${BASE_URI}/user/forgot-password`,
-    {
-      email: email,
-      platform: platform,
-    },
-    {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8",
+  try {
+    const res = await axios.post(
+      `${BASE_URI}/user/forgot-password`,
+      {
+        email: email,
+        platform: platform,
       },
-    },
-  );
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=UTF-8",
+        },
+      },
+    );
 
-  if (res.status === 200) {
-    return;
-  } else if (res.status === 400) {
-    throw new Error("User wasn't found");
+    if (res.status === 200) {
+      return;
+    }
+  } catch (error: any) {
+    if (error.status === 400) {
+      throw new Error("User wasn't found");
+    }
   }
 }
 
 export async function postResetPassword(password: string, token: string) {
-  const res = await axios.post(
-    `${BASE_URI}/user/reset-password/${token}`,
-    {
-      password: password,
-    },
-    {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8",
+  try {
+    const res = await axios.post(
+      `${BASE_URI}/user/reset-password/${token}`,
+      {
+        password: password,
       },
-    },
-  );
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=UTF-8",
+        },
+      },
+    );
 
-  if (res.status === 200) {
-    return;
-  } else if (res.status === 400) {
-    throw new Error("Invalid password reset token.");
+    if (res.status === 200) {
+      return;
+    }
+  } catch (error: any) {
+    if (error.status === 400) {
+      throw new Error("Invalid password reset token.");
+    } else {
+      throw new Error("Unexpected Error!");
+    }
   }
 }
 //TODO: change any

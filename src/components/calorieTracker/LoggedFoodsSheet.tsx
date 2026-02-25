@@ -93,7 +93,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
       await removeFood(food);
     } catch (error: any) {
       Toast.show({
-        type: "fail",
+        type: "error",
         text1: error.message,
         text2: "Please try again later",
       });
@@ -126,7 +126,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
         }}
         enablePanDownToClose
         enableDynamicSizing={false}
-        snapPoints={snapPoints} // Add this
+        snapPoints={snapPoints}
       >
         <Text
           style={{ textAlign: "center", marginBottom: 10, color: "white" }}
@@ -134,6 +134,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
         >
           Logged Foods
         </Text>
+        {/*Top Meal Tabs */}
         <View style={styles.mealTabsContainer}>
           {mealTypes.map((mealType, index) => (
             <TouchableOpacity
@@ -154,6 +155,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
           ))}
         </View>
         <Divider style={styles.divider} />
+        {/* Logged Foods Container */}
         <BottomSheetScrollView
           style={{
             width: "100%",
@@ -168,6 +170,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
           {todaysFoodsByMeal[selectedMealType].map((food, index) => {
             const Icon = mealIcons[selectedMealType];
             return (
+              // Food card container
               <View
                 key={index}
                 style={{
@@ -177,7 +180,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
                   paddingLeft: 14,
                   padding: 5,
                   borderWidth: 1,
-                  borderColor: colors.primary20,
+                  borderColor: colors.lvPrimary10,
                 }}
               >
                 <View
@@ -186,11 +189,12 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
                     alignItems: "center",
                   }}
                 >
-                  <View>
+                  {/* Food name and Macros text container */}
+                  <View style={{ maxWidth: "80%" }}>
                     <Text
                       variant="headlineSmall"
                       style={{
-                        fontSize: 19,
+                        fontSize: 18,
                         color: "white",
                         lineHeight: 23,
                       }}
@@ -212,18 +216,26 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
                     </View>
                   </View>
                 </View>
-                <Text
+                <View
                   style={{
                     position: "absolute",
-                    right: 55,
+                    right: "13%",
                     top: "50%",
                     transform: [{ translateX: "0%" }, { translateY: "-40%" }],
-                    fontSize: 17,
-                    color: "rgba(219, 132, 26, 1)",
+                    alignItems: "center",
                   }}
                 >
-                  {food.calories} cal
-                </Text>
+                  <Text
+                    style={{ fontSize: 19, color: colors.lvPrimary }}
+                    variant="labelLarge"
+                  >
+                    {food.calories}
+                  </Text>
+                  <Text style={{ fontSize: 17, color: "rgb(130, 130, 130)" }}>
+                    kcal
+                  </Text>
+                </View>
+
                 <TouchableOpacity
                   style={{
                     position: "absolute",
@@ -236,7 +248,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
                   }}
                   onPress={() => handleFoodRemoval(food)}
                 >
-                  <Trash2 size={30} color={paperTheme.colors.error} />
+                  <Trash2 size={26} color={paperTheme.colors.error} />
                 </TouchableOpacity>
               </View>
             );

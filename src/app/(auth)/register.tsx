@@ -237,19 +237,6 @@ export default function RegisterScreen() {
             </Text>
           </Text>
         </Button>
-
-        <Button
-          mode="text"
-          textColor={colors.lvPrimary80}
-          onPress={() =>
-            router.navigate({
-              params: { email: emailInput },
-              pathname: "/(auth)/verifyUser",
-            })
-          }
-        >
-          /verifyuser
-        </Button>
       </View>
     </KeyboardAvoidingView>
   );

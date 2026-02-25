@@ -5,33 +5,47 @@ import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useHeaderHeight } from "@react-navigation/elements";
-import { ListCheck } from "lucide-react-native";
+import { useRouter } from "expo-router";
+import { Barcode, ListCheck } from "lucide-react-native";
 import { useRef, useState } from "react";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
+import { Divider, Text, TextInput, TouchableRipple } from "react-native-paper";
 
 export default function CalorieTrackerScreen() {
   const [selectedMealType, setselectedMealType] = useState<string>("Breakfast");
   const [searchInput, setSearchInput] = useState<string>("");
   const [selectedFood, setSelectedFood] = useState<FoodType | null>(null);
   const [filteredFoods, setFilteredFoods] = useState<FoodType[]>([]);
-  const tabBarHeight = useBottomTabBarHeight();
-  const headerHeight = useHeaderHeight();
+  // const tabBarHeight = useBottomTabBarHeight();
+  // const headerHeight = useHeaderHeight();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const loggedFoodsSheetRef = useRef<BottomSheet>(null);
   const foods: FoodType[] = useUserLogsStore((s) => s.foods);
+  const todaysFoods: LoggedFoodType[] = useUserLogsStore((s) => s.todaysFoods);
+  const router = useRouter();
 
   function handleSearchInputChange(text: string) {
     setSearchInput(text);
     if (text.length > 1) {
-      console.log(text);
-      setFilteredFoods(foods.filter((food) => food.name.includes(text)));
+      const words = text.split(" ");
+      setFilteredFoods(
+        foods.filter((food) => {
+          for (const word of words) {
+            if (!food.name.toLowerCase().includes(word.toLowerCase())) {
+              return false;
+            }
+          }
+          return true;
+        }),
+      );
     }
     if (text.length === 0) {
       setFilteredFoods([]);
     }
+  }
+
+  function handleBarcodeScannerPress() {
+    router.navigate("/(tabs)/cameraScreen");
   }
 
   return (
@@ -140,23 +154,76 @@ export default function CalorieTrackerScreen() {
         />
       </View>
 
-      <Button
-        icon={() => <ListCheck color={colors.lvBackground}></ListCheck>}
+      {/* Open logged foods button */}
+      <View
         style={{
+          flexDirection: "row",
           position: "absolute",
           bottom: 15,
-          left: "50%",
-          transform: [{ translateX: "-50%" }, { translateY: "0%" }],
-          width: 150,
-          backgroundColor: colors.lvPrimary80,
+          right: "0%",
+          transform: [{ translateX: "-10%" }, { translateY: "0%" }],
+          width: "auto",
+          backgroundColor: colors.lvPrimary,
+          borderRadius: 10,
+          overflow: "hidden",
         }}
-        mode="contained"
-        onPress={() => loggedFoodsSheetRef.current?.snapToIndex(0)}
       >
-        <Text variant="labelMedium" style={{ color: colors.lvBackground }}>
-          Logged Foods
-        </Text>
-      </Button>
+        <TouchableRipple
+          onPress={() => loggedFoodsSheetRef.current?.snapToIndex(0)}
+          rippleColor={"rgba(8, 147, 159, 0.52)"}
+          borderless
+        >
+          <View style={{ alignItems: "center", padding: 5 }}>
+            <ListCheck size={30} color={colors.lvBackground}></ListCheck>
+            {/* Logged Foods Counter Badge */}
+            <View
+              style={{
+                position: "absolute",
+                backgroundColor: "rgb(5, 59, 68)",
+                borderRadius: "100%",
+                right: "10%",
+                padding: todaysFoods.length > 0 ? 3 : 0,
+              }}
+            >
+              <Text
+                variant="labelLarge"
+                style={{
+                  textAlign: "center",
+                  lineHeight: 10,
+                  color: colors.lvPrimaryLight,
+                  fontSize: 16,
+                  width: todaysFoods.length > 0 ? 11 : 0,
+                  height: 11,
+                }}
+              >
+                {todaysFoods.length > 0 ? todaysFoods.length : null}
+              </Text>
+            </View>
+            <Text variant="labelLarge" style={{ fontSize: 12, lineHeight: 10 }}>
+              Foods
+            </Text>
+          </View>
+        </TouchableRipple>
+        <Divider
+          style={{
+            width: 0.5,
+            height: "100%",
+            backgroundColor: colors.lvBackground,
+          }}
+        />
+        <TouchableRipple
+          onPress={handleBarcodeScannerPress}
+          rippleColor={"rgba(8, 147, 159, 0.52)"}
+          borderless
+        >
+          <View style={{ alignItems: "center", padding: 5 }}>
+            <Barcode size={30} color={colors.lvBackground} />
+            <Text variant="labelLarge" style={{ fontSize: 12, lineHeight: 10 }}>
+              Scan Barcode
+            </Text>
+          </View>
+        </TouchableRipple>
+      </View>
 
       <LoggedFoodsSheet sheetRef={loggedFoodsSheetRef}></LoggedFoodsSheet>
       <FoodOptionsSheet

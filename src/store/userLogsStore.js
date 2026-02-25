@@ -80,7 +80,7 @@ export const useUserLogsStore = create((set, get) => ({
       set({ logsLoading: false });
       //TODO: fix error message (Check backend to seperate cases where logs is empty or could not access DB data )
       throw new Error(
-        "Could not fetch user data or there are no user logs for today..."
+        "Could not fetch user data or there are no user logs for today...",
       );
     }
   },
@@ -123,7 +123,7 @@ export const useUserLogsStore = create((set, get) => ({
       const res = await deleteUserLogsFood(foodToDelete);
       set((state) => ({
         todaysFoods: state.todaysFoods.filter(
-          (food) => food._id !== foodToDelete._id
+          (food) => food._id !== foodToDelete._id,
         ),
       }));
       get().updateTodayMacros();

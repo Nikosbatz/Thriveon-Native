@@ -17,7 +17,7 @@ export default function BottomBarPlus({
       accessibilityRole={accessibilityRole}
       accessibilityLabel={accessibilityLabel}
       testID={testID}
-      rippleColor={"rgba(22, 64, 68, 1)"}
+      rippleColor={"rgba(68, 126, 129, 0.74)"}
       style={styles.container}
       borderless
     >

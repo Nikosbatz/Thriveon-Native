@@ -41,7 +41,7 @@ export default function FoodOptionsSheet({
   setselectedMealType,
 }: FoodSheetProps) {
   // Hooks
-  const [quantityInput, setQuantityInput] = useState("");
+  const [quantityInput, setQuantityInput] = useState("100");
   const quantityInputRef = useRef<RNTextInput>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const handleAddFood = useUserLogsStore((s) => s.handleAddFood);
@@ -59,7 +59,7 @@ export default function FoodOptionsSheet({
       setSheetOpen(false);
       backdropOpacity.value = withTiming(0, { duration: 250 });
 
-      setQuantityInput("");
+      setQuantityInput("100");
       if (quantityInputRef.current?.isFocused()) {
         quantityInputRef.current.blur();
       }

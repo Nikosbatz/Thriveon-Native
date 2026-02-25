@@ -58,7 +58,6 @@ export default function AuthContextProvider({
     (async () => {
       try {
         const token = await SecureStore.getItemAsync("token");
-        console.log("token", token);
         if (token) {
           await authToken();
           await fetchUserInfo();
@@ -140,10 +139,8 @@ export default function AuthContextProvider({
       // console.log("signIn data: ", data.user);
       setIsLoggedIn(true);
       setUser(data.user);
-
       // if user is verified re-direct to main screen
       // else re-direct to verification screen
-      Toast.show({ type: "success", text1: data });
       if (data.isVerified) {
         router.replace("/(tabs)");
       } else {
