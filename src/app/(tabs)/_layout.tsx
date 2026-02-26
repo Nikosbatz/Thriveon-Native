@@ -4,11 +4,17 @@ import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { Redirect, Tabs } from "expo-router";
+import { Redirect, Tabs, useSegments } from "expo-router";
 import { Platform, Pressable, StyleProp, ViewStyle } from "react-native";
 
 export default function TabsLayout() {
   const { isLoggedIn, user } = useAuth();
+  const segments = useSegments();
+
+  // Check if the current route contains a specific folder/file name
+  // Example: app/(tabs)/home/[id].tsx -> segments would be ["(tabs)", "home", "[id]"]
+  const hideOnScreens = ["cameraScreen"];
+  const isHidden = segments.some((s) => hideOnScreens.includes(s));
 
   if (!isLoggedIn) {
     return <Redirect href={"/(auth)/auth"} />;
@@ -53,6 +59,7 @@ export default function TabsLayout() {
         },
         tabBarActiveTintColor: colors.lvPrimary,
         tabBarStyle: {
+          display: isHidden ? "none" : "flex",
           backgroundColor: colors.lvSecondary,
           marginBottom: 0,
           borderTopColor: "rgba(91, 91, 91, 1)",
@@ -96,7 +103,7 @@ export default function TabsLayout() {
         options={{
           title: "Today's Calories",
           tabBarButton: BottomBarPlus,
-          headerShown: true,
+          headerShown: false,
         }}
       ></Tabs.Screen>
       <Tabs.Screen
@@ -114,12 +121,6 @@ export default function TabsLayout() {
                 color={color}
               />
             ),
-        }}
-      ></Tabs.Screen>
-      <Tabs.Screen
-        name="cameraScreen"
-        options={{
-          href: null,
         }}
       ></Tabs.Screen>
     </Tabs>

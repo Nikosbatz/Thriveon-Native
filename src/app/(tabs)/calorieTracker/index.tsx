@@ -45,7 +45,7 @@ export default function CalorieTrackerScreen() {
   }
 
   function handleBarcodeScannerPress() {
-    router.navigate("/(tabs)/cameraScreen");
+    router.navigate("/calorieTracker/cameraScreen");
   }
 
   return (
