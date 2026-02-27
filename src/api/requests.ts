@@ -350,6 +350,18 @@ export async function postUserWeightLogs(weight: number) {
   }
 }
 
+export async function getBarcodeFood(code: string) {
+  console.log(`/foods/barcode/${code}`);
+  try {
+    const res = await api.get(`/foods/barcode/${code}`);
+    return res.data;
+  } catch (error: any) {
+    if (error.status === 404) {
+      throw Error("Requested food doesn't exist in our database");
+    }
+  }
+}
+
 export async function authToken() {
   const res = await api.get("/user/auth");
   console.log("authToken: ", res.status);

@@ -16,8 +16,6 @@ export default function CalorieTrackerScreen() {
   const [searchInput, setSearchInput] = useState<string>("");
   const [selectedFood, setSelectedFood] = useState<FoodType | null>(null);
   const [filteredFoods, setFilteredFoods] = useState<FoodType[]>([]);
-  // const tabBarHeight = useBottomTabBarHeight();
-  // const headerHeight = useHeaderHeight();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const loggedFoodsSheetRef = useRef<BottomSheet>(null);
   const foods: FoodType[] = useUserLogsStore((s) => s.foods);
@@ -230,7 +228,6 @@ export default function CalorieTrackerScreen() {
         bottomSheetRef={bottomSheetRef}
         food={selectedFood}
         selectedMealType={selectedMealType}
-        setselectedMealType={setselectedMealType}
       />
     </View>
   );

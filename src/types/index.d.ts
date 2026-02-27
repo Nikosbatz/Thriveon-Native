@@ -42,6 +42,11 @@ type LoggedFoodType = FoodType & {
   mealType: mealType;
 };
 
+type BarcodeFoodType = FoodType & {
+  brands: string;
+  [key: string]: unknown;
+};
+
 type userActivity = {
   activityType: string;
   duration: number;

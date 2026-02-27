@@ -5,24 +5,40 @@ import BottomSheet, {
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
 } from "@gorhom/bottom-sheet";
-import { Beef, Check, Droplets, Wheat } from "lucide-react-native";
-import React, { useCallback, useRef, useState } from "react";
-import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
+import { ArrowDown, Beef, Check, Droplets, Wheat } from "lucide-react-native";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
+import {
+  Pressable,
+  TextInput as RNTextInput,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Button, Divider, Text, TextInput } from "react-native-paper";
 import Animated, {
+  SharedValue,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 import Toast from "react-native-toast-message";
+import MealTypeModal from "./MealTypeModal";
 
 // const SCREEN_WIDTH = Dimensions.get("window").width;
 
 type FoodSheetProps = {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
-  food: FoodType | null;
-  selectedMealType: string;
-  setselectedMealType: React.Dispatch<React.SetStateAction<string>>;
+  food: FoodType | BarcodeFoodType | null;
+  selectedMealType: mealType;
+  setSelectedMealType: Dispatch<SetStateAction<mealType>>;
+  initialIndex?: number;
+  enablePanDownToClose?: boolean;
+  animatedIndex?: SharedValue<number>;
 };
 
 type macroKey = "fats" | "protein" | "carbs";
@@ -38,12 +54,16 @@ export default function FoodOptionsSheet({
   bottomSheetRef,
   food,
   selectedMealType,
-  setselectedMealType,
+  setSelectedMealType,
+  initialIndex,
+  enablePanDownToClose,
+  animatedIndex,
 }: FoodSheetProps) {
   // Hooks
   const [quantityInput, setQuantityInput] = useState("100");
   const quantityInputRef = useRef<RNTextInput>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [mealTypeModalVisible, setMealTypeModalVisible] = useState(false);
   const handleAddFood = useUserLogsStore((s) => s.handleAddFood);
   const logsLoading = useUserLogsStore((s) => s.logsLoading);
   const backdropOpacity = useSharedValue(0);
@@ -79,7 +99,6 @@ export default function FoodOptionsSheet({
         text2: "",
       });
       bottomSheetRef.current?.close();
-      // bottomSheetRef.current?.snapToIndex(-1);
     } catch (error) {
       Toast.show({
         type: "error",
@@ -118,12 +137,13 @@ export default function FoodOptionsSheet({
         ref={bottomSheetRef}
         onChange={handleSheetChanges}
         handleIndicatorStyle={{ backgroundColor: "white" }}
-        index={-1}
+        index={initialIndex ?? -1}
         backgroundStyle={{
           backgroundColor: colors.lvBackground,
           elevation: 10,
         }}
-        enablePanDownToClose
+        enablePanDownToClose={enablePanDownToClose ?? true}
+        animatedIndex={animatedIndex ?? undefined}
       >
         <BottomSheetView style={styles.contentContainer}>
           {/* Food Name and Calories Container */}
@@ -148,18 +168,41 @@ export default function FoodOptionsSheet({
                 </Text>
               </Text>
             </View>
-            {/* <Divider style={styles.divider} /> */}
           </View>
           {/* Picker and TextInput Container */}
           <View style={styles.flexRowView}>
-            {/* <View>
+            <View>
               <Text
                 variant="labelLarge"
                 style={{ color: colors.lightGrayText }}
               >
                 Meal Type
               </Text>
-            </View> */}
+              <Pressable
+                onPress={() => setMealTypeModalVisible(true)}
+                style={{
+                  backgroundColor: colors.lvPrimary20,
+                  flex: 1,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  paddingHorizontal: 7,
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                <Text
+                  variant="labelLarge"
+                  style={{
+                    fontSize: 18,
+                    color: "white",
+                    display: "flex",
+                  }}
+                >
+                  {selectedMealType}
+                </Text>
+                <ArrowDown size={24} color={"white"} style={{}}></ArrowDown>
+              </Pressable>
+            </View>
             <View style={{ flex: 1 }}>
               <Text
                 variant="labelLarge"
@@ -240,7 +283,6 @@ export default function FoodOptionsSheet({
             }}
             icon={() => <Check color={colors.lvBackground}></Check>}
             onPress={() => {
-              // bottomSheetRef.current?.;
               handleLogFood();
             }}
             loading={logsLoading}
@@ -253,6 +295,12 @@ export default function FoodOptionsSheet({
               Log Food
             </Text>
           </Button>
+          <MealTypeModal
+            selectedMealType={selectedMealType}
+            setSelectedMealType={setSelectedMealType}
+            setVisible={setMealTypeModalVisible}
+            visible={mealTypeModalVisible}
+          />
         </BottomSheetView>
       </BottomSheet>
     </Animated.View>
