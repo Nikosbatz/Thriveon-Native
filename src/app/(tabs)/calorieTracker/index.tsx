@@ -33,9 +33,6 @@ export default function CalorieTrackerScreen() {
   const foodHistory: LoggedFoodType[] = useUserLogsStore((s) => s.foodHistory);
   const router = useRouter();
 
-  // TODO: fix bug that at the start of the day when no foods are logged app doesnt also fetch the foodhistory
-  // TODO: fix not showing macros on some products that have different quantities (e.g 1L) (Problem is in foodcard and foodoptionssheet confusing quantity property
-  // of the logged foods with the quantity property on products (maybe change the logged foods quantity property to loggedQuantity)
   useEffect(() => {
     // If text is too short, don't even start the timer
     if (searchInput.length <= 2) return;

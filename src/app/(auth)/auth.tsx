@@ -83,7 +83,7 @@ export default function AuthScreen() {
             style={{
               color: colors.lvPrimaryLight,
               alignSelf: "center",
-              fontSize: 30,
+              fontSize: 31,
             }}
           >
             Thriveon
@@ -93,7 +93,7 @@ export default function AuthScreen() {
             style={{
               color: colors.lightWhiteText,
               alignSelf: "center",
-              fontSize: 16,
+              fontSize: 17,
             }}
           >
             Track Grow Thriveon
@@ -162,7 +162,7 @@ export default function AuthScreen() {
               marginTop: 5,
               alignSelf: "flex-end",
               textDecorationLine: "underline",
-              fontSize: 13,
+              fontSize: 12,
             }}
           >
             Forgot Password?
@@ -206,7 +206,7 @@ export default function AuthScreen() {
             {"Don't have an account?"}
             <Text
               variant="labelLarge"
-              style={{ color: colors.lvPrimary80, fontSize: 15 }}
+              style={{ color: colors.lvPrimary80, fontSize: 14 }}
             >
               {" "}
               {"Sign Up"}
