@@ -35,10 +35,10 @@ type FoodType = {
   fats: number;
   carbs: number;
   protein: number;
-  quantity?: number;
+  loggedQuantity?: number;
 };
 
-type LoggedFoodType = FoodType & {
+type LoggedFoodType = BarcodeFoodType & {
   _id: string;
   quantity: number;
   mealType: mealType;

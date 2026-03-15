@@ -77,6 +77,7 @@ export const useUserLogsStore = create((set, get) => ({
     set({ logsLoading: true });
     try {
       const { data, foodHistory } = await getFoods("/foods/userlogs");
+      console.log("data");
       set({ todaysFoods: data, foodHistory: foodHistory });
       get().updateTodayMacros();
       set({ logsLoading: false });
@@ -145,7 +146,7 @@ export const useUserLogsStore = create((set, get) => ({
       ...food,
       foodId: food._id,
       calories: calories,
-      quantity: gramsInput,
+      loggedQuantity: gramsInput,
       protein: protein,
       carbs: carbs,
       fats: fats,

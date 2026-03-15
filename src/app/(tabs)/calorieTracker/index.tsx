@@ -10,7 +10,7 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
 import { Barcode, ListCheck } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import {
   ActivityIndicator,
   Divider,
@@ -25,10 +25,10 @@ export default function CalorieTrackerScreen() {
   const [searchInput, setSearchInput] = useState<string>("");
   const [searchEnded, setSearchEnded] = useState<boolean>(false);
   const [selectedFood, setSelectedFood] = useState<FoodType | null>(null);
-  const [filteredFoods, setFilteredFoods] = useState<FoodType[]>([]);
+  const [filteredFoods, setFilteredFoods] = useState<BarcodeFoodType[]>([]);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const loggedFoodsSheetRef = useRef<BottomSheet>(null);
-  const foods: FoodType[] = useUserLogsStore((s) => s.foods);
+  const foods: BarcodeFoodType[] = useUserLogsStore((s) => s.foods);
   const todaysFoods: LoggedFoodType[] = useUserLogsStore((s) => s.todaysFoods);
   const foodHistory: LoggedFoodType[] = useUserLogsStore((s) => s.foodHistory);
   const router = useRouter();
@@ -65,23 +65,6 @@ export default function CalorieTrackerScreen() {
   async function handleSearchInputChange(text: string) {
     setSearchInput(text);
     setSearchEnded(false);
-
-    // if (text.length > 2) {
-    //   const words = text.split(" ");
-    //   setFilteredFoods(
-    //     foods.filter((food) => {
-    //       for (const word of words) {
-    //         if (!food.name.toLowerCase().includes(word.toLowerCase())) {
-    //           return false;
-    //         }
-    //       }
-    //       return true;
-    //     }),
-    //   );
-    // }
-    // if (text.length === 0) {
-    //   setFilteredFoods([]);
-    // }
   }
 
   function handleBarcodeScannerPress() {
@@ -98,10 +81,12 @@ export default function CalorieTrackerScreen() {
       {/* MealType selection buttons */}
       <View style={styles.mealTabsContainer}>
         {mealTypes.map((mealType, index) => (
-          <TouchableOpacity
+          <TouchableRipple
             key={index}
-            activeOpacity={0.3}
+            rippleColor={"rgba(0, 234, 255, 0.52)"}
+            borderless
             onPress={() => setselectedMealType(mealType)}
+            style={{ borderRadius: 10 }}
           >
             <Text
               variant="labelLarge"
@@ -112,7 +97,7 @@ export default function CalorieTrackerScreen() {
             >
               {mealType}
             </Text>
-          </TouchableOpacity>
+          </TouchableRipple>
         ))}
       </View>
       {/* Food Search*/}
@@ -191,13 +176,15 @@ export default function CalorieTrackerScreen() {
         {/* Foods List */}
         {!searchEnded && searchInput.length > 2 ? (
           <ActivityIndicator
-            style={{ flex: 1 }}
+            style={{ flex: 1, paddingBottom: 150 }}
             size={50}
             color={colors.lvPrimaryLight}
           />
         ) : (
           <FlatList
-            data={searchInput.length > 2 ? filteredFoods : foodHistory}
+            data={
+              searchInput.length > 2 ? filteredFoods.slice(0, 35) : foodHistory
+            }
             keyExtractor={(item, i) => i.toString()}
             renderItem={({ item, index }) => (
               <FoodCard

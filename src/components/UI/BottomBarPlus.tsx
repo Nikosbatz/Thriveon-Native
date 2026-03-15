@@ -32,10 +32,10 @@ const styles = StyleSheet.create({
     padding: 7,
     position: "absolute",
     left: "50%",
-    top: -7,
+    top: -10,
     transform: [{ translateX: "-50%" }],
     backgroundColor: colors.lvPrimary, // required for ripple
-    borderRadius: 10,
+    borderRadius: 50,
     overflow: "hidden", // required for ripple
   },
 });

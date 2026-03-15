@@ -5,7 +5,7 @@ import { StyleSheet, TouchableHighlight, View } from "react-native";
 import { Text } from "react-native-paper";
 
 type FoodCardProps = {
-  food: FoodType;
+  food: BarcodeFoodType;
   index: number;
   setSelectedFood: React.Dispatch<React.SetStateAction<FoodType | null>>;
   bottomSheetRef: React.RefObject<BottomSheet | null>;
@@ -33,8 +33,8 @@ export default function FoodCard({
         {/* Food Name Text */}
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
+            flexDirection: "column",
+            alignItems: "flex-start",
             gap: 0,
             maxWidth: "90%",
           }}
@@ -49,6 +49,18 @@ export default function FoodCard({
           >
             {food.name}
           </Text>
+          {food.brands ? (
+            <Text
+              variant="labelLarge"
+              style={{
+                fontSize: 15,
+                color: "rgb(184, 184, 184)",
+                lineHeight: 20,
+              }}
+            >
+              {food.brands}
+            </Text>
+          ) : null}
         </View>
         {/* Food Macro Info Text*/}
         <View
@@ -63,7 +75,7 @@ export default function FoodCard({
             {food.calories} kcal
             <Text style={styles.foodMacroText}>
               {" "}
-              / {food.quantity ?? food.grams}g
+              / {food.loggedQuantity ?? food.grams}g
             </Text>
           </Text>
         </View>

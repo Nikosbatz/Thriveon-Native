@@ -11,6 +11,7 @@ import React, {
   Dispatch,
   SetStateAction,
   useCallback,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -51,10 +52,11 @@ export default function FoodOptionsSheet({
 }: FoodSheetProps) {
   // Hooks
   const [quantityInput, setQuantityInput] = useState(
-    String(food?.quantity ?? "100"),
+    String(food?.loggedQuantity ?? "100"),
   );
   const quantityInputRef = useRef<RNTextInput>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const snapPoints = useMemo(() => ["98%"], []);
   const [prevFood, setPrevFood] = useState<FoodType | BarcodeFoodType | null>(
     food,
   );
@@ -95,15 +97,18 @@ export default function FoodOptionsSheet({
 
   // When a food is selected, check whether a "quantity" property exists,
   // if "quantity" exists make its value is the default quantityInput value
-  if (prevFood?.name !== food?.name || prevFood?.quantity !== food?.quantity) {
-    setQuantityInput(String(food?.quantity ?? "100"));
+  if (
+    prevFood?.name !== food?.name ||
+    prevFood?.loggedQuantity !== food?.loggedQuantity
+  ) {
+    setQuantityInput(String(food?.loggedQuantity ?? "100"));
     setPrevFood(food);
   }
 
   // Calculate Macros and Calories based on food quantity
   const currentMacros = macrosKeys.map((macro) => {
     const macroValue = food?.[macro] ?? 0;
-    const grams = food?.quantity ?? food?.grams ?? 0;
+    const grams = food?.loggedQuantity ?? food?.grams ?? 0;
     if (grams === 0) return 0;
     return Math.floor((macroValue / grams) * Number(quantityInput));
   });
@@ -134,6 +139,7 @@ export default function FoodOptionsSheet({
         backgroundColor: colors.lvBackground,
         elevation: 10,
       }}
+      snapPoints={snapPoints}
       enablePanDownToClose={enablePanDownToClose ?? true}
       backdropComponent={renderBackdrop}
     >

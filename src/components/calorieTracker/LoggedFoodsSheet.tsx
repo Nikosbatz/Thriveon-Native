@@ -1,7 +1,6 @@
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import BottomSheet, {
-  BottomSheetBackdrop,
   BottomSheetScrollView,
   SCREEN_WIDTH,
 } from "@gorhom/bottom-sheet";
@@ -10,11 +9,9 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { Apple, EggFried, Salad, Soup, Trash2 } from "lucide-react-native";
 import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Divider, Text, useTheme } from "react-native-paper";
-import { useSharedValue, withTiming } from "react-native-reanimated";
+import { Divider, Text, TouchableRipple, useTheme } from "react-native-paper";
+import { useSharedValue } from "react-native-reanimated";
 import Toast from "react-native-toast-message";
-
-// const SCREEN_WIDTH = Dimensions.get("window").width;
 
 type LoggedFoodsSheetProps = {
   sheetRef: React.RefObject<BottomSheet | null>;
@@ -46,7 +43,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
   const removeFood = useUserLogsStore((s) => s.removeFood);
   const headerHeight = useHeaderHeight();
   const bottomBarHeight = useBottomTabBarHeight();
-  const snapPoints = useMemo(() => ["50%", "80%"], []);
+  const snapPoints = useMemo(() => ["98%"], []);
   const paperTheme = useTheme();
   const backdropOpacity = useSharedValue(0);
 
@@ -68,11 +65,8 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
   const handleSheetChanges = useCallback(
     (index: number) => {
       if (index === -1) {
-        backdropOpacity.value = withTiming(0, { duration: 250 });
         setSheetOpen(false);
       } else {
-        backdropOpacity.value = withTiming(0.5, { duration: 250 });
-
         setSheetOpen(true);
       }
     },
@@ -92,17 +86,17 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
   }
 
   // Custom backdrop component
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop
-        {...props}
-        appearsOnIndex={1}
-        disappearsOnIndex={-1}
-        opacity={0.7}
-      />
-    ),
-    [],
-  );
+  // const renderBackdrop = useCallback(
+  //   (props: any) => (
+  //     <BottomSheetBackdrop
+  //       {...props}
+  //       appearsOnIndex={0}
+  //       disappearsOnIndex={-1}
+  //       opacity={0}
+  //     />
+  //   ),
+  //   [],
+  // );
 
   return (
     <BottomSheet
@@ -118,7 +112,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
       enablePanDownToClose
       enableDynamicSizing={false}
       snapPoints={snapPoints}
-      backdropComponent={renderBackdrop}
+      // backdropComponent={renderBackdrop}
     >
       <Text
         style={{ textAlign: "center", marginBottom: 10, color: "white" }}
@@ -129,10 +123,12 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
       {/*Top Meal Tabs */}
       <View style={styles.mealTabsContainer}>
         {mealTypes.map((mealType, index) => (
-          <TouchableOpacity
+          <TouchableRipple
             key={index}
-            activeOpacity={0.3}
             onPress={() => setselectedMealType(mealType)}
+            rippleColor={"rgba(0, 205, 224, 0.52)"}
+            borderless
+            style={{ borderRadius: 10 }}
           >
             <Text
               variant="labelLarge"
@@ -143,7 +139,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
             >
               {mealType}
             </Text>
-          </TouchableOpacity>
+          </TouchableRipple>
         ))}
       </View>
       <Divider style={styles.divider} />
@@ -175,34 +171,51 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
                 borderColor: colors.lvPrimary10,
               }}
             >
+              {/* Food name and Macros text container */}
               <View
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  maxWidth: "75%",
                 }}
               >
-                {/* Food name and Macros text container */}
-                <View style={{ maxWidth: "80%" }}>
+                <Text
+                  variant="headlineSmall"
+                  style={{
+                    fontSize: 18,
+                    color: "white",
+                    lineHeight: 23,
+                  }}
+                >
+                  {food.name}
+                </Text>
+                {food.brands ? (
                   <Text
                     variant="headlineSmall"
                     style={{
-                      fontSize: 18,
-                      color: "white",
-                      lineHeight: 23,
+                      fontSize: 16,
+                      color: "rgb(184, 184, 184)",
+                      lineHeight: 20,
                     }}
                   >
-                    {food.name}
+                    {food.brands}
                   </Text>
-                  <View style={{ flexDirection: "row", gap: 7 }}>
-                    {macrosKeys.map((macro, index) => (
-                      <Text key={index} style={{ color: colors.lightGrayText }}>
-                        {macro}:{" "}
-                        <Text style={{ color: "white", fontSize: 16 }}>
-                          {food[macro]}
-                        </Text>
+                ) : null}
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    gap: 7,
+                  }}
+                >
+                  {macrosKeys.map((macro, index) => (
+                    <Text key={index} style={{ color: colors.lightGrayText }}>
+                      {macro}:{" "}
+                      <Text style={{ color: "white", fontSize: 16 }}>
+                        {food[macro]}
                       </Text>
-                    ))}
-                  </View>
+                    </Text>
+                  ))}
                 </View>
               </View>
               <View
@@ -215,7 +228,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
                 }}
               >
                 <Text
-                  style={{ fontSize: 19, color: colors.lvPrimary }}
+                  style={{ fontSize: 18, color: colors.lvPrimary }}
                   variant="labelLarge"
                 >
                   {food.calories}
