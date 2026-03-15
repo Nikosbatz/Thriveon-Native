@@ -1,8 +1,8 @@
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import BottomSheet, {
+  BottomSheetBackdrop,
   BottomSheetScrollView,
-  SCREEN_HEIGHT,
   SCREEN_WIDTH,
 } from "@gorhom/bottom-sheet";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -11,11 +11,7 @@ import { Apple, EggFried, Salad, Soup, Trash2 } from "lucide-react-native";
 import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Divider, Text, useTheme } from "react-native-paper";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import { useSharedValue, withTiming } from "react-native-reanimated";
 import Toast from "react-native-toast-message";
 
 // const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -53,11 +49,6 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
   const snapPoints = useMemo(() => ["50%", "80%"], []);
   const paperTheme = useTheme();
   const backdropOpacity = useSharedValue(0);
-
-  // trigger animation each time sheetOpen state changes
-  const backdropStyle = useAnimatedStyle(() => ({
-    backgroundColor: `{rgba(0, 0, 0,${backdropOpacity.value})}`,
-  }));
 
   //TODO: maybe add todaysFoodsByMeal property to Zustand store (It should be calculated when todaysFoods changes)
   const todaysFoodsByMeal = useMemo<todaysFoodsByMealType>(() => {
@@ -100,162 +91,158 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
     }
   }
 
+  // Custom backdrop component
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={1}
+        disappearsOnIndex={-1}
+        opacity={0.7}
+      />
+    ),
+    [],
+  );
+
   return (
-    <Animated.View
-      pointerEvents={sheetOpen ? "auto" : "none"}
-      style={[
-        {
-          position: "absolute",
-          height: SCREEN_HEIGHT,
-          bottom: 0,
-          width: SCREEN_WIDTH,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-        },
-        backdropStyle,
-      ]}
+    <BottomSheet
+      ref={sheetRef}
+      onChange={handleSheetChanges}
+      index={-1}
+      handleIndicatorStyle={{ backgroundColor: "white" }}
+      backgroundStyle={{
+        backgroundColor: colors.lvBackground,
+        elevation: 10,
+        borderColor: "white",
+      }}
+      enablePanDownToClose
+      enableDynamicSizing={false}
+      snapPoints={snapPoints}
+      backdropComponent={renderBackdrop}
     >
-      <BottomSheet
-        ref={sheetRef}
-        onChange={handleSheetChanges}
-        index={-1}
-        handleIndicatorStyle={{ backgroundColor: "white" }}
-        backgroundStyle={{
-          backgroundColor: colors.lvBackground,
-          elevation: 10,
-          borderColor: "white",
-        }}
-        enablePanDownToClose
-        enableDynamicSizing={false}
-        snapPoints={snapPoints}
+      <Text
+        style={{ textAlign: "center", marginBottom: 10, color: "white" }}
+        variant="headlineSmall"
       >
-        <Text
-          style={{ textAlign: "center", marginBottom: 10, color: "white" }}
-          variant="headlineSmall"
-        >
-          Logged Foods
-        </Text>
-        {/*Top Meal Tabs */}
-        <View style={styles.mealTabsContainer}>
-          {mealTypes.map((mealType, index) => (
-            <TouchableOpacity
-              key={index}
-              activeOpacity={0.3}
-              onPress={() => setselectedMealType(mealType)}
+        Logged Foods
+      </Text>
+      {/*Top Meal Tabs */}
+      <View style={styles.mealTabsContainer}>
+        {mealTypes.map((mealType, index) => (
+          <TouchableOpacity
+            key={index}
+            activeOpacity={0.3}
+            onPress={() => setselectedMealType(mealType)}
+          >
+            <Text
+              variant="labelLarge"
+              style={[
+                styles.mealTab,
+                selectedMealType === mealType ? styles.selectedMealTab : null,
+              ]}
             >
-              <Text
-                variant="labelLarge"
-                style={[
-                  styles.mealTab,
-                  selectedMealType === mealType ? styles.selectedMealTab : null,
-                ]}
-              >
-                {mealType}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        <Divider style={styles.divider} />
-        {/* Logged Foods Container */}
-        <BottomSheetScrollView
-          style={{
-            width: "100%",
-          }}
-          contentContainerStyle={{
-            gap: 2,
-            paddingBottom: 10,
-            paddingHorizontal: 5,
-            paddingTop: 5,
-          }}
-        >
-          {todaysFoodsByMeal[selectedMealType].map((food, index) => {
-            const Icon = mealIcons[selectedMealType];
-            return (
-              // Food card container
+              {mealType}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+      <Divider style={styles.divider} />
+      {/* Logged Foods Container */}
+      <BottomSheetScrollView
+        style={{
+          width: "100%",
+        }}
+        contentContainerStyle={{
+          gap: 2,
+          paddingBottom: 10,
+          paddingHorizontal: 5,
+          paddingTop: 5,
+        }}
+      >
+        {todaysFoodsByMeal[selectedMealType].map((food, index) => {
+          const Icon = mealIcons[selectedMealType];
+          return (
+            // Food card container
+            <View
+              key={index}
+              style={{
+                width: "100%",
+                backgroundColor: colors.lvGradientCard,
+                borderRadius: 15,
+                paddingLeft: 14,
+                padding: 5,
+                borderWidth: 1,
+                borderColor: colors.lvPrimary10,
+              }}
+            >
               <View
-                key={index}
                 style={{
-                  width: "100%",
-                  backgroundColor: colors.lvGradientCard,
-                  borderRadius: 15,
-                  paddingLeft: 14,
-                  padding: 5,
-                  borderWidth: 1,
-                  borderColor: colors.lvPrimary10,
+                  flexDirection: "row",
+                  alignItems: "center",
                 }}
               >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  {/* Food name and Macros text container */}
-                  <View style={{ maxWidth: "80%" }}>
-                    <Text
-                      variant="headlineSmall"
-                      style={{
-                        fontSize: 18,
-                        color: "white",
-                        lineHeight: 23,
-                      }}
-                    >
-                      {food.name}
-                    </Text>
-                    <View style={{ flexDirection: "row", gap: 7 }}>
-                      {macrosKeys.map((macro, index) => (
-                        <Text
-                          key={index}
-                          style={{ color: colors.lightGrayText }}
-                        >
-                          {macro}:{" "}
-                          <Text style={{ color: "white", fontSize: 16 }}>
-                            {food[macro]}
-                          </Text>
+                {/* Food name and Macros text container */}
+                <View style={{ maxWidth: "80%" }}>
+                  <Text
+                    variant="headlineSmall"
+                    style={{
+                      fontSize: 18,
+                      color: "white",
+                      lineHeight: 23,
+                    }}
+                  >
+                    {food.name}
+                  </Text>
+                  <View style={{ flexDirection: "row", gap: 7 }}>
+                    {macrosKeys.map((macro, index) => (
+                      <Text key={index} style={{ color: colors.lightGrayText }}>
+                        {macro}:{" "}
+                        <Text style={{ color: "white", fontSize: 16 }}>
+                          {food[macro]}
                         </Text>
-                      ))}
-                    </View>
+                      </Text>
+                    ))}
                   </View>
                 </View>
-                <View
-                  style={{
-                    position: "absolute",
-                    right: "13%",
-                    top: "50%",
-                    transform: [{ translateX: "0%" }, { translateY: "-40%" }],
-                    alignItems: "center",
-                  }}
-                >
-                  <Text
-                    style={{ fontSize: 19, color: colors.lvPrimary }}
-                    variant="labelLarge"
-                  >
-                    {food.calories}
-                  </Text>
-                  <Text style={{ fontSize: 17, color: "rgb(130, 130, 130)" }}>
-                    kcal
-                  </Text>
-                </View>
-
-                <TouchableOpacity
-                  style={{
-                    position: "absolute",
-                    right: 5,
-                    top: "50%",
-                    borderRadius: 5,
-                    transform: [{ translateY: "-40%" }],
-                    // backgroundColor: "tra",
-                    padding: 4,
-                  }}
-                  onPress={() => handleFoodRemoval(food)}
-                >
-                  <Trash2 size={26} color={paperTheme.colors.error} />
-                </TouchableOpacity>
               </View>
-            );
-          })}
-        </BottomSheetScrollView>
-      </BottomSheet>
-    </Animated.View>
+              <View
+                style={{
+                  position: "absolute",
+                  right: "13%",
+                  top: "50%",
+                  transform: [{ translateX: "0%" }, { translateY: "-40%" }],
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{ fontSize: 19, color: colors.lvPrimary }}
+                  variant="labelLarge"
+                >
+                  {food.calories}
+                </Text>
+                <Text style={{ fontSize: 17, color: "rgb(130, 130, 130)" }}>
+                  kcal
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                style={{
+                  position: "absolute",
+                  right: 5,
+                  top: "50%",
+                  borderRadius: 5,
+                  transform: [{ translateY: "-40%" }],
+                  padding: 4,
+                }}
+                onPress={() => handleFoodRemoval(food)}
+              >
+                <Trash2 size={26} color={paperTheme.colors.error} />
+              </TouchableOpacity>
+            </View>
+          );
+        })}
+      </BottomSheetScrollView>
+    </BottomSheet>
   );
 }
 

@@ -38,7 +38,7 @@ export default function BarcodeScanner() {
       setScanned(true);
       setDataFreq({});
       setScannerCounter(0);
-      router.navigate("/calorieTracker/barcodeFoodScreen");
+      router.replace("/calorieTracker/barcodeFoodScreen");
     }
   }
 
@@ -58,55 +58,43 @@ export default function BarcodeScanner() {
       )}
 
       {/* Frame and hint text */}
-      <View
-        style={{
-          position: "absolute",
-          alignSelf: "center",
-          borderWidth: 8,
-          borderColor: "rgb(224, 224, 224)",
-          borderRadius: 15,
-          width: "75%",
-          height: "22%",
-        }}
-      >
-        <Text
+      {scanned ? null : (
+        <View
           style={{
-            top: "-100%",
+            position: "absolute",
             alignSelf: "center",
-            backgroundColor: "rgba(24, 24, 24, 0.55)",
-            color: "rgba(255, 255, 255, 0.8)",
-            padding: 5,
-            borderRadius: 10,
+            borderWidth: 8,
+            borderColor: "rgb(224, 224, 224)",
+            borderRadius: 15,
+            width: "75%",
+            height: "22%",
           }}
         >
-          Place the barcode within the frame
-        </Text>
-      </View>
-
-      {/* Overlay Appearing after a barcode is scanned */}
-      {/* {barcodeStoreLoadingFood ? <LoadingOverlay /> : null} */}
-
-      {/* Text for testing purposes */}
-      <Text
-        style={{ backgroundColor: "red" }}
-        onPress={() => handlebarcodeScanned({ data: "100000006535" })}
-      >
-        {" "}
-        100000006535
-      </Text>
-
-      {/* Food data */}
-      {scanned ? (
-        <View>
           <Text
-            variant="labelLarge"
-            style={{ color: "white", fontSize: 30, lineHeight: 50 }}
+            style={{
+              top: "-100%",
+              alignSelf: "center",
+              backgroundColor: "rgba(24, 24, 24, 0.55)",
+              color: "rgba(255, 255, 255, 0.8)",
+              padding: 5,
+              borderRadius: 10,
+            }}
           >
-            {barcodeStoreFood?.name}|{barcodeStoreFood?.brands}|protein:
-            {barcodeStoreFood?.protein}|calories: {barcodeStoreFood?.calories}|
+            Place the barcode within the frame
           </Text>
         </View>
-      ) : null}
+      )}
+
+      {/* Text for testing purposes */}
+      {scanned ? null : (
+        <Text
+          style={{ backgroundColor: "red" }}
+          onPress={() => handlebarcodeScanned({ data: "100000006535" })}
+        >
+          {" "}
+          100000006535
+        </Text>
+      )}
     </View>
   );
 }

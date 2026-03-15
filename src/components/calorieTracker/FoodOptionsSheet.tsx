@@ -1,11 +1,12 @@
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import BottomSheet, {
+  BottomSheetBackdrop,
   BottomSheetView,
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
 } from "@gorhom/bottom-sheet";
-import { ArrowDown, Beef, Check, Droplets, Wheat } from "lucide-react-native";
+import { Beef, Check, Droplets, Wheat } from "lucide-react-native";
 import React, {
   Dispatch,
   SetStateAction,
@@ -13,21 +14,10 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  Pressable,
-  TextInput as RNTextInput,
-  StyleSheet,
-  View,
-} from "react-native";
+import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
 import { Button, Divider, Text, TextInput } from "react-native-paper";
-import Animated, {
-  SharedValue,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
 import Toast from "react-native-toast-message";
-import MealTypeModal from "./MealTypeModal";
+import MenuPicker from "../UI/MenuPicker";
 
 // const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -38,7 +28,7 @@ type FoodSheetProps = {
   setSelectedMealType: Dispatch<SetStateAction<mealType>>;
   initialIndex?: number;
   enablePanDownToClose?: boolean;
-  animatedIndex?: SharedValue<number>;
+  setFoodLogged?: Dispatch<SetStateAction<boolean>>;
 };
 
 type macroKey = "fats" | "protein" | "carbs";
@@ -57,40 +47,34 @@ export default function FoodOptionsSheet({
   setSelectedMealType,
   initialIndex,
   enablePanDownToClose,
-  animatedIndex,
+  setFoodLogged,
 }: FoodSheetProps) {
   // Hooks
-  const [quantityInput, setQuantityInput] = useState("100");
+  const [quantityInput, setQuantityInput] = useState(
+    String(food?.quantity ?? "100"),
+  );
   const quantityInputRef = useRef<RNTextInput>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [mealTypeModalVisible, setMealTypeModalVisible] = useState(false);
+  const [prevFood, setPrevFood] = useState<FoodType | BarcodeFoodType | null>(
+    food,
+  );
   const handleAddFood = useUserLogsStore((s) => s.handleAddFood);
   const logsLoading = useUserLogsStore((s) => s.logsLoading);
-  const backdropOpacity = useSharedValue(0);
-
-  // trigger animation each time sheetOpen state changes
-  const backdropStyle = useAnimatedStyle(() => ({
-    backgroundColor: `{rgba(0, 0, 0,${backdropOpacity.value})}`,
-  }));
 
   // Called when Sheet closes or opens
   const handleSheetChanges = useCallback((index: number) => {
     if (index === -1) {
       setSheetOpen(false);
-      backdropOpacity.value = withTiming(0, { duration: 250 });
-
-      setQuantityInput("100");
+      // setQuantityInput("100");
       if (quantityInputRef.current?.isFocused()) {
         quantityInputRef.current.blur();
       }
     } else {
-      backdropOpacity.value = withTiming(0.5, { duration: 250 });
       setSheetOpen(true);
     }
   }, []);
 
   async function handleLogFood() {
-    //setLoading = true
     try {
       await handleAddFood(food, quantityInput, selectedMealType);
       Toast.show({
@@ -99,6 +83,7 @@ export default function FoodOptionsSheet({
         text2: "",
       });
       bottomSheetRef.current?.close();
+      setFoodLogged ? setFoodLogged(true) : null;
     } catch (error) {
       Toast.show({
         type: "error",
@@ -108,10 +93,17 @@ export default function FoodOptionsSheet({
     }
   }
 
+  // When a food is selected, check whether a "quantity" property exists,
+  // if "quantity" exists make its value is the default quantityInput value
+  if (prevFood?.name !== food?.name || prevFood?.quantity !== food?.quantity) {
+    setQuantityInput(String(food?.quantity ?? "100"));
+    setPrevFood(food);
+  }
+
   // Calculate Macros and Calories based on food quantity
   const currentMacros = macrosKeys.map((macro) => {
     const macroValue = food?.[macro] ?? 0;
-    const grams = food?.grams ?? 0;
+    const grams = food?.quantity ?? food?.grams ?? 0;
     if (grams === 0) return 0;
     return Math.floor((macroValue / grams) * Number(quantityInput));
   });
@@ -119,193 +111,164 @@ export default function FoodOptionsSheet({
     ((food?.calories ?? 0) / (food?.grams ?? 0)) * Number(quantityInput),
   );
 
-  return (
-    <Animated.View
-      pointerEvents={sheetOpen ? "auto" : "none"}
-      style={[
-        {
-          position: "absolute",
-          height: SCREEN_HEIGHT,
-          bottom: 0,
-          width: SCREEN_WIDTH,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-        },
-        backdropStyle,
-      ]}
-    >
-      <BottomSheet
-        ref={bottomSheetRef}
-        onChange={handleSheetChanges}
-        handleIndicatorStyle={{ backgroundColor: "white" }}
-        index={initialIndex ?? -1}
-        backgroundStyle={{
-          backgroundColor: colors.lvBackground,
-          elevation: 10,
-        }}
-        enablePanDownToClose={enablePanDownToClose ?? true}
-        animatedIndex={animatedIndex ?? undefined}
-      >
-        <BottomSheetView style={styles.contentContainer}>
-          {/* Food Name and Calories Container */}
-          <View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-              }}
-            >
-              <Text variant="headlineSmall" style={{ color: "white" }}>
-                {food?.name}
-              </Text>
-              <Text
-                variant="headlineSmall"
-                style={{ fontSize: 20, color: "rgba(162, 162, 162, 1)" }}
-              >
-                cal{" "}
-                <Text variant="headlineSmall" style={{ color: colors.primary }}>
-                  {currentCalories}
-                </Text>
-              </Text>
-            </View>
-          </View>
-          {/* Picker and TextInput Container */}
-          <View style={styles.flexRowView}>
-            <View>
-              <Text
-                variant="labelLarge"
-                style={{ color: colors.lightGrayText }}
-              >
-                Meal Type
-              </Text>
-              <Pressable
-                onPress={() => setMealTypeModalVisible(true)}
-                style={{
-                  backgroundColor: colors.lvPrimary20,
-                  flex: 1,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  paddingHorizontal: 7,
-                  alignItems: "center",
-                  gap: 5,
-                }}
-              >
-                <Text
-                  variant="labelLarge"
-                  style={{
-                    fontSize: 18,
-                    color: "white",
-                    display: "flex",
-                  }}
-                >
-                  {selectedMealType}
-                </Text>
-                <ArrowDown size={24} color={"white"} style={{}}></ArrowDown>
-              </Pressable>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text
-                variant="labelLarge"
-                style={{ color: colors.lightGrayText }}
-              >
-                Quantity (Grams)
-              </Text>
-              <TextInput
-                ref={quantityInputRef}
-                mode="outlined"
-                keyboardType="number-pad"
-                value={quantityInput}
-                onChangeText={setQuantityInput}
-                placeholder="Grams"
-                style={styles.textInput}
-                outlineColor="transparent"
-                activeOutlineColor="transparent"
-                cursorColor="white"
-                placeholderTextColor={colors.lightGrayText}
-                textColor={"white"}
-              ></TextInput>
-            </View>
-          </View>
-          <Divider style={styles.divider} />
-          {/* Macros Values Container */}
-          <View style={[styles.flexRowView, styles.macrosContainer]}>
-            {macrosKeys.map((macro, index) => {
-              const IconElement = macrosInfo.macrosIcons[index];
-              return (
-                <View
-                  key={macro}
-                  style={[
-                    styles.macroTextContainer,
-                    { borderColor: colors[macro] },
-                  ]}
-                >
-                  <IconElement
-                    size={22}
-                    color={colors.primary}
-                    style={{
-                      // backgroundColor: colors[macro],
-                      borderRadius: 5,
-                    }}
-                  />
-                  <View
-                    style={{ flexDirection: "column", alignContent: "center" }}
-                  >
-                    <Text
-                      variant="labelLarge"
-                      style={{
-                        fontSize: 22,
-                        color: "white",
-                        textAlign: "center",
-                        lineHeight: 25,
-                      }}
-                    >
-                      {currentMacros[index]}g
-                    </Text>
-                    <Text
-                      variant="labelLarge"
-                      style={{ fontSize: 15, color: "rgba(225, 225, 225, 1)" }}
-                    >
-                      {macrosInfo.macrosLabels[index]}
-                    </Text>
-                  </View>
-                </View>
-              );
-            })}
-          </View>
+  // BackDrop component used as prop to BottomSheet
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        opacity={0.9}
+      />
+    ),
+    [],
+  );
 
-          <Button
-            mode="contained-tonal"
-            textColor="white"
-            style={{
-              alignSelf: "stretch",
-              backgroundColor: colors.lvPrimary80,
-              alignContent: "center",
-            }}
-            icon={() => <Check color={colors.lvBackground}></Check>}
-            onPress={() => {
-              handleLogFood();
-            }}
-            loading={logsLoading}
-            disabled={logsLoading}
+  return (
+    <BottomSheet
+      ref={bottomSheetRef}
+      onChange={handleSheetChanges}
+      handleIndicatorStyle={{ backgroundColor: "white" }}
+      index={initialIndex ?? -1}
+      backgroundStyle={{
+        backgroundColor: colors.lvBackground,
+        elevation: 10,
+      }}
+      enablePanDownToClose={enablePanDownToClose ?? true}
+      backdropComponent={renderBackdrop}
+    >
+      <BottomSheetView style={styles.contentContainer}>
+        {/* Food Name and Calories Container */}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text
+            variant="headlineSmall"
+            style={{ color: "white", width: "75%" }}
           >
-            <Text
-              variant="labelLarge"
-              style={{ color: colors.lvBackground, fontSize: 17 }}
-            >
-              Log Food
+            {food?.name}
+          </Text>
+          <Text
+            variant="headlineSmall"
+            style={{
+              fontSize: 20,
+              color: "rgba(162, 162, 162, 1)",
+            }}
+          >
+            cal{" "}
+            <Text variant="headlineSmall" style={{ color: colors.primary }}>
+              {currentCalories}
             </Text>
-          </Button>
-          <MealTypeModal
-            selectedMealType={selectedMealType}
-            setSelectedMealType={setSelectedMealType}
-            setVisible={setMealTypeModalVisible}
-            visible={mealTypeModalVisible}
+          </Text>
+        </View>
+
+        {/* MealType Picker and TextInput Container */}
+        <View style={styles.flexRowView}>
+          {/* MealType Picker */}
+          <MenuPicker
+            selectedOption={selectedMealType}
+            setSelectedOption={setSelectedMealType}
+            options={mealTypes}
           />
-        </BottomSheetView>
-      </BottomSheet>
-    </Animated.View>
+          {/* Quantity Input */}
+          <View style={{ flex: 1 }}>
+            <Text variant="labelLarge" style={{ color: colors.lightGrayText }}>
+              Quantity (Grams)
+            </Text>
+            <TextInput
+              ref={quantityInputRef}
+              mode="outlined"
+              keyboardType="number-pad"
+              value={quantityInput}
+              onChangeText={setQuantityInput}
+              placeholder="Grams"
+              style={styles.textInput}
+              outlineColor="transparent"
+              activeOutlineColor="transparent"
+              cursorColor="white"
+              placeholderTextColor={colors.lightGrayText}
+              textColor={"white"}
+            ></TextInput>
+          </View>
+        </View>
+        <Divider style={styles.divider} />
+        {/* Macros Values Container */}
+        <View style={[styles.flexRowView, styles.macrosContainer]}>
+          {macrosKeys.map((macro, index) => {
+            const IconElement = macrosInfo.macrosIcons[index];
+            return (
+              <View
+                key={macro}
+                style={[
+                  styles.macroTextContainer,
+                  { borderColor: colors[macro] },
+                ]}
+              >
+                <IconElement
+                  size={22}
+                  color={colors.primary}
+                  style={{
+                    // backgroundColor: colors[macro],
+                    borderRadius: 5,
+                  }}
+                />
+                <View
+                  style={{ flexDirection: "column", alignContent: "center" }}
+                >
+                  <Text
+                    variant="labelLarge"
+                    style={{
+                      fontSize: 22,
+                      color: "white",
+                      textAlign: "center",
+                      lineHeight: 25,
+                    }}
+                  >
+                    {currentMacros[index]}g
+                  </Text>
+                  <Text
+                    variant="labelLarge"
+                    style={{ fontSize: 15, color: "rgba(225, 225, 225, 1)" }}
+                  >
+                    {macrosInfo.macrosLabels[index]}
+                  </Text>
+                </View>
+              </View>
+            );
+          })}
+        </View>
+
+        <Button
+          mode="contained-tonal"
+          textColor="white"
+          style={{
+            alignSelf: "stretch",
+            backgroundColor: colors.lvPrimary80,
+            alignContent: "center",
+          }}
+          icon={() => <Check color={colors.lvBackground}></Check>}
+          onPress={() => {
+            handleLogFood();
+          }}
+          loading={logsLoading}
+          disabled={logsLoading}
+        >
+          <Text
+            variant="labelLarge"
+            style={{ color: colors.lvBackground, fontSize: 17 }}
+          >
+            Log Food
+          </Text>
+        </Button>
+      </BottomSheetView>
+    </BottomSheet>
   );
 }
+
+const mealTypes: mealType[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
 
 const styles = StyleSheet.create({
   container: {

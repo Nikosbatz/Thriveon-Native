@@ -28,8 +28,6 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         tabBarButton: (props) => {
-          // Destructure to separate the problematic 'style' and 'children'
-          // from the rest of the navigation props.
           const { style, children, ...rest } = props;
 
           return (
@@ -43,13 +41,9 @@ export default function TabsLayout() {
               }}
               // Map the style correctly to the Pressable state
               style={({ pressed }): StyleProp<ViewStyle> => [
-                style as ViewStyle, // Cast the incoming style from the tab bar
+                style, // Cast the incoming style from the tab bar
                 {
                   opacity: pressed && Platform.OS === "ios" ? 0.6 : 1,
-                  // Ensure the button fills the space correctly
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
                 },
               ]}
             >

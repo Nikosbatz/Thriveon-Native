@@ -126,8 +126,10 @@ export async function postForgotPasswordEmail(email: string, platform: string) {
       return;
     }
   } catch (error: any) {
-    if (error.status === 400) {
-      throw new Error("User wasn't found");
+    if (error.status === 404) {
+      throw new Error("User wasn't found!");
+    } else if (error.status === 400) {
+      throw new Error("Something went wrong! Please try again later.");
     }
   }
 }
@@ -212,8 +214,7 @@ export async function getFoods(path: string) {
   }
 }
 
-// Posts food object on /api/foods
-//TODO:change any type
+// Posts food object on /api/foods/userlogs
 export async function postFood(data: FoodType, path: string) {
   try {
     const res = await api.post(`${path}`, data, {
@@ -227,14 +228,7 @@ export async function postFood(data: FoodType, path: string) {
       return res.data;
     }
   } catch (error: any) {
-    if (error.response.status === 409) {
-      throw new Error(
-        `Error: ${error.response.status}\nAn Item with this name already exists! `,
-      );
-    } else {
-      // console.log(error.response.status);
-      throw new Error(`${error}`);
-    }
+    throw new Error("Something went wrong while logging your food...");
   }
 }
 
@@ -359,6 +353,16 @@ export async function getBarcodeFood(code: string) {
     if (error.status === 404) {
       throw Error("Requested food doesn't exist in our database");
     }
+  }
+}
+
+export async function getSearchFoods(searchInput: string) {
+  console.log(searchInput);
+  try {
+    const res = await api.get(`/foods/search/${searchInput}`);
+    return res.data.data;
+  } catch (error: any) {
+    throw new Error("Could not complete the search!");
   }
 }
 

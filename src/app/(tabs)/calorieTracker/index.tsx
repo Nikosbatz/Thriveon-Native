@@ -1,45 +1,87 @@
+import { getSearchFoods } from "@/src/api/requests";
 import FoodCard from "@/src/components/calorieTracker/FoodCard";
 import FoodOptionsSheet from "@/src/components/calorieTracker/FoodOptionsSheet";
 import LoggedFoodsSheet from "@/src/components/calorieTracker/LoggedFoodsSheet";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
+import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
 import { Barcode, ListCheck } from "lucide-react-native";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Divider, Text, TextInput, TouchableRipple } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Divider,
+  Text,
+  TextInput,
+  TouchableRipple,
+} from "react-native-paper";
 
 export default function CalorieTrackerScreen() {
-  const [selectedMealType, setselectedMealType] = useState<string>("Breakfast");
+  const [selectedMealType, setselectedMealType] =
+    useState<mealType>("Breakfast");
   const [searchInput, setSearchInput] = useState<string>("");
+  const [searchEnded, setSearchEnded] = useState<boolean>(false);
   const [selectedFood, setSelectedFood] = useState<FoodType | null>(null);
   const [filteredFoods, setFilteredFoods] = useState<FoodType[]>([]);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const loggedFoodsSheetRef = useRef<BottomSheet>(null);
   const foods: FoodType[] = useUserLogsStore((s) => s.foods);
   const todaysFoods: LoggedFoodType[] = useUserLogsStore((s) => s.todaysFoods);
+  const foodHistory: LoggedFoodType[] = useUserLogsStore((s) => s.foodHistory);
   const router = useRouter();
 
-  function handleSearchInputChange(text: string) {
-    setSearchInput(text);
-    if (text.length > 1) {
-      const words = text.split(" ");
-      setFilteredFoods(
-        foods.filter((food) => {
-          for (const word of words) {
-            if (!food.name.toLowerCase().includes(word.toLowerCase())) {
-              return false;
-            }
+  // TODO: fix bug that at the start of the day when no foods are logged app doesnt also fetch the foodhistory
+  // TODO: fix not showing macros on some products that have different quantities (e.g 1L) (Problem is in foodcard and foodoptionssheet confusing quantity property
+  // of the logged foods with the quantity property on products (maybe change the logged foods quantity property to loggedQuantity)
+  useEffect(() => {
+    // If text is too short, don't even start the timer
+    if (searchInput.length <= 2) return;
+
+    const timer = setTimeout(async () => {
+      const searchData = await getSearchFoods(searchInput);
+      console.log(searchData.at(2));
+      setSearchEnded(true);
+      // Do your filtering logic with the fresh data
+      const words = searchInput.split(" ");
+      const searchedFoods = foods.filter((food) => {
+        for (const word of words) {
+          if (!food.name.toLowerCase().includes(word.toLowerCase())) {
+            return false;
           }
-          return true;
-        }),
-      );
-    }
-    if (text.length === 0) {
-      setFilteredFoods([]);
-    }
+        }
+        return true;
+      });
+      searchedFoods.push(...searchData);
+      setFilteredFoods(searchedFoods);
+    }, 700);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [searchInput]);
+
+  async function handleSearchInputChange(text: string) {
+    setSearchInput(text);
+    setSearchEnded(false);
+
+    // if (text.length > 2) {
+    //   const words = text.split(" ");
+    //   setFilteredFoods(
+    //     foods.filter((food) => {
+    //       for (const word of words) {
+    //         if (!food.name.toLowerCase().includes(word.toLowerCase())) {
+    //           return false;
+    //         }
+    //       }
+    //       return true;
+    //     }),
+    //   );
+    // }
+    // if (text.length === 0) {
+    //   setFilteredFoods([]);
+    // }
   }
 
   function handleBarcodeScannerPress() {
@@ -90,6 +132,21 @@ export default function CalorieTrackerScreen() {
               )}
             />
           }
+          right={
+            searchInput !== "" ? (
+              <TextInput.Icon
+                rippleColor={colors.lvPrimary20}
+                onPress={() => setSearchInput("")}
+                icon={() => (
+                  <Entypo
+                    name="circle-with-cross"
+                    size={26}
+                    color="rgb(255, 103, 103)"
+                  />
+                )}
+              />
+            ) : null
+          }
           value={searchInput}
           onChangeText={handleSearchInputChange}
           style={{
@@ -128,28 +185,36 @@ export default function CalorieTrackerScreen() {
             color: colors.lvPrimaryLight,
           }}
         >
-          {searchInput.length < 2 ? "History" : "Search Results"}
+          {searchInput.length > 2 ? "Search Results: " : "History"}
         </Text>
         {/* <Divider /> */}
         {/* Foods List */}
-        <FlatList
-          data={searchInput.length < 2 ? foodHistory : filteredFoods}
-          keyExtractor={(item, i) => i.toString()}
-          renderItem={({ item, index }) => (
-            <FoodCard
-              food={item}
-              index={index}
-              setSelectedFood={setSelectedFood}
-              bottomSheetRef={bottomSheetRef}
-            />
-          )}
-          contentContainerStyle={{
-            gap: 2,
-            paddingBottom: 10,
-            paddingHorizontal: 5,
-          }}
-          showsVerticalScrollIndicator={false}
-        />
+        {!searchEnded && searchInput.length > 2 ? (
+          <ActivityIndicator
+            style={{ flex: 1 }}
+            size={50}
+            color={colors.lvPrimaryLight}
+          />
+        ) : (
+          <FlatList
+            data={searchInput.length > 2 ? filteredFoods : foodHistory}
+            keyExtractor={(item, i) => i.toString()}
+            renderItem={({ item, index }) => (
+              <FoodCard
+                food={item}
+                index={index}
+                setSelectedFood={setSelectedFood}
+                bottomSheetRef={bottomSheetRef}
+              />
+            )}
+            contentContainerStyle={{
+              gap: 2,
+              paddingBottom: 10,
+              paddingHorizontal: 5,
+            }}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
       </View>
 
       {/* Open logged foods button */}
@@ -187,11 +252,11 @@ export default function CalorieTrackerScreen() {
                 variant="labelLarge"
                 style={{
                   textAlign: "center",
-                  lineHeight: 10,
+                  lineHeight: 15,
                   color: colors.lvPrimaryLight,
                   fontSize: 16,
-                  width: todaysFoods.length > 0 ? 11 : 0,
-                  height: 11,
+                  width: todaysFoods.length > 0 ? 17 : 0,
+                  height: 17,
                 }}
               >
                 {todaysFoods.length > 0 ? todaysFoods.length : null}
@@ -228,6 +293,7 @@ export default function CalorieTrackerScreen() {
         bottomSheetRef={bottomSheetRef}
         food={selectedFood}
         selectedMealType={selectedMealType}
+        setSelectedMealType={setselectedMealType}
       />
     </View>
   );
@@ -271,30 +337,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const mealTypes: string[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
-const foodHistory: FoodType[] = [
-  {
-    name: "Fish",
-    calories: 128,
-    grams: 100,
-    protein: 26,
-    carbs: 0,
-    fats: 2.7,
-  },
-  {
-    name: "Broccoli",
-    calories: 35,
-    grams: 100,
-    protein: 2.8,
-    carbs: 7,
-    fats: 0.4,
-  },
-  {
-    name: "Rice",
-    calories: 130,
-    grams: 100,
-    protein: 2.7,
-    carbs: 28,
-    fats: 0.3,
-  },
-];
+const mealTypes: mealType[] = ["Breakfast", "Lunch", "Dinner", "Snack"];

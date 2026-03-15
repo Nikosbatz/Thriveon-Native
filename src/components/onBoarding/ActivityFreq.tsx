@@ -36,8 +36,6 @@ export default function ActivityFreq() {
       return;
     }
 
-    console.log("userPlan", userPlan);
-
     try {
       await updateUserInfo(userPlan);
       setTimeout(() => {

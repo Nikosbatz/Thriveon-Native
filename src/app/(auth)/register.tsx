@@ -39,7 +39,6 @@ export default function RegisterScreen() {
       setIsLoading(false);
       return;
     }
-    //TODO: send sign up data to backend and navigate to verifyUser
     setErrorText(null);
     try {
       await signUp(emailInput, passwordInput);

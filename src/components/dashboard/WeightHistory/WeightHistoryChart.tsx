@@ -37,8 +37,6 @@ export default function WeightHistoryChart() {
     ],
   };
 
-  console.log(weights);
-
   // Calculate current weight and weight trend
   const currentWeight = weightLogs?.at(-1)?.weight ?? 0;
   let weightTrend = 0;

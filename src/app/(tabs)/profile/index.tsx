@@ -9,8 +9,6 @@ import { Text } from "react-native-paper";
 export default function ProfileScreen() {
   const { user } = useAuth();
 
-  console.log(user);
-
   const mainInfo: mainInfoType[] = [
     { label: "Age", value: user?.age },
     { label: "Height", value: user?.height, unit: "cm" },

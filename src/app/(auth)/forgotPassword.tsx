@@ -21,10 +21,10 @@ export default function ForgotPasswordScreen() {
         text1: "Code sent! Check your email.",
       });
       setShowTokenForm(true);
-    } catch (error) {
+    } catch (error: any) {
       Toast.show({
         type: "error",
-        text1: "Could not send reset code to email!",
+        text1: error.message,
       });
     }
   }

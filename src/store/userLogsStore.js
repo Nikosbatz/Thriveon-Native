@@ -7,15 +7,15 @@ import {
   postUserWeightLogs,
 } from "../api/requests";
 
-//TODO: define type fo the store (convert the fine to .tsx)
-// TODO: User food logs list is not synced across web app and react native because of the case of meal types (e.g "BreakFast instead of Breakfast")
+//TODO: define type for the store (convert the fine to .tsx)
 
-export const useUserLogsStore = create((set, get) => ({
+const initialState = {
   logsLoading: true,
   foodsLoading: true,
   weightLogsLoading: false,
   weightLogs: [],
   foods: [],
+  foodHistory: [],
   todaysFoods: [],
   todaysMacros: {
     calories: 0,
@@ -29,9 +29,15 @@ export const useUserLogsStore = create((set, get) => ({
     { name: "Dinner", value: 0 },
     { name: "Snacks", value: 0 },
   ],
+};
+
+export const useUserLogsStore = create((set, get) => ({
+  ...initialState,
+  resetLogs: () => {
+    set(initialState);
+  },
 
   fetchUserWeightLogs: async () => {
-    console.log("fetchUserWeightLogs");
     set({ weightLogsLoading: true });
     try {
       const logs = await getUserWeightLogs();
@@ -43,11 +49,9 @@ export const useUserLogsStore = create((set, get) => ({
     }
   },
   postUserWeight: async (weight) => {
-    console.log("postUserWeight");
     set({ weightLogsLoading: true });
     try {
       const weightLogs = await postUserWeightLogs(weight);
-      console.log("weightLogs: ", weightLogs);
       set({ weightLogs: weightLogs });
       set({ weightLogsLoading: false });
     } catch (error) {
@@ -72,8 +76,8 @@ export const useUserLogsStore = create((set, get) => ({
   getTodayFoods: async () => {
     set({ logsLoading: true });
     try {
-      const todaysFoods = await getFoods("/foods/userlogs");
-      set({ todaysFoods });
+      const { data, foodHistory } = await getFoods("/foods/userlogs");
+      set({ todaysFoods: data, foodHistory: foodHistory });
       get().updateTodayMacros();
       set({ logsLoading: false });
     } catch (error) {
@@ -138,24 +142,25 @@ export const useUserLogsStore = create((set, get) => ({
     const fats = Math.round((food.fats / food.grams) * gramsInput);
 
     const foodToUpload = {
-      name: food.name,
+      ...food,
+      foodId: food._id,
       calories: calories,
-      grams: gramsInput,
+      quantity: gramsInput,
       protein: protein,
       carbs: carbs,
       fats: fats,
       mealType: mealType,
     };
 
-    // POST request to upload food
-    set({ logsLoading: true });
+    delete foodToUpload._id;
+    delete foodToUpload.__v;
 
+    set({ logsLoading: true });
     try {
       const res = await postFood(foodToUpload, "/foods/userlogs");
-      console.log("foods length: ", res.message.length);
-
       set((state) => ({
         todaysFoods: res.message,
+        foodHistory: res.foodHistory,
       }));
       get().updateTodayMacros();
       set({ logsLoading: false });

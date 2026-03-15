@@ -20,6 +20,8 @@ import {
   postUserInfo,
   register,
 } from "../api/requests";
+import { useUserLogsStore } from "../store/userLogsStore";
+import { useUserStore } from "../store/userStore";
 
 type AuthContextType = {
   user: UserInterface | null;
@@ -49,8 +51,8 @@ export default function AuthContextProvider({
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string>("");
   const [loadingUserInfo, setLoadingUserInfo] = useState<boolean>(false);
-
-  console.log(isLoggedIn);
+  const resetLogsStore = useUserLogsStore((state) => state.resetLogs);
+  const resetUserStore = useUserStore((state) => state.resetUser);
 
   // Auto Log in user if he has a token and fetchUserInfo
   // else do not do anything
@@ -74,6 +76,8 @@ export default function AuthContextProvider({
   // keep logout handler reference stable
   const logOut = useCallback(async () => {
     await SecureStore.deleteItemAsync("token");
+    resetLogsStore();
+    resetUserStore();
     setIsLoggedIn(false);
   }, []);
 
@@ -85,7 +89,6 @@ export default function AuthContextProvider({
     try {
       setLoadingUserInfo(true);
       const userData = await getUserInfo();
-      console.log("fetchUserInfo", userData);
       setUser(userData);
       setLoadingUserInfo(false);
     } catch (error: any) {
@@ -136,7 +139,6 @@ export default function AuthContextProvider({
   const signIn = useCallback(async (email: string, password: string) => {
     try {
       const data = await login(email, password);
-      // console.log("signIn data: ", data.user);
       setIsLoggedIn(true);
       setUser(data.user);
       // if user is verified re-direct to main screen

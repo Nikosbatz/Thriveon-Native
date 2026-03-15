@@ -1,13 +1,18 @@
 import { create } from "zustand";
-import { postUserInfo, getUserInfo } from "../api/requests";
+import { getUserInfo, postUserInfo } from "../api/requests";
 
-export const useUserStore = create((set) => ({
+const initialState = {
   userProfile: null,
   loadingUser: true,
   isVerified: false,
   onBoardingCompleted: false,
   isUserNull: true,
+};
 
+export const useUserStore = create((set) => ({
+  resetUser: () => {
+    set(initialState);
+  },
   loadUser: async () => {
     set({ loadingUser: true });
     try {

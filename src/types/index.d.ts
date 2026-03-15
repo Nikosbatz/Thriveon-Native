@@ -35,10 +35,12 @@ type FoodType = {
   fats: number;
   carbs: number;
   protein: number;
+  quantity?: number;
 };
 
 type LoggedFoodType = FoodType & {
   _id: string;
+  quantity: number;
   mealType: mealType;
 };
 

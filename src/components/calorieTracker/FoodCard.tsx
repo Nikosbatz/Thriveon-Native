@@ -18,7 +18,6 @@ export default function FoodCard({
   bottomSheetRef,
 }: FoodCardProps) {
   function handleOnPress() {
-    console.log(food);
     setSelectedFood(food);
     bottomSheetRef.current?.expand();
   }
@@ -60,21 +59,12 @@ export default function FoodCard({
             // marginRight: 40,
           }}
         >
-          {/* <View style={{ flexDirection: "row", gap: 5 }}>
-            <Text variant="labelLarge" style={[{ color: colors.protein }]}>
-              p <Text style={{ color: "white" }}>{food.protein}g</Text>
-            </Text>
-            <Text variant="labelLarge" style={{ color: colors.carbs }}>
-              c <Text style={{ color: "white" }}>{food.carbs}g</Text>
-            </Text>
-            <Text variant="labelLarge" style={{ color: colors.fats }}>
-              f <Text style={{ color: "white" }}>{food.fats}g</Text>
-            </Text>
-          </View> */}
-
           <Text variant="labelLarge" style={styles.foodMacroValue}>
             {food.calories} kcal
-            <Text style={styles.foodMacroText}> / 100g</Text>
+            <Text style={styles.foodMacroText}>
+              {" "}
+              / {food.quantity ?? food.grams}g
+            </Text>
           </Text>
         </View>
         {/* Plus Icon */}
