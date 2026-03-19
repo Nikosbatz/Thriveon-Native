@@ -1,6 +1,7 @@
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import BottomSheet, {
+  BottomSheetBackdrop,
   BottomSheetScrollView,
   SCREEN_WIDTH,
 } from "@gorhom/bottom-sheet";
@@ -86,17 +87,17 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
   }
 
   // Custom backdrop component
-  // const renderBackdrop = useCallback(
-  //   (props: any) => (
-  //     <BottomSheetBackdrop
-  //       {...props}
-  //       appearsOnIndex={0}
-  //       disappearsOnIndex={-1}
-  //       opacity={0}
-  //     />
-  //   ),
-  //   [],
-  // );
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        opacity={0.9}
+      />
+    ),
+    [],
+  );
 
   return (
     <BottomSheet
@@ -112,7 +113,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
       enablePanDownToClose
       enableDynamicSizing={false}
       snapPoints={snapPoints}
-      // backdropComponent={renderBackdrop}
+      backdropComponent={renderBackdrop}
     >
       <Text
         style={{ textAlign: "center", marginBottom: 10, color: "white" }}

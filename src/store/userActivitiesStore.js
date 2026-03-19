@@ -19,7 +19,6 @@ export const useUserActivitiesStore = create((set, get) => ({
       });
       get().calculateUserActivitiesSums();
     } catch (error) {
-      console.log(error);
       throw new Error("Could not fetch user activities");
     }
   },
@@ -27,7 +26,6 @@ export const useUserActivitiesStore = create((set, get) => ({
     set({ activitiesLoading: true });
     try {
       const activities = await postUserActivityAPI(activityValues);
-      console.log(activities);
       set({ activitiesLoading: false, userActivities: activities });
       get().calculateUserActivitiesSums();
     } catch (error) {

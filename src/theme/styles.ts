@@ -12,7 +12,7 @@ export const mainStyles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 12,
     // Android shadow
-    elevation: 8,
+    elevation: 3,
   },
   cardTitle: {
     marginStart: 10,

@@ -12,6 +12,7 @@ export async function login(email: string, password: string) {
         "Content-Type": "application/json;charset=UTF-8",
       },
     });
+
     if (res.status === 200) {
       if (res.data.accessToken) {
         await SecureStore.setItemAsync("token", res.data.accessToken);
@@ -22,10 +23,8 @@ export async function login(email: string, password: string) {
     }
   } catch (error: any) {
     if (error.status === 401) {
-      // console.log("login code 401");
       throw new Error("Wrong Credentials...");
     } else if (error.status === 403) {
-      // console.log("login code 403");
       return error.response.data;
     }
   }
@@ -54,7 +53,6 @@ export async function register(email: string, password: string) {
 }
 
 export async function getEmailVerificationToken(email: string) {
-  console.log("email in getEmailVerififcationcomde:", email);
   try {
     const res = await axios.post(
       `${BASE_URI}/user/resend-verification-code`,
@@ -206,7 +204,6 @@ export async function getFoods(path: string) {
       headers: { Accept: "application/json" },
     });
     if (res.status === 200) {
-      //console.log(data);
       return res.data;
     }
   } catch (error: any) {
@@ -345,7 +342,6 @@ export async function postUserWeightLogs(weight: number) {
 }
 
 export async function getBarcodeFood(code: string) {
-  console.log(`/foods/barcode/${code}`);
   try {
     const res = await api.get(`/foods/barcode/${code}`);
     return res.data;
@@ -357,7 +353,6 @@ export async function getBarcodeFood(code: string) {
 }
 
 export async function getSearchFoods(searchInput: string) {
-  console.log(searchInput);
   try {
     const res = await api.get(`/foods/search/${searchInput}`);
     return res.data.data;
@@ -368,7 +363,6 @@ export async function getSearchFoods(searchInput: string) {
 
 export async function authToken() {
   const res = await api.get("/user/auth");
-  console.log("authToken: ", res.status);
   if (res.status === 200) {
     return;
   }

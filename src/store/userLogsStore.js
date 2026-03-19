@@ -77,7 +77,6 @@ export const useUserLogsStore = create((set, get) => ({
     set({ logsLoading: true });
     try {
       const { data, foodHistory } = await getFoods("/foods/userlogs");
-      console.log("data");
       set({ todaysFoods: data, foodHistory: foodHistory });
       get().updateTodayMacros();
       set({ logsLoading: false });
@@ -159,6 +158,7 @@ export const useUserLogsStore = create((set, get) => ({
     set({ logsLoading: true });
     try {
       const res = await postFood(foodToUpload, "/foods/userlogs");
+
       set((state) => ({
         todaysFoods: res.message,
         foodHistory: res.foodHistory,

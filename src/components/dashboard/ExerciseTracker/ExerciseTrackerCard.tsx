@@ -1,6 +1,6 @@
 import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
-import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
+import { LinearGradient } from "expo-linear-gradient";
 import { Flame, Plus, Timer } from "lucide-react-native";
 import { useState } from "react";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -12,10 +12,10 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 export default function ExerciseTrackerCard() {
   const [modalVisible, setModalVisible] = useState(false);
   const activitiesDurationSum = useUserActivitiesStore(
-    (s) => s.activitiesDurationSum
+    (s) => s.activitiesDurationSum,
   );
   const activitiesCaloriesSum = useUserActivitiesStore(
-    (s) => s.activitiesCaloriesSum
+    (s) => s.activitiesCaloriesSum,
   );
 
   function handlePress() {
@@ -27,7 +27,10 @@ export default function ExerciseTrackerCard() {
       style={{ flex: 1 }}
       onPress={handlePress}
     >
-      <View
+      <LinearGradient
+        start={{ x: 0, y: 0.1 }}
+        end={{ x: 1, y: 0.5 }}
+        colors={["#ed4f1a", "#f6af7c"]}
         style={{
           padding: 7,
           gap: 15,
@@ -43,17 +46,10 @@ export default function ExerciseTrackerCard() {
             justifyContent: "space-between",
           }}
         >
-          <Text
-            variant="headlineSmall"
-            style={[mainStyles.cardTitleSmall, { color: colors.lvBackground }]}
-          >
+          <Text variant="headlineSmall" style={[mainStyles.cardTitleSmall]}>
             Exercise
           </Text>
-          <Plus
-            size={26}
-            color={"white"}
-            style={{ backgroundColor: "rgba(231, 158, 0, 1)", borderRadius: 8 }}
-          ></Plus>
+          <Plus size={26} color={"white"} style={{ borderRadius: 8 }}></Plus>
         </View>
         <View style={{ gap: 5 }}>
           <View style={styles.infoContainer}>
@@ -75,7 +71,7 @@ export default function ExerciseTrackerCard() {
             </Text>
           </View>
         </View>
-      </View>
+      </LinearGradient>
       <ExerciseFormModal visible={modalVisible} setVisible={setModalVisible} />
     </TouchableOpacity>
   );
@@ -89,14 +85,14 @@ const styles = StyleSheet.create({
   valueText: {
     fontSize: 20,
     //fontWeight: "bold",
-    color: "rgba(57, 40, 0, 1)",
+    color: "rgb(255, 255, 255)",
   },
   infoIcon: {
-    backgroundColor: "rgba(231, 158, 0, 1)",
+    // backgroundColor: "rgba(231, 158, 0, 1)",
     borderRadius: 8,
   },
   infoMetriUnitText: {
-    color: "rgba(183, 143, 0, 1)",
+    color: "rgb(211, 210, 208)",
     fontSize: 16,
     //fontWeight: "bold",
   },

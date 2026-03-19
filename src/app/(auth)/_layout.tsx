@@ -1,15 +1,22 @@
+import { colors } from "@/src/theme/colors";
 import { Stack } from "expo-router";
 
 export default function AuthLayout() {
   return (
     <Stack
-    // screenOptions={{
-    //   headerTitleStyle: mainStyles.headerTitleStyle,
-    //   headerTitleAlign: "center",
-    //   headerStyle: {
-    //     backgroundColor: colors.lvBackground,
-    //   },
-    // }}
+      // screenOptions={{
+      //   headerTitleStyle: mainStyles.headerTitleStyle,
+      //   headerTitleAlign: "center",
+      //   headerStyle: {
+      //     backgroundColor: colors.lvBackground,
+      //   },
+      // }}
+      screenOptions={{
+        animation: "ios_from_right", // This often feels more "connected" than the generic slide
+        contentStyle: {
+          backgroundColor: colors.lvBackground,
+        },
+      }}
     >
       <Stack.Screen
         options={{ headerShown: false }}

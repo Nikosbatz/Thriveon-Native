@@ -226,7 +226,7 @@ export default function RegisterScreen() {
         <Button
           mode="text"
           textColor={colors.lvPrimary80}
-          onPress={() => router.navigate("/(auth)/auth")}
+          onPress={() => router.push("/(auth)/auth")}
         >
           <Text variant="labelLarge" style={{ color: colors.lightWhiteText }}>
             {"Already have an account?"}

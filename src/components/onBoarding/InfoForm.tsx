@@ -253,8 +253,8 @@ const genders = [
 
 const goals = [
   { goal: "Lose Weight", icon: TrendingDown },
-  { goal: "Gain Mass", icon: BicepsFlexed },
   { goal: "Maintain Weight", icon: Scale },
+  { goal: "Gain Mass", icon: BicepsFlexed },
 ];
 
 const formNumInputsData: {

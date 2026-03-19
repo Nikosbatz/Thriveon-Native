@@ -13,7 +13,6 @@ export default function ForgotPasswordScreen() {
   const [showTokenForm, setShowTokenForm] = useState<boolean>(false);
 
   async function handleEmailSubmit() {
-    console.log("handleEmailSubmit");
     try {
       await postForgotPasswordEmail(emailInput, "mobile");
       Toast.show({
@@ -35,6 +34,7 @@ export default function ForgotPasswordScreen() {
         flex: 1,
         paddingHorizontal: 10,
         paddingVertical: 40,
+        marginTop: 100,
         justifyContent: showTokenForm ? "flex-start" : "flex-start",
         gap: 0,
         backgroundColor: colors.lvBackground,

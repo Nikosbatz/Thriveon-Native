@@ -22,8 +22,6 @@ export default function VerifyUser() {
   const { email }: { email: string } = useLocalSearchParams();
   const { verifyUserEmail, userEmail, isLoggedIn, logOut } = useAuth();
 
-  console.log(email);
-
   useEffect(() => {
     if (code.every((digit) => digit !== "")) {
       handleSubmit();

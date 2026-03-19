@@ -1,14 +1,14 @@
 import CaloriesProgressChart from "@/src/components/dashboard/CaloriesProgressChart";
+import DashboardMacroCards from "@/src/components/dashboard/DashboardMacroCards";
 import ExerciseTrackerCard from "@/src/components/dashboard/ExerciseTracker/ExerciseTrackerCard";
-import MacrosProgressChart from "@/src/components/dashboard/MacrosProgessChart";
 import WaterCard from "@/src/components/dashboard/WaterCard";
 import WeightHistoryChart from "@/src/components/dashboard/WeightHistory/WeightHistoryChart";
-import PagerDots from "@/src/components/UI/PagerDots";
 import { useAuth } from "@/src/context/authContext";
 import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
+import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import {
   Animated,
@@ -17,7 +17,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import Toast from "react-native-toast-message";
 
 const ITEM_WIDTH = Dimensions.get("window").width - 50;
@@ -32,6 +32,8 @@ export default function Dashboard() {
   const fetchUserActivites = useUserActivitiesStore(
     (s) => s.fetchUserActivites,
   );
+
+  const router = useRouter();
 
   const { logOut } = useAuth();
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -64,45 +66,21 @@ export default function Dashboard() {
       showsVerticalScrollIndicator={false}
     >
       {/* Calories Chart */}
-      <View>
-        <Animated.ScrollView
-          snapToInterval={ITEM_WIDTH}
-          decelerationRate="fast"
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            flexDirection: "row",
-            gap: 8, // optional, spacing between cards
-            paddingHorizontal: 6,
-            padding: 5,
-          }}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-            { useNativeDriver: true },
-          )}
-          scrollEventThrottle={16}
-        >
-          <View style={styles.scrollViewCard}>
-            <Text variant="headlineMedium" style={mainStyles.cardTitle}>
-              Calories
-            </Text>
-            <CaloriesProgressChart></CaloriesProgressChart>
-          </View>
-
-          {/* Macros Chart */}
-          <View style={styles.scrollViewCard}>
-            <Text variant="headlineMedium" style={mainStyles.cardTitle}>
-              Macros
-            </Text>
-            <MacrosProgressChart />
-          </View>
-        </Animated.ScrollView>
-        <PagerDots scrollX={scrollX} itemWidth={ITEM_WIDTH} itemCount={2} />
+      <View
+        style={[styles.scrollViewCard, { width: "95%", alignSelf: "center" }]}
+      >
+        <CaloriesProgressChart></CaloriesProgressChart>
       </View>
+
       {/* FOR TESTING */}
-      <Button onPress={() => logOut()}>log out</Button>
+      {/* <Button onPress={() => logOut()}>log out</Button>
+      <Button onPress={() => router.navigate("/(onBoarding)/welcomeScreen")}>
+        to welcome screen
+      </Button> */}
       {/* Cards container (Every card but those from Horizontal ScrollView) */}
       <View style={styles.cardsContainer}>
+        {/* Macros Cards 3-columns container */}
+        <DashboardMacroCards />
         {/* Row 2-Cards Container */}
         <View style={styles.flexRowCardsContainer}>
           <View style={[mainStyles.card, { flex: 1, maxWidth: "50%" }]}>
@@ -127,11 +105,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lvBackground,
     paddingBottom: 100,
     paddingVertical: 0,
-    // marginBottom: 30,
   },
   cardsContainer: {
     paddingLeft: 15,
     paddingRight: 15,
+    gap: 10,
   },
   flexRowCardsContainer: {
     flexDirection: "row",
@@ -141,7 +119,7 @@ const styles = StyleSheet.create({
   scrollViewCard: {
     padding: 2,
     backgroundColor: colors.lvGradientCard,
-    borderRadius: 20,
+    borderRadius: 30,
     marginTop: 10,
     marginLeft: 0,
     marginRight: 0,
@@ -152,6 +130,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 12,
     // Android shadow
-    elevation: 4,
+    elevation: 20,
+    overflow: "hidden",
   },
 });

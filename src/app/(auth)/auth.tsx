@@ -82,8 +82,9 @@ export default function AuthScreen() {
             variant="headlineLarge"
             style={{
               color: colors.lvPrimaryLight,
-              alignSelf: "center",
               fontSize: 31,
+              width: "100%",
+              textAlign: "center",
             }}
           >
             Thriveon
@@ -94,6 +95,8 @@ export default function AuthScreen() {
               color: colors.lightWhiteText,
               alignSelf: "center",
               fontSize: 17,
+              width: "100%",
+              textAlign: "center",
             }}
           >
             Track Grow Thriveon
@@ -160,9 +163,10 @@ export default function AuthScreen() {
             style={{
               color: colors.lightGrayText,
               marginTop: 5,
-              alignSelf: "flex-end",
               textDecorationLine: "underline",
               fontSize: 12,
+              width: "100%",
+              textAlign: "right",
             }}
           >
             Forgot Password?
@@ -178,39 +182,30 @@ export default function AuthScreen() {
           onPress={handleAuth}
           loading={isLoading}
           disabled={isLoading}
-          icon={"login"}
+          icon="login"
           style={{
             backgroundColor: colors.lvPrimary,
             width: "80%",
             alignSelf: "center",
           }}
+          labelStyle={{ fontSize: 16 }}
           textColor={colors.lvBackground}
         >
-          <Text variant="labelLarge">Sign In</Text>
+          Sign In
         </Button>
 
         <Button
           mode="text"
-          style={
-            {
-              // position: "absolute",
-              // bottom: 30,
-              // left: "50%",
-              // transform: [{ translateX: "-50%" }],
-            }
-          }
-          textColor={colors.lvPrimary80}
           onPress={() => router.navigate("/(auth)/register")}
+          labelStyle={{
+            color: colors.lightWhiteText,
+            fontSize: 14,
+          }}
         >
-          <Text variant="labelLarge" style={{ color: colors.lightWhiteText }}>
-            {"Don't have an account?"}
-            <Text
-              variant="labelLarge"
-              style={{ color: colors.lvPrimary80, fontSize: 14 }}
-            >
-              {" "}
-              {"Sign Up"}
-            </Text>
+          Don't have an account?
+          <Text variant="labelLarge" style={{ color: colors.lvPrimaryLight }}>
+            {" "}
+            Sign Up
           </Text>
         </Button>
       </View>

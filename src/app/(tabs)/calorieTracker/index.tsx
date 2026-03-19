@@ -39,7 +39,6 @@ export default function CalorieTrackerScreen() {
 
     const timer = setTimeout(async () => {
       const searchData = await getSearchFoods(searchInput);
-      console.log(searchData.at(2));
       setSearchEnded(true);
       // Do your filtering logic with the fresh data
       const words = searchInput.split(" ");
@@ -201,7 +200,7 @@ export default function CalorieTrackerScreen() {
         )}
       </View>
 
-      {/* Open logged foods button */}
+      {/* Open logged foods and scan barcode buttons */}
       <View
         style={{
           flexDirection: "row",

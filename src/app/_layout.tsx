@@ -1,4 +1,9 @@
 import AuthContextProvider from "@/src/context/authContext";
+import { colors } from "@/src/theme/colors";
+import {
+  DefaultTheme as NavDefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -10,6 +15,15 @@ import {
   PaperProvider,
 } from "react-native-paper";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
+
+// Change the background color of the app (Visible when a screen un-mounts)
+const MyNavigationTheme = {
+  ...NavDefaultTheme,
+  colors: {
+    ...NavDefaultTheme.colors,
+    background: colors.lvBackground,
+  },
+};
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,13 +43,15 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider theme={theme}>
-        <AuthContextProvider>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="(auth)" />
-            <Stack.Screen name="(onBoarding)" />
-          </Stack>
-        </AuthContextProvider>
+        <ThemeProvider value={MyNavigationTheme}>
+          <AuthContextProvider>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(onBoarding)" />
+            </Stack>
+          </AuthContextProvider>
+        </ThemeProvider>
         <Toast visibilityTime={3000} config={toastConfig} />
       </PaperProvider>
     </GestureHandlerRootView>

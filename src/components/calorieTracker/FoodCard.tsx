@@ -27,7 +27,11 @@ export default function FoodCard({
       // activeOpacity={0.5}
       underlayColor={colors.primary20}
       onPress={handleOnPress}
-      style={{ backgroundColor: colors.lvGradientCard, borderRadius: 10 }}
+      style={{
+        backgroundColor: colors.lvGradientCard,
+        borderRadius: 10,
+        marginTop: 5,
+      }}
     >
       <View style={styles.foodCard}>
         {/* Food Name Text */}
@@ -42,7 +46,7 @@ export default function FoodCard({
           <Text
             variant="headlineMedium"
             style={{
-              fontSize: 18,
+              fontSize: 17,
               color: "white",
               lineHeight: 21,
             }}
@@ -53,7 +57,7 @@ export default function FoodCard({
             <Text
               variant="labelLarge"
               style={{
-                fontSize: 15,
+                fontSize: 14,
                 color: "rgb(184, 184, 184)",
                 lineHeight: 20,
               }}
@@ -103,17 +107,17 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderRadius: 10,
     elevation: 0,
-    padding: 5,
+    padding: 8,
     paddingHorizontal: 10,
     borderWidth: 0,
     borderColor: "rgba(135, 191, 244, 0)",
-    gap: 5,
+    gap: 7,
   },
   foodMacroText: {
     color: colors.lightWhiteText,
   },
   foodMacroValue: {
-    color: colors.lvPrimary,
-    fontSize: 16,
+    color: colors.lvPrimaryLight,
+    fontSize: 14,
   },
 });

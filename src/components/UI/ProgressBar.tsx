@@ -16,12 +16,17 @@ export default function ProgressBar(props: ProgressBarProps) {
       : Math.floor((props.currentValue / props.targetValue) * 100);
 
   return (
-    <View style={{ flexDirection: "row", alignItems: "center" }}>
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+      }}
+    >
       <View
         style={{
           width: props.width,
           height: props.height,
-          minHeight: 15,
+          minHeight: 5,
           backgroundColor: props.unfilledColor,
           borderRadius: 8,
         }}

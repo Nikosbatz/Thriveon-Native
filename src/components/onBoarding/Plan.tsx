@@ -11,7 +11,6 @@ export default function Plan() {
   const router = useRouter();
   const { user } = useAuth();
 
-  console.log(user);
   return (
     <View
       style={{

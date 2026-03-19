@@ -1,3 +1,4 @@
+import { useAuth } from "@/src/context/authContext";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import BottomSheet, {
@@ -19,6 +20,7 @@ import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
 import { Button, Divider, Text, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import MenuPicker from "../UI/MenuPicker";
+import ProgressBar from "../UI/ProgressBar";
 
 // const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -62,6 +64,7 @@ export default function FoodOptionsSheet({
   );
   const handleAddFood = useUserLogsStore((s) => s.handleAddFood);
   const logsLoading = useUserLogsStore((s) => s.logsLoading);
+  const { user } = useAuth();
 
   // Called when Sheet closes or opens
   const handleSheetChanges = useCallback((index: number) => {
@@ -200,52 +203,110 @@ export default function FoodOptionsSheet({
             ></TextInput>
           </View>
         </View>
-        <Divider style={styles.divider} />
+
         {/* Macros Values Container */}
         <View style={[styles.flexRowView, styles.macrosContainer]}>
           {macrosKeys.map((macro, index) => {
             const IconElement = macrosInfo.macrosIcons[index];
             return (
-              <View
-                key={macro}
-                style={[
-                  styles.macroTextContainer,
-                  { borderColor: colors[macro] },
-                ]}
-              >
-                <IconElement
-                  size={22}
-                  color={colors.primary}
-                  style={{
-                    // backgroundColor: colors[macro],
-                    borderRadius: 5,
-                  }}
+              <View key={index}>
+                <Divider
+                  style={[
+                    styles.divider,
+                    { backgroundColor: "rgba(40, 154, 171, 0.09)" },
+                  ]}
                 />
+                {/* Outer View for each macro */}
                 <View
-                  style={{ flexDirection: "column", alignContent: "center" }}
+                  key={macro}
+                  style={[
+                    styles.macroTextContainer,
+                    { borderColor: colors[macro] },
+                  ]}
                 >
-                  <Text
-                    variant="labelLarge"
+                  <IconElement
+                    size={22}
+                    color={colors[macro]}
                     style={{
-                      fontSize: 22,
-                      color: "white",
-                      textAlign: "center",
-                      lineHeight: 25,
+                      // backgroundColor: colors[macro],
+                      borderRadius: 5,
+                    }}
+                  />
+                  {/* ProgressBar and Label */}
+                  <View
+                    style={{
+                      flexDirection: "column",
+                      width: "70%",
+                      gap: 10,
                     }}
                   >
-                    {currentMacros[index]}g
-                  </Text>
-                  <Text
-                    variant="labelLarge"
-                    style={{ fontSize: 15, color: "rgba(225, 225, 225, 1)" }}
-                  >
-                    {macrosInfo.macrosLabels[index]}
-                  </Text>
+                    <Text
+                      variant="labelLarge"
+                      style={{
+                        fontSize: 15,
+                        color: "rgba(225, 225, 225, 1)",
+                        alignSelf: "flex-start",
+                      }}
+                    >
+                      {macrosInfo.macrosLabels[index]}
+                    </Text>
+
+                    <ProgressBar
+                      width={"100%"}
+                      height={8}
+                      unfilledColor={colors.lvPrimary10}
+                      filledColor={colors[macro]}
+                      currentValue={currentMacros[index]}
+                      targetValue={user ? user?.nutritionGoals[macro] : 0}
+                    ></ProgressBar>
+                  </View>
+
+                  {/* Percetange and value texts */}
+                  <View style={{ flexDirection: "column", width: "30%" }}>
+                    <Text
+                      variant="labelLarge"
+                      style={{
+                        fontSize: 14,
+                        color: "white",
+                        textAlign: "center",
+                        lineHeight: 25,
+                      }}
+                    >
+                      {currentMacros[index]}g/{user?.nutritionGoals[macro]}g
+                    </Text>
+                    <Text
+                      variant="labelLarge"
+                      style={{
+                        fontSize: 14,
+                        color: "white",
+                        textAlign: "center",
+                        lineHeight: 25,
+                      }}
+                    >
+                      {user
+                        ? Math.floor(
+                            (currentMacros[index] /
+                              user.nutritionGoals[macro]) *
+                              100,
+                          ) + "%"
+                        : null}
+                    </Text>
+                  </View>
                 </View>
               </View>
             );
           })}
         </View>
+        <Text
+          style={{
+            color: "rgba(206, 206, 206, 0.66)",
+            fontSize: 11,
+            alignSelf: "center",
+          }}
+          variant="labelLarge"
+        >
+          The above amounts are relative to daily goal consumption.
+        </Text>
 
         <Button
           mode="contained-tonal"
@@ -317,14 +378,17 @@ const styles = StyleSheet.create({
   macrosContainer: {
     // backgroundColor: "red",
     width: "100%",
-    justifyContent: "space-around",
+    justifyContent: "flex-start",
+    gap: 15,
   },
   macroTextContainer: {
     alignItems: "center",
     flexDirection: "row",
-    padding: 10,
+    justifyContent: "space-between",
+    padding: 5,
     borderRadius: 20,
-    backgroundColor: colors.lvGradientCard,
-    borderWidth: 1.5,
+    // backgroundColor: colors.lvGradientCard,
+    width: "97%",
+    // borderWidth: 1.5,
   },
 });

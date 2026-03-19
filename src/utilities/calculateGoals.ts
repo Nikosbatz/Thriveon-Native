@@ -1,61 +1,69 @@
-type parameters = {
-  gender: string;
-  weight: number;
-  height: number;
-  age: number;
-  activity: number;
-  goal: string;
+type Parameters = {
+  gender: "male" | "female" | "other";
+  weight: number; // kg
+  height: number; // cm
+  age: number; // years
+  activity: 0 | 1 | 2 | 3; // 0: none, 1: light, 2: moderate, 3: active
+  goal: 0 | 1 | 2; // 0: lose, 1: maintain, 2: gain
 };
 
 export default function calculateNutrition({
-  gender, // "male", "female" or "other"
-  weight, // kg
-  height, // cm
-  age, // years
-  activity, // "0 : none" | "1 : light" | "2 : moderate" | "3 : active"
-  goal, // "0 : lose" | "1 : gain" | "2 : maintain"
-}: parameters) {
-  const healthGoals = { weight: weight, water: 5 };
+  gender,
+  weight,
+  height,
+  age,
+  activity,
+  goal,
+}: Parameters) {
+  // 1. Initial health goals setup
+  const healthGoals = { weight: weight, water: 0 };
   const activityMultipliers = [1.2, 1.375, 1.55, 1.725];
 
-  // BMR Calculation
-  const BMR =
-    gender === "male"
-      ? 10 * weight + 6.25 * height - 5 * age + 5
-      : 10 * weight + 6.25 * height - 5 * age - 161;
+  // 2. BMR Calculation (Mifflin-St Jeor Equation)
+  // Fallback for "other" uses a neutral midpoint or female constant (-161)
+  let BMR = 10 * weight + 6.25 * height - 5 * age;
+  if (gender === "male") {
+    BMR += 5;
+  } else {
+    BMR -= 161;
+  }
 
-  // console.log(BMR);
-  // Activity adjustment
-  let TDEE = BMR * activityMultipliers[activity];
+  console.log(typeof goal, typeof activity);
+  // 3. Activity adjustment (TDEE)
+  const multiplier = activityMultipliers[activity] || 1.2;
+  let TDEE = BMR * multiplier;
 
-  //if goal === "Lose Weight"
+  // 4. Goal Adjustment
+  // 0: Lose Weight (-15%)
   if (Number(goal) === 0) {
     TDEE *= 0.85;
-
-    healthGoals.weight =
-      healthGoals.weight - Math.floor(healthGoals.weight * 0.05); // Decrease weight by 5%
+    healthGoals.weight = Math.round(weight * 0.95); // Target 5% reduction
   }
-  //if goal === "Gain Mass"
+  // 2: Gain Mass (+15%)
   else if (Number(goal) === 2) {
     TDEE *= 1.15;
-    healthGoals.weight =
-      healthGoals.weight + Math.floor(healthGoals.weight * 0.05); // Increase weight by 5%
+    healthGoals.weight = Math.round(weight * 1.05); // Target 5% increase
+    console.log(healthGoals.weight);
   }
+  // 1: Maintain (No change to TDEE or target weight)
 
   TDEE = Math.round(TDEE);
 
-  // Macronutrient calculation
-  const proteinGrams = weight * 2; // 2g per kg
-  const fatGrams = weight * 0.9; // 0.9g per kg
+  // 5. Macronutrient calculation
+  // Protein: 2g per kg | Fat: 0.9g per kg | Carbs: Remainder
+  const proteinGrams = weight * 2;
+  const fatGrams = weight * 0.9;
 
   const proteinCalories = proteinGrams * 4;
   const fatCalories = fatGrams * 9;
 
   const remainingCalories = TDEE - (proteinCalories + fatCalories);
+
+  // Ensure carbs don't drop below 0 if calories are very low
   const carbGrams = Math.max(remainingCalories / 4, 0);
 
-  // Daily Water Intake calculation
-  healthGoals.water = weight * 0.06;
+  // 6. Daily Water Intake (approx 0.033L to 0.06L per kg)
+  healthGoals.water = Number((weight * 0.04).toFixed(1));
 
   return {
     nutritionGoals: {

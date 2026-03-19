@@ -26,5 +26,5 @@ export const colors = {
   lvPrimary80: "hsla(180, 78%, 52%, 0.8)",
   lvHeader: "rgba(33, 38, 49, 0.5)",
   lvSecondary: "rgb(42, 48, 60)",
-  lvGradientCard: "linear-gradient(135deg, hsl(220 20% 18%), hsl(220 20% 16%))",
+  lvGradientCard: "linear-gradient(135deg, #252b37, hsl(220 20% 16%))",
 };

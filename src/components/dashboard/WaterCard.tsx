@@ -1,6 +1,7 @@
 import { getUserWaterIntake, postUserWaterIntake } from "@/src/api/requests";
 import { useAuth } from "@/src/context/authContext";
 import { mainStyles } from "@/src/theme/styles";
+import { LinearGradient } from "expo-linear-gradient";
 import { Droplet, Plus } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
@@ -38,7 +39,10 @@ export default function WaterCard() {
   }
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
-      <View
+      <LinearGradient
+        start={{ x: 0, y: 0.2 }}
+        end={{ x: 1, y: 0.5 }}
+        colors={["#1D4ED8", "#25E4E4"]}
         style={{
           backgroundColor: "rgba(0, 119, 254, 1)",
           borderRadius: mainStyles.card.borderRadius,
@@ -62,22 +66,18 @@ export default function WaterCard() {
             variant="headlineSmall"
             style={[mainStyles.cardTitleSmall, { color: "white" }]}
           >
-            Water
+            Hydration
           </Text>
-          <Plus
-            size={26}
-            color={"white"}
-            style={{ backgroundColor: "rgba(0, 92, 231, 1)", borderRadius: 8 }}
-          ></Plus>
+          <Plus size={26} color={"white"} style={{ borderRadius: 8 }}></Plus>
         </View>
         {/* Icon and Water Info container */}
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
           {/* Icon container */}
           <View
             style={{
-              backgroundColor: "rgba(4, 170, 216, 1)",
+              backgroundColor: "rgb(4, 170, 216)",
               alignSelf: "flex-start",
-              borderRadius: 30,
+              borderRadius: 40,
               padding: 10,
             }}
           >
@@ -93,7 +93,7 @@ export default function WaterCard() {
                 fontSize: 17,
               }}
             >
-              /{user?.healthGoals.water ?? 3.5} L
+              /{user?.healthGoals.water.toFixed(1) ?? 3.5} L
             </Text>
           </Text>
         </View>
@@ -102,13 +102,13 @@ export default function WaterCard() {
           <ProgressBar
             width={cardWidth - 30}
             height={10}
-            filledColor="rgba(0, 182, 167, 1)"
+            filledColor="rgb(0, 94, 182)"
             unfilledColor="rgba(199, 199, 199, 1)"
             targetValue={user?.healthGoals.water ?? 3.5}
             currentValue={waterIntake}
           />
         </View>
-      </View>
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
