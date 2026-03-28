@@ -135,17 +135,25 @@ export const useUserLogsStore = create((set, get) => ({
       throw new Error("Could not delete food...");
     }
   },
-  handleAddFood: async (food, gramsInput, mealType) => {
-    const calories = Math.round((food.calories / food.grams) * gramsInput);
-    const protein = Math.round((food.protein / food.grams) * gramsInput);
-    const carbs = Math.round((food.carbs / food.grams) * gramsInput);
-    const fats = Math.round((food.fats / food.grams) * gramsInput);
+  handleAddFood: async (
+    food,
+    quantityInput,
+    mealType,
+    selectedServingIndex,
+  ) => {
+    const gramWeight =
+      food.portions[selectedServingIndex].gramWeight * quantityInput;
+    const calories = Math.floor((food.calories / food.grams) * gramWeight);
+    const protein = Math.floor((food.protein / food.grams) * gramWeight);
+    const carbs = Math.floor((food.carbs / food.grams) * gramWeight);
+    const fats = Math.floor((food.fats / food.grams) * gramWeight);
 
     const foodToUpload = {
       ...food,
       foodId: food._id,
       calories: calories,
-      loggedQuantity: gramsInput,
+      loggedQuantity: quantityInput,
+      selectedServingIndex: selectedServingIndex,
       protein: protein,
       carbs: carbs,
       fats: fats,

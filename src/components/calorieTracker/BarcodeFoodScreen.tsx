@@ -1,10 +1,11 @@
 import { useBarcodeFoodStore } from "@/src/store/useBarcodeFoodStore";
 import { colors } from "@/src/theme/colors";
+import { mealType } from "@/src/types";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
-import FoodOptionsSheet from "./FoodOptionsSheet";
+import FoodOptionsSheet from "./FoodOptionsSheet/FoodOptionsSheet";
 
 export default function BarcodeFoodScreen() {
   const [selectedMealType, setSelectedMealType] =

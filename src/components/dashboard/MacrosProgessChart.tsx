@@ -37,11 +37,7 @@ export default function MacrosProgressChart() {
   const data = {
     labels: ["Protein", "Fats", "Carbs"],
     data: macroPercentages,
-    colors: [
-      "rgba(0, 194, 212, 1)",
-      "rgba(0, 115, 255, 1)",
-      "rgba(1, 208, 132, 1)",
-    ],
+    colors: ["rgb(0, 234, 255)", "rgba(0, 115, 255, 1)", "rgb(0, 255, 162)"],
   };
 
   return (

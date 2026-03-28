@@ -53,15 +53,33 @@ export default function WeightHistoryChart() {
 
   return (
     <TouchableOpacity activeOpacity={0.4} onPress={handlePress}>
-      <View style={{ padding: 5, gap: 10 }}>
+      <View
+        style={{
+          padding: 5,
+          gap: 10,
+          borderWidth: 1,
+          backgroundColor: "#222a3700",
+          // borderLeftWidth: 1,
+          // borderColor: colors.lvPrimary50,
+          borderColor: "rgb(46, 47, 70)",
+          borderRadius: 20,
+        }}
+      >
         {/* Header and Weight Trend texts at the top of the component */}
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            // backgroundColor: "#D946EF",
+            // borderRadius: 10,
+          }}
+        >
           <Text variant="headlineSmall" style={mainStyles.cardTitleSmall}>
-            Weight history chart
+            WEIGHT HISTORY
           </Text>
           <View style={{ alignItems: "center" }}>
             <Plus
-              size={26}
+              size={0}
               color={"white"}
               style={{
                 backgroundColor: colors.primary,

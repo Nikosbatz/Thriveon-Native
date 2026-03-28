@@ -16,8 +16,8 @@ export const colors = {
   frostWhite: "#f2fdff",
   articSky: "#7bbcfe",
   deepNavy: "#091636",
-  cardBorderColor: "#454545ff",
-  lvBackground: "#191d24",
+  cardBorderColor: "rgb(49, 49, 49)",
+  lvBackground: "#0d0f13",
   lvPrimary: "rgb(37, 228, 228)",
   lvPrimaryLight: "rgba(170, 247, 247, 1)",
   lvPrimary10: "hsla(180, 78%, 52%, 0.1)",
@@ -26,5 +26,5 @@ export const colors = {
   lvPrimary80: "hsla(180, 78%, 52%, 0.8)",
   lvHeader: "rgba(33, 38, 49, 0.5)",
   lvSecondary: "rgb(42, 48, 60)",
-  lvGradientCard: "linear-gradient(135deg, #252b37, hsl(220 20% 16%))",
+  lvGradientCard: "#181c25",
 };

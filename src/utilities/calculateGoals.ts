@@ -28,7 +28,6 @@ export default function calculateNutrition({
     BMR -= 161;
   }
 
-  console.log(typeof goal, typeof activity);
   // 3. Activity adjustment (TDEE)
   const multiplier = activityMultipliers[activity] || 1.2;
   let TDEE = BMR * multiplier;
@@ -43,7 +42,6 @@ export default function calculateNutrition({
   else if (Number(goal) === 2) {
     TDEE *= 1.15;
     healthGoals.weight = Math.round(weight * 1.05); // Target 5% increase
-    console.log(healthGoals.weight);
   }
   // 1: Maintain (No change to TDEE or target weight)
 

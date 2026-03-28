@@ -1,11 +1,10 @@
 import { getUserWaterIntake, postUserWaterIntake } from "@/src/api/requests";
 import { useAuth } from "@/src/context/authContext";
 import { mainStyles } from "@/src/theme/styles";
-import { LinearGradient } from "expo-linear-gradient";
 import { Droplet, Plus } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Text } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
+import { Text, TouchableRipple } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import ProgressBar from "../UI/ProgressBar";
 
@@ -38,18 +37,20 @@ export default function WaterCard() {
     }
   }
   return (
-    <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
-      <LinearGradient
-        start={{ x: 0, y: 0.2 }}
-        end={{ x: 1, y: 0.5 }}
-        colors={["#1D4ED8", "#25E4E4"]}
-        style={{
-          backgroundColor: "rgba(0, 119, 254, 1)",
-          borderRadius: mainStyles.card.borderRadius,
-          padding: 7,
-          gap: 20,
-          flex: 0,
-        }}
+    <TouchableRipple
+      rippleColor={"rgba(6, 173, 198, 0.55)"}
+      borderless
+      onPress={handlePress}
+      style={{ borderRadius: 20 }}
+    >
+      <View
+        style={[
+          mainStyles.card,
+          {
+            gap: 20,
+            backgroundColor: "#016dc6",
+          },
+        ]}
         onLayout={(event) => {
           const { width } = event.nativeEvent.layout;
           setCardWidth(width);
@@ -66,9 +67,13 @@ export default function WaterCard() {
             variant="headlineSmall"
             style={[mainStyles.cardTitleSmall, { color: "white" }]}
           >
-            Hydration
+            HYDRATION
           </Text>
-          <Plus size={26} color={"white"} style={{ borderRadius: 8 }}></Plus>
+          <Plus
+            size={26}
+            color={"rgb(250, 250, 250)"}
+            style={{ borderRadius: 8 }}
+          ></Plus>
         </View>
         {/* Icon and Water Info container */}
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
@@ -78,19 +83,19 @@ export default function WaterCard() {
               backgroundColor: "rgb(4, 170, 216)",
               alignSelf: "flex-start",
               borderRadius: 40,
-              padding: 10,
+              padding: 6,
             }}
           >
-            <Droplet size={26} color={"white"} />
+            <Droplet size={22} color={"white"} />
           </View>
           {/* water intake info container */}
-          <Text style={{ color: "white", fontSize: 17, fontWeight: "bold" }}>
+          <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
             {waterIntake} L
             <Text
               variant="headlineSmall"
               style={{
-                color: "rgba(0, 77, 178, 1)",
-                fontSize: 17,
+                color: "rgb(137, 184, 245)",
+                fontSize: 16,
               }}
             >
               /{user?.healthGoals.water.toFixed(1) ?? 3.5} L
@@ -102,14 +107,14 @@ export default function WaterCard() {
           <ProgressBar
             width={cardWidth - 30}
             height={10}
-            filledColor="rgb(0, 94, 182)"
-            unfilledColor="rgba(199, 199, 199, 1)"
+            filledColor="rgb(1, 180, 203)"
+            unfilledColor="rgb(36, 43, 51)"
             targetValue={user?.healthGoals.water ?? 3.5}
             currentValue={waterIntake}
           />
         </View>
-      </LinearGradient>
-    </TouchableOpacity>
+      </View>
+    </TouchableRipple>
   );
 }
 

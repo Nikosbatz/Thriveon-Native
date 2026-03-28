@@ -3,6 +3,8 @@ import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { useUserStore } from "@/src/store/userStore";
 import { colors } from "@/src/theme/colors";
+import { mainStyles } from "@/src/theme/styles";
+import { userActivity } from "@/src/types";
 import { Apple, CircleEqual, Flame } from "lucide-react-native";
 import { StyleSheet, View } from "react-native";
 import { ProgressChart } from "react-native-chart-kit";
@@ -76,11 +78,10 @@ export default function CaloriesProgressChart() {
   return (
     <TouchableRipple
       borderless
-      rippleColor={colors.lvPrimary50}
-      style={styles.mainContainer}
-      onPress={() => console.log("object")}
+      rippleColor={colors.lvPrimary10}
+      style={[mainStyles.card, styles.mainContainer]}
     >
-      <View>
+      <View style={{ gap: 10 }}>
         {/* Chart Container */}
         <View
           style={{
@@ -112,25 +113,34 @@ export default function CaloriesProgressChart() {
               alignItems: "center",
             }}
           >
-            <Text style={{ color: "white" }}>Remaining</Text>
             <Text
-              variant="headlineMedium"
-              style={{ fontSize: 27, color: colors.primary }}
+              variant="labelLarge"
+              style={{ fontSize: 12, color: "rgb(104, 104, 104)" }}
+            >
+              REMAINING
+            </Text>
+            <Text
+              variant="labelLarge"
+              style={{
+                fontSize: 35,
+                lineHeight: 35,
+                color: "white",
+              }}
             >
               {remainingCal}
             </Text>
-            <Text style={{ color: "white" }}>kcal</Text>
+            <Text style={{ color: "rgb(82, 82, 82)" }}>kcal</Text>
           </View>
         </View>
         {/* Calories Info texts */}
-        <Divider
+        {/* <Divider
           style={{
             width: "80%",
             height: 1,
             backgroundColor: "rgb(68, 68, 68)",
             alignSelf: "center",
           }}
-        ></Divider>
+        ></Divider> */}
         <View
           style={{
             flexDirection: "row",
@@ -141,12 +151,15 @@ export default function CaloriesProgressChart() {
           {chartInfo.map((info, index) => (
             <View style={{ flexDirection: "row" }} key={index}>
               <View>
-                <Text
-                  style={{ color: "rgb(208, 208, 208)", fontSize: 14 }}
-                  variant="labelLarge"
-                >
-                  {info.title}
-                </Text>
+                <View style={{ flexDirection: "row" }}>
+                  <Text
+                    style={{ color: "rgb(208, 208, 208)", fontSize: 14 }}
+                    variant="labelLarge"
+                  >
+                    {info.title}
+                  </Text>
+                </View>
+
                 <View
                   style={{ flexDirection: "row", gap: 6, alignSelf: "center" }}
                 >
@@ -168,11 +181,12 @@ export default function CaloriesProgressChart() {
                   </Text>
                 </View>
               </View>
+
               {chartInfo.length - 1 > index ? (
                 <Divider
                   style={{
-                    backgroundColor: "gray",
-                    width: 1,
+                    backgroundColor: "rgb(48, 48, 48)",
+                    width: 1.1,
                     height: "100%",
                     marginHorizontal: 20,
                   }}
@@ -212,20 +226,31 @@ export default function CaloriesProgressChart() {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    padding: 5,
+    margin: 10,
     justifyContent: "space-around",
-    gap: 10,
+    borderRadius: 20,
   },
 });
 
 const chartConfig = {
   backgroundGradientFrom: "rgba(30, 41, 35, 0)",
   backgroundGradientFromOpacity: 0,
-  backgroundGradientTo: "rgba(30, 41, 35, 0)",
+  backgroundGradientTo: "rgba(20, 29, 24, 0.97)",
   backgroundGradientToOpacity: 0,
 
-  color: (opacity = 1) => `rgb(37, 228, 228,${opacity})`,
-  labelColor: (opacity = 1) => {
-    return `rgba(0,0,0,1)`;
+  // color: (opacity = 1) => `rgb(37, 228, 228,${opacity})`,
+  // This function is called for both the fill and the track
+  color: (opacity = 1) => {
+    // If opacity is low, it's usually the 'track' (unfilled space)
+    // We can return a fixed Gray for the track
+    if (opacity < 0.3) {
+      return `rgb(31, 35, 43)`; // Dark gray track
+    }
+    // Return a bright, solid color for the filled part
+    return `rgb(0, 250, 250)`;
   },
+
+  // Optional: makes the ring transition smoother
+  strokeWidth: 3,
+  barRadius: 3,
 };

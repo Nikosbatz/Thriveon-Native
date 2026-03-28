@@ -1,5 +1,6 @@
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
+import { Food, mealType } from "@/src/types";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetScrollView,
@@ -18,10 +19,10 @@ type LoggedFoodsSheetProps = {
   sheetRef: React.RefObject<BottomSheet | null>;
 };
 type todaysFoodsByMealType = {
-  Breakfast: LoggedFoodType[];
-  Lunch: LoggedFoodType[];
-  Dinner: LoggedFoodType[];
-  Snack: LoggedFoodType[];
+  Breakfast: Food[];
+  Lunch: Food[];
+  Dinner: Food[];
+  Snack: Food[];
 };
 type macroKey = "fats" | "protein" | "carbs";
 
@@ -40,7 +41,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
   const [selectedMealType, setselectedMealType] =
     useState<mealType>("Breakfast");
   const [sheetOpen, setSheetOpen] = useState(false);
-  const todaysFoods: LoggedFoodType[] = useUserLogsStore((s) => s.todaysFoods);
+  const todaysFoods: Food[] = useUserLogsStore((s) => s.todaysFoods);
   const removeFood = useUserLogsStore((s) => s.removeFood);
   const headerHeight = useHeaderHeight();
   const bottomBarHeight = useBottomTabBarHeight();
@@ -57,7 +58,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
       Snack: [],
     };
     for (const food of todaysFoods) {
-      grouped[food.mealType]?.push(food);
+      grouped[food.mealType ?? "Breakfast"]?.push(food);
     }
     return grouped;
   }, [todaysFoods]);
@@ -74,7 +75,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
     [todaysFoods],
   );
 
-  async function handleFoodRemoval(food: LoggedFoodType) {
+  async function handleFoodRemoval(food: Food) {
     try {
       await removeFood(food);
     } catch (error: any) {

@@ -1,10 +1,9 @@
 import { useAuth } from "@/src/context/authContext";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
-import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
-import { LinearGradient } from "expo-linear-gradient";
+import { Beef, Droplets, Wheat } from "lucide-react-native";
 import { View } from "react-native";
-import { Text } from "react-native-paper";
+import { Divider, Text } from "react-native-paper";
 import ProgressBar from "../UI/ProgressBar";
 
 export default function DashboardMacroCards() {
@@ -37,65 +36,105 @@ export default function DashboardMacroCards() {
       : 0,
   ];
 
-  console.log(todaysMacros);
-
   const data = {
     labels: ["Protein", "Fats", "Carbs"],
     data: macroPercentages,
-    colors: [
-      "rgba(0, 194, 212, 1)",
-      "rgba(0, 115, 255, 1)",
-      "rgba(1, 208, 132, 1)",
-    ],
+    icons: [Beef, Wheat, Droplets],
+    colors: ["rgb(0, 234, 255)", "rgba(0, 115, 255, 1)", "rgb(0, 255, 162)"],
   };
 
-  console.log(macros[0]);
   return (
-    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-      {data.labels.map((label, index) => (
-        <LinearGradient
-          colors={[colors.lvGradientCard, data.colors[index]]}
-          start={{ x: 0.5, y: 0.5 }}
-          end={{ x: 1, y: 0.5 }}
-          locations={[1, 1]}
-          key={index}
-          style={[
-            mainStyles.card,
-            {
-              width: "32%",
-              paddingHorizontal: 15,
-              paddingTop: 15,
-              paddingBottom: 5,
-              gap: 10,
-              borderColor: data.colors[index],
-              borderWidth: 1,
-            },
-          ]}
-        >
-          <Text variant="labelLarge" style={{ color: data.colors[index] }}>
-            {label.toUpperCase()}
-          </Text>
-          <Text
-            variant="labelLarge"
-            style={{ color: "white", fontSize: 20, lineHeight: 23 }}
-          >
-            {todaysMacros[label.toLowerCase()]}g
-          </Text>
-          <View style={{ alignItems: "center" }}>
-            <ProgressBar
-              filledColor={data.colors[index]}
-              unfilledColor="rgb(63, 63, 63)"
-              width={"100%"}
-              height={6}
-              currentValue={macros[index]}
-              targetValue={targets[index]}
-            />
+    <View
+      style={[
+        mainStyles.card,
+        {
+          flexDirection: "row",
+          justifyContent: "space-between",
+        },
+      ]}
+    >
+      {data.labels.map((label, index) => {
+        const Icon = data.icons[index];
+        return (
+          <View style={{ width: "31%", flexDirection: "row" }} key={index}>
+            <View
+              key={index}
+              style={[
+                {
+                  paddingHorizontal: 5,
+                  paddingTop: 10,
+                  paddingBottom: 5,
+                  gap: 10,
+                  backgroundColor: "transparent",
+                  elevation: 0,
+                },
+              ]}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: 5,
+                  alignSelf: "flex-start",
+                }}
+              >
+                <Text
+                  variant="labelLarge"
+                  style={{
+                    color: data.colors[index],
+                    textAlign: "center",
+                    fontSize: 14,
+                  }}
+                >
+                  {label.toUpperCase()}
+                </Text>
+
+                <Icon
+                  size={20}
+                  color={data.colors[index]}
+                  style={{
+                    // backgroundColor: colors.lvPrimary20,
+                    borderRadius: 5,
+                  }}
+                />
+              </View>
+              <Text
+                variant="labelLarge"
+                style={{
+                  color: "white",
+                  fontSize: 20,
+                  lineHeight: 23,
+                  textAlign: "left",
+                }}
+              >
+                {todaysMacros[label.toLowerCase()]}g
+              </Text>
+              <View style={{ alignItems: "center" }}>
+                <ProgressBar
+                  filledColor={data.colors[index]}
+                  unfilledColor="rgb(63, 63, 63)"
+                  width={"100%"}
+                  height={6}
+                  currentValue={macros[index]}
+                  targetValue={targets[index]}
+                />
+              </View>
+              <Text variant="labelLarge" style={{ color: "gray" }}>
+                Goal: {targets[index]}g
+              </Text>
+            </View>
+            {data.labels.length - 1 === index ? null : (
+              <Divider
+                style={{
+                  backgroundColor: "rgb(67, 68, 78)",
+                  width: 1,
+                  height: "70%",
+                  alignSelf: "center",
+                }}
+              />
+            )}
           </View>
-          <Text variant="labelLarge" style={{ color: "gray" }}>
-            Goal: {targets[index]}g
-          </Text>
-        </LinearGradient>
-      ))}
+        );
+      })}
     </View>
   );
 }

@@ -17,11 +17,11 @@ export default function BottomBarPlus({
       accessibilityRole={accessibilityRole}
       accessibilityLabel={accessibilityLabel}
       testID={testID}
-      rippleColor={"rgba(68, 126, 129, 0.74)"}
+      rippleColor={"rgba(17, 63, 65, 0.74)"}
       style={styles.container}
       borderless
     >
-      <AntDesign name="plus" size={40} color={colors.lvSecondary} />
+      <AntDesign name="plus" size={28} color={colors.lvSecondary} />
     </TouchableRipple>
   );
 }
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     padding: 7,
     position: "absolute",
     left: "50%",
-    top: -10,
+    top: 2,
     transform: [{ translateX: "-50%" }],
     backgroundColor: colors.lvPrimary, // required for ripple
     borderRadius: 50,

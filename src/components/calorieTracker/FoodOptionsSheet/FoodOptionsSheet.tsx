@@ -1,6 +1,7 @@
 import { useAuth } from "@/src/context/authContext";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
+import { Food, mealType } from "@/src/types";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
@@ -17,16 +18,16 @@ import React, {
   useState,
 } from "react";
 import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
-import { Button, Divider, Text, TextInput } from "react-native-paper";
+import { Button, Text, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
-import MenuPicker from "../UI/MenuPicker";
-import ProgressBar from "../UI/ProgressBar";
+import MenuPicker from "../../UI/MenuPicker";
+import MacrosInfo from "./MacrosInfo";
 
 // const SCREEN_WIDTH = Dimensions.get("window").width;
 
 type FoodSheetProps = {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
-  food: FoodType | BarcodeFoodType | null;
+  food: Food | null;
   selectedMealType: mealType;
   setSelectedMealType: Dispatch<SetStateAction<mealType>>;
   initialIndex?: number;
@@ -34,7 +35,7 @@ type FoodSheetProps = {
   setFoodLogged?: Dispatch<SetStateAction<boolean>>;
 };
 
-type macroKey = "fats" | "protein" | "carbs";
+export type macroKey = "fats" | "protein" | "carbs";
 
 const macrosKeys: macroKey[] = ["protein", "carbs", "fats"];
 
@@ -42,6 +43,9 @@ const macrosInfo = {
   macrosLabels: ["Protein", "Carbs", "Fats"],
   macrosIcons: [Beef, Wheat, Droplets],
 };
+
+//TODO: add a grams choice in all foods portions
+//TODO: fix bug trying to read portions array on items that portions array is empty (Partialy solved by the previous TODO)
 
 export default function FoodOptionsSheet({
   bottomSheetRef,
@@ -54,13 +58,20 @@ export default function FoodOptionsSheet({
 }: FoodSheetProps) {
   // Hooks
   const [quantityInput, setQuantityInput] = useState(
-    String(food?.loggedQuantity ?? "100"),
+    String(
+      food && "selectedServingIndex" in food
+        ? (food.selectedServingIndex ?? "1")
+        : "1",
+    ),
   );
   const quantityInputRef = useRef<RNTextInput>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const snapPoints = useMemo(() => ["98%"], []);
-  const [prevFood, setPrevFood] = useState<FoodType | BarcodeFoodType | null>(
-    food,
+  const [prevFood, setPrevFood] = useState<Food | null>(food);
+  const [selectedServingIndex, setSelectedServingIndex] = useState(
+    food && "selectedServingIndex" in food
+      ? (food.selectedServingIndex ?? 0)
+      : 0,
   );
   const handleAddFood = useUserLogsStore((s) => s.handleAddFood);
   const logsLoading = useUserLogsStore((s) => s.logsLoading);
@@ -74,6 +85,7 @@ export default function FoodOptionsSheet({
       if (quantityInputRef.current?.isFocused()) {
         quantityInputRef.current.blur();
       }
+      setSelectedServingIndex(0);
     } else {
       setSheetOpen(true);
     }
@@ -81,7 +93,12 @@ export default function FoodOptionsSheet({
 
   async function handleLogFood() {
     try {
-      await handleAddFood(food, quantityInput, selectedMealType);
+      await handleAddFood(
+        food,
+        quantityInput,
+        selectedMealType,
+        selectedServingIndex,
+      );
       Toast.show({
         type: "success",
         text1: "Food Logged Successfully",
@@ -98,26 +115,30 @@ export default function FoodOptionsSheet({
     }
   }
 
+  function handleQuantityInputChange(text: string) {
+    if (/^\d*\.?\d*$/.test(text)) {
+      setQuantityInput(text);
+    }
+  }
+
   // When a food is selected, check whether a "quantity" property exists,
   // if "quantity" exists make its value is the default quantityInput value
   if (
     prevFood?.name !== food?.name ||
     prevFood?.loggedQuantity !== food?.loggedQuantity
   ) {
-    setQuantityInput(String(food?.loggedQuantity ?? "100"));
+    setQuantityInput(String(food?.loggedQuantity ?? "1"));
     setPrevFood(food);
   }
 
   // Calculate Macros and Calories based on food quantity
-  const currentMacros = macrosKeys.map((macro) => {
-    const macroValue = food?.[macro] ?? 0;
-    const grams = food?.loggedQuantity ?? food?.grams ?? 0;
-    if (grams === 0) return 0;
-    return Math.floor((macroValue / grams) * Number(quantityInput));
-  });
   const currentCalories = Math.floor(
-    ((food?.calories ?? 0) / (food?.grams ?? 0)) * Number(quantityInput),
+    ((food?.calories ?? 0) / (food?.grams ?? 0)) *
+      Number(quantityInput) *
+      (food?.portions[selectedServingIndex].gramWeight ?? 1),
   );
+
+  console.log(food);
 
   // BackDrop component used as prop to BottomSheet
   const renderBackdrop = useCallback(
@@ -175,128 +196,59 @@ export default function FoodOptionsSheet({
         </View>
 
         {/* MealType Picker and TextInput Container */}
-        <View style={styles.flexRowView}>
+        <View style={[styles.flexRowView, {}]}>
           {/* MealType Picker */}
-          <MenuPicker
-            selectedOption={selectedMealType}
-            setSelectedOption={setSelectedMealType}
-            options={mealTypes}
-          />
-          {/* Quantity Input */}
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, width: "70%" }}>
             <Text variant="labelLarge" style={{ color: colors.lightGrayText }}>
-              Quantity (Grams)
+              Serving
+            </Text>
+            <MenuPicker
+              selectedOptionIndex={food?.portions[selectedServingIndex].label}
+              setSelectedOptionIndex={setSelectedServingIndex}
+              options={food?.portions.map((portion) => portion.label) ?? []}
+            />
+          </View>
+          {/* Quantity Input */}
+          <View style={{ width: "40%" }}>
+            <Text variant="labelLarge" style={{ color: colors.lightGrayText }}>
+              Quantity
             </Text>
             <TextInput
               ref={quantityInputRef}
               mode="outlined"
               keyboardType="number-pad"
               value={quantityInput}
-              onChangeText={setQuantityInput}
-              placeholder="Grams"
+              onChangeText={(text) => handleQuantityInputChange(text)}
+              placeholder="Quantity"
               style={styles.textInput}
               outlineColor="transparent"
               activeOutlineColor="transparent"
               cursorColor="white"
               placeholderTextColor={colors.lightGrayText}
               textColor={"white"}
+              maxLength={6}
             ></TextInput>
           </View>
+          {/* <MenuPicker
+            selectedOption={selectedMealType}
+            setSelectedOption={setSelectedMealType}
+            options={mealTypes}
+          /> */}
         </View>
+        <Text variant="labelLarge" style={{ color: "white" }}>
+          Grams in total:{" "}
+          {Number(quantityInput) *
+            (food?.portions[selectedServingIndex].gramWeight ?? 0)}
+          g
+        </Text>
 
-        {/* Macros Values Container */}
-        <View style={[styles.flexRowView, styles.macrosContainer]}>
-          {macrosKeys.map((macro, index) => {
-            const IconElement = macrosInfo.macrosIcons[index];
-            return (
-              <View key={index}>
-                <Divider
-                  style={[
-                    styles.divider,
-                    { backgroundColor: "rgba(40, 154, 171, 0.09)" },
-                  ]}
-                />
-                {/* Outer View for each macro */}
-                <View
-                  key={macro}
-                  style={[
-                    styles.macroTextContainer,
-                    { borderColor: colors[macro] },
-                  ]}
-                >
-                  <IconElement
-                    size={22}
-                    color={colors[macro]}
-                    style={{
-                      // backgroundColor: colors[macro],
-                      borderRadius: 5,
-                    }}
-                  />
-                  {/* ProgressBar and Label */}
-                  <View
-                    style={{
-                      flexDirection: "column",
-                      width: "70%",
-                      gap: 10,
-                    }}
-                  >
-                    <Text
-                      variant="labelLarge"
-                      style={{
-                        fontSize: 15,
-                        color: "rgba(225, 225, 225, 1)",
-                        alignSelf: "flex-start",
-                      }}
-                    >
-                      {macrosInfo.macrosLabels[index]}
-                    </Text>
+        {/* Macros Values Component */}
+        <MacrosInfo
+          food={food}
+          quantityInput={quantityInput}
+          selectedServingIndex={selectedServingIndex}
+        />
 
-                    <ProgressBar
-                      width={"100%"}
-                      height={8}
-                      unfilledColor={colors.lvPrimary10}
-                      filledColor={colors[macro]}
-                      currentValue={currentMacros[index]}
-                      targetValue={user ? user?.nutritionGoals[macro] : 0}
-                    ></ProgressBar>
-                  </View>
-
-                  {/* Percetange and value texts */}
-                  <View style={{ flexDirection: "column", width: "30%" }}>
-                    <Text
-                      variant="labelLarge"
-                      style={{
-                        fontSize: 14,
-                        color: "white",
-                        textAlign: "center",
-                        lineHeight: 25,
-                      }}
-                    >
-                      {currentMacros[index]}g/{user?.nutritionGoals[macro]}g
-                    </Text>
-                    <Text
-                      variant="labelLarge"
-                      style={{
-                        fontSize: 14,
-                        color: "white",
-                        textAlign: "center",
-                        lineHeight: 25,
-                      }}
-                    >
-                      {user
-                        ? Math.floor(
-                            (currentMacros[index] /
-                              user.nutritionGoals[macro]) *
-                              100,
-                          ) + "%"
-                        : null}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            );
-          })}
-        </View>
         <Text
           style={{
             color: "rgba(206, 206, 206, 0.66)",

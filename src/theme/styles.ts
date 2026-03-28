@@ -4,8 +4,11 @@ import { colors } from "./colors";
 export const mainStyles = StyleSheet.create({
   card: {
     backgroundColor: colors.lvGradientCard,
+    // backgroundColor: "transparent",
+    borderWidth: 0,
+    borderColor: "rgb(40, 46, 58)",
+    padding: 8,
     borderRadius: 20,
-    marginTop: 10,
     // iOS shadow
     shadowColor: "#000",
     shadowOffset: { width: 5, height: 4 },
@@ -21,7 +24,7 @@ export const mainStyles = StyleSheet.create({
   },
   cardTitleSmall: {
     marginStart: 10,
-    fontSize: 17,
+    fontSize: 14,
     color: "rgba(255, 255, 255, 1)",
   },
   headerTitleStyle: {
@@ -31,5 +34,8 @@ export const mainStyles = StyleSheet.create({
   },
   stackHeaderStyle: {
     backgroundColor: colors.lvBackground,
+  },
+  mainContainer: {
+    paddingBottom: 60,
   },
 });

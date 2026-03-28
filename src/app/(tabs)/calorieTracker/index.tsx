@@ -1,9 +1,11 @@
 import { getSearchFoods } from "@/src/api/requests";
 import FoodCard from "@/src/components/calorieTracker/FoodCard";
-import FoodOptionsSheet from "@/src/components/calorieTracker/FoodOptionsSheet";
+import FoodOptionsSheet from "@/src/components/calorieTracker/FoodOptionsSheet/FoodOptionsSheet";
 import LoggedFoodsSheet from "@/src/components/calorieTracker/LoggedFoodsSheet";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
+import { mainStyles } from "@/src/theme/styles";
+import { Food, mealType } from "@/src/types";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import BottomSheet from "@gorhom/bottom-sheet";
@@ -24,13 +26,13 @@ export default function CalorieTrackerScreen() {
     useState<mealType>("Breakfast");
   const [searchInput, setSearchInput] = useState<string>("");
   const [searchEnded, setSearchEnded] = useState<boolean>(false);
-  const [selectedFood, setSelectedFood] = useState<FoodType | null>(null);
-  const [filteredFoods, setFilteredFoods] = useState<BarcodeFoodType[]>([]);
+  const [selectedFood, setSelectedFood] = useState<Food | null>(null);
+  const [filteredFoods, setFilteredFoods] = useState<Food[]>([]);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const loggedFoodsSheetRef = useRef<BottomSheet>(null);
-  const foods: BarcodeFoodType[] = useUserLogsStore((s) => s.foods);
-  const todaysFoods: LoggedFoodType[] = useUserLogsStore((s) => s.todaysFoods);
-  const foodHistory: LoggedFoodType[] = useUserLogsStore((s) => s.foodHistory);
+  const foods: Food[] = useUserLogsStore((s) => s.foods);
+  const todaysFoods: Food[] = useUserLogsStore((s) => s.todaysFoods);
+  const foodHistory: Food[] = useUserLogsStore((s) => s.foodHistory);
   const router = useRouter();
 
   useEffect(() => {
@@ -38,19 +40,9 @@ export default function CalorieTrackerScreen() {
     if (searchInput.length <= 2) return;
 
     const timer = setTimeout(async () => {
-      const searchData = await getSearchFoods(searchInput);
+      // Search for foods in the backend, based on user input
+      const searchedFoods = await getSearchFoods(searchInput);
       setSearchEnded(true);
-      // Do your filtering logic with the fresh data
-      const words = searchInput.split(" ");
-      const searchedFoods = foods.filter((food) => {
-        for (const word of words) {
-          if (!food.name.toLowerCase().includes(word.toLowerCase())) {
-            return false;
-          }
-        }
-        return true;
-      });
-      searchedFoods.push(...searchData);
       setFilteredFoods(searchedFoods);
     }, 700);
     return () => {
@@ -205,13 +197,11 @@ export default function CalorieTrackerScreen() {
         style={{
           flexDirection: "row",
           position: "absolute",
-          bottom: 15,
+          bottom: mainStyles.mainContainer.paddingBottom + 15,
           right: "0%",
           transform: [{ translateX: "-10%" }, { translateY: "0%" }],
-          width: "auto",
           backgroundColor: colors.lvPrimary,
           borderRadius: 10,
-          overflow: "hidden",
         }}
       >
         <TouchableRipple
@@ -288,6 +278,7 @@ const styles = StyleSheet.create({
     gap: 12,
     flex: 1,
     backgroundColor: colors.lvBackground,
+    paddingBottom: mainStyles.mainContainer.paddingBottom + 10,
   },
   mealTabsContainer: {
     flexDirection: "row",

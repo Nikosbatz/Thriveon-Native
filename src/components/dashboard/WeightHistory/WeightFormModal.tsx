@@ -82,7 +82,7 @@ export default function WeightFormModal(props: Props) {
               lineHeight: 25,
             }}
           >
-            Log Your Weight ⏲️
+            Log Your Weight
           </Text>
           <Pressable onPress={() => console.log("date picker pressed")}>
             <TextInput
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 20,
     gap: 15,
-    borderWidth: 1,
+    borderWidth: 0,
     borderColor: "rgba(61, 61, 61, 1)",
   },
 

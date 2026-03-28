@@ -177,8 +177,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lvGradientCard,
     padding: 20,
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "rgba(61, 61, 61, 1)",
   },
 
   title: {

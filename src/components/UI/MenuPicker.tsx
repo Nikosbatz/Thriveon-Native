@@ -2,24 +2,19 @@ import { colors } from "@/src/theme/colors";
 import { ArrowDown } from "lucide-react-native";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Modal, Pressable, TouchableHighlight, View } from "react-native";
-import { Text } from "react-native-paper";
-
-// TODO: fix picker width and height
+import { Divider, Text } from "react-native-paper";
 
 type PickerProps = {
-  selectedOption: any;
-  setSelectedOption: Dispatch<SetStateAction<any>>;
+  selectedOptionIndex: any;
+  setSelectedOptionIndex: Dispatch<SetStateAction<any>>;
   options: any[];
 };
 
 export default function MenuPicker(props: PickerProps) {
   const [modalVisible, setModalVisible] = useState(false);
   return (
-    <View style={{ width: "45%", alignSelf: "stretch" }}>
+    <View style={{ width: "100%", alignSelf: "center", flex: 1 }}>
       <View style={{ flex: 1 }}>
-        <Text variant="labelLarge" style={{ color: colors.lightGrayText }}>
-          Meal Type
-        </Text>
         <Pressable
           onPress={() => setModalVisible(true)}
           style={{
@@ -36,12 +31,13 @@ export default function MenuPicker(props: PickerProps) {
           <Text
             variant="labelLarge"
             style={{
-              fontSize: 18,
+              fontSize: 17,
               color: "white",
               display: "flex",
+              maxWidth: "85%",
             }}
           >
-            {props.selectedOption}
+            {props.selectedOptionIndex}
           </Text>
           <ArrowDown
             size={24}
@@ -53,8 +49,8 @@ export default function MenuPicker(props: PickerProps) {
       <MenuPickerModal
         visible={modalVisible}
         setVisible={setModalVisible}
-        selectedOption={props.selectedOption}
-        setSelectedOption={props.setSelectedOption}
+        selectedOptionIndex={props.setSelectedOptionIndex}
+        setSelectedOptionIndex={props.setSelectedOptionIndex}
         options={props.options}
       />
     </View>
@@ -64,20 +60,20 @@ export default function MenuPicker(props: PickerProps) {
 type ModalProps = {
   visible: boolean;
   setVisible: Dispatch<SetStateAction<boolean>>;
-  selectedOption: any;
-  setSelectedOption: Dispatch<SetStateAction<any>>;
+  selectedOptionIndex: any;
+  setSelectedOptionIndex: Dispatch<SetStateAction<any>>;
   options: any[];
 };
 
 function MenuPickerModal({
   visible,
   setVisible,
-  selectedOption,
-  setSelectedOption,
+  selectedOptionIndex,
+  setSelectedOptionIndex,
   options,
 }: ModalProps) {
-  function handleSelection(mealType: mealType) {
-    setSelectedOption(mealType);
+  function handleSelection(index: number) {
+    setSelectedOptionIndex(index);
     setVisible(false);
   }
   return (
@@ -103,48 +99,69 @@ function MenuPickerModal({
         <Pressable
           style={{
             width: "80%",
-            backgroundColor: colors.lvGradientCard,
+            backgroundColor: colors.lvBackground,
             borderRadius: 25,
             padding: 20,
             gap: 10,
           }}
         >
           <Text
-            style={{ textAlign: "center", color: colors.lvPrimary80 }}
+            style={{
+              textAlign: "center",
+              color: colors.lvPrimary80,
+              fontSize: 20,
+            }}
             variant="headlineSmall"
           >
-            Select a meal type
+            Select option
           </Text>
+          <Divider
+            style={{
+              backgroundColor: "rgb(155, 155, 155)",
+              width: "100%",
+              marginTop: 0,
+            }}
+          />
           {/* Meal Types Texts */}
           <View style={{ gap: 0 }}>
             {options.map((option, index) => (
               <TouchableHighlight
                 key={index}
                 activeOpacity={1}
-                underlayColor={colors.primary20}
+                underlayColor={colors.lvPrimary10}
                 onPress={() => {
-                  handleSelection(option);
+                  handleSelection(index);
                 }}
-                // rippleColor={"rgba(6, 213, 231, 0.73)"}
-                style={{ borderRadius: 20, overflow: "hidden" }}
-                // borderless
+                style={{ borderRadius: 10, overflow: "hidden" }}
               >
-                <Text
-                  variant="labelLarge"
-                  style={{
-                    color: "white",
-                    textAlign: "center",
-                    fontSize: 21,
-                    padding: 5,
-                    backgroundColor:
-                      selectedOption === option
-                        ? colors.lvPrimary50
-                        : "transparent",
-                    borderRadius: 7,
-                  }}
-                >
-                  {option}
-                </Text>
+                <View>
+                  <Text
+                    variant="labelLarge"
+                    style={{
+                      color: "white",
+                      textAlign: "center",
+                      fontSize: 18,
+                      padding: 3,
+                      backgroundColor:
+                        selectedOptionIndex === index
+                          ? colors.lvPrimary50
+                          : "transparent",
+                      borderRadius: 7,
+                    }}
+                  >
+                    {option}
+                  </Text>
+                  {options.length - 1 > index ? (
+                    <Divider
+                      style={{
+                        backgroundColor: "rgb(51, 51, 51)",
+                        width: "70%",
+                        marginTop: 5,
+                        alignSelf: "center",
+                      }}
+                    />
+                  ) : null}
+                </View>
               </TouchableHighlight>
             ))}
           </View>

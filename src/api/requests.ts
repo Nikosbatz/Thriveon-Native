@@ -1,5 +1,6 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
+import { Food } from "../types";
 import { api, BASE_URI } from "./axiosApi";
 
 export async function login(email: string, password: string) {
@@ -212,7 +213,7 @@ export async function getFoods(path: string) {
 }
 
 // Posts food object on /api/foods/userlogs
-export async function postFood(data: FoodType, path: string) {
+export async function postFood(data: Food, path: string) {
   try {
     const res = await api.post(`${path}`, data, {
       headers: {
@@ -230,7 +231,7 @@ export async function postFood(data: FoodType, path: string) {
 }
 
 //TODO:change any type
-export async function deleteUserLogsFood(food: LoggedFoodType) {
+export async function deleteUserLogsFood(food: Food) {
   const res = await api.delete(`/foods/userlogs/${food._id}`, {
     headers: {
       Accept: "application/json",
@@ -355,7 +356,7 @@ export async function getBarcodeFood(code: string) {
 export async function getSearchFoods(searchInput: string) {
   try {
     const res = await api.get(`/foods/search/${searchInput}`);
-    return res.data.data;
+    return res.data;
   } catch (error: any) {
     throw new Error("Could not complete the search!");
   }

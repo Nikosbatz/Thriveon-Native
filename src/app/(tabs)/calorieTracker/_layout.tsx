@@ -18,7 +18,10 @@ export default function Layout() {
       }}
     >
       <Stack.Screen name="index" options={{ title: "Today foods" }} />
-      <Stack.Screen name="cameraScreen" options={{ title: "Scan barcode" }} />
+      <Stack.Screen
+        name="cameraScreen"
+        options={{ title: "Scan barcode", headerShown: false }}
+      />
       <Stack.Screen name="barcodeFoodScreen" options={{ title: "" }} />
     </Stack>
   );
