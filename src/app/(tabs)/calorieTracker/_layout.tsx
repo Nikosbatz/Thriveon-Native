@@ -17,7 +17,10 @@ export default function Layout() {
         // popToTopOnBlur: true,
       }}
     >
-      <Stack.Screen name="index" options={{ title: "Today foods" }} />
+      <Stack.Screen
+        name="index"
+        options={{ title: "Today foods", headerShown: false }}
+      />
       <Stack.Screen
         name="cameraScreen"
         options={{ title: "Scan barcode", headerShown: false }}

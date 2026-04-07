@@ -17,7 +17,7 @@ export const colors = {
   articSky: "#7bbcfe",
   deepNavy: "#091636",
   cardBorderColor: "rgb(49, 49, 49)",
-  lvBackground: "#0d0f13",
+  lvBackground: "#0c111a",
   lvPrimary: "rgb(37, 228, 228)",
   lvPrimaryLight: "rgba(170, 247, 247, 1)",
   lvPrimary10: "hsla(180, 78%, 52%, 0.1)",
@@ -27,4 +27,6 @@ export const colors = {
   lvHeader: "rgba(33, 38, 49, 0.5)",
   lvSecondary: "rgb(42, 48, 60)",
   lvGradientCard: "#181c25",
+  lvDashboardCardBg: "rgba(126, 126, 128, 0.26)",
+  lvFoodCardBg: "rgba(39, 48, 62, 0.71)",
 };

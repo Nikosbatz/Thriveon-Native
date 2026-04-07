@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import { getBarcodeFood } from "../api/requests";
+import { Food } from "../types";
 
 interface BarcodeFoodStoreState {
-  food: BarcodeFoodType | null;
+  food: Food | null;
   loadingFood: boolean;
   code: string;
   fetchFood: (code: string) => void;

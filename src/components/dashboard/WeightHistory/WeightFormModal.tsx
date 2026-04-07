@@ -94,6 +94,7 @@ export default function WeightFormModal(props: Props) {
               right={<TextInput.Icon icon="calendar" />}
               style={styles.input}
               textColor="white"
+              theme={{ roundness: 10 }}
             />
           </Pressable>
 
@@ -123,6 +124,7 @@ export default function WeightFormModal(props: Props) {
               textColor="white"
               cursorColor="white"
               placeholderTextColor={colors.lightGrayText}
+              theme={{ roundness: 10 }}
               keyboardType="number-pad"
             ></TextInput>
           </View>
@@ -147,8 +149,8 @@ export default function WeightFormModal(props: Props) {
               backgroundColor: colors.lvPrimary80,
             }}
             onPress={handleLogWeight}
-            icon={() => <Weight color={"white"} />}
-            textColor={"white"}
+            icon={() => <Weight color={colors.lvBackground} />}
+            textColor={colors.lvBackground}
             loading={weightLogsLoading}
             disabled={weightLogsLoading}
           >
@@ -168,7 +170,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0, 0, 0, 0.77)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -176,6 +178,7 @@ const styles = StyleSheet.create({
   modalBox: {
     width: "80%",
     backgroundColor: colors.lvGradientCard,
+    elevation: 10,
     padding: 20,
     borderRadius: 20,
     gap: 15,

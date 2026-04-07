@@ -46,7 +46,7 @@ export default function DashboardMacroCards() {
   return (
     <View
       style={[
-        mainStyles.card,
+        mainStyles.dashboardCard,
         {
           flexDirection: "row",
           justifyContent: "space-between",

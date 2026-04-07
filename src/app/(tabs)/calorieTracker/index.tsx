@@ -2,6 +2,7 @@ import { getSearchFoods } from "@/src/api/requests";
 import FoodCard from "@/src/components/calorieTracker/FoodCard";
 import FoodOptionsSheet from "@/src/components/calorieTracker/FoodOptionsSheet/FoodOptionsSheet";
 import LoggedFoodsSheet from "@/src/components/calorieTracker/LoggedFoodsSheet";
+import ProfileHeader from "@/src/components/profile/ProfileHeader";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
@@ -12,7 +13,7 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
 import { Barcode, ListCheck } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
   ActivityIndicator,
   Divider,
@@ -20,6 +21,12 @@ import {
   TextInput,
   TouchableRipple,
 } from "react-native-paper";
+import Animated, {
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 export default function CalorieTrackerScreen() {
   const [selectedMealType, setselectedMealType] =
@@ -30,7 +37,6 @@ export default function CalorieTrackerScreen() {
   const [filteredFoods, setFilteredFoods] = useState<Food[]>([]);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const loggedFoodsSheetRef = useRef<BottomSheet>(null);
-  const foods: Food[] = useUserLogsStore((s) => s.foods);
   const todaysFoods: Food[] = useUserLogsStore((s) => s.todaysFoods);
   const foodHistory: Food[] = useUserLogsStore((s) => s.foodHistory);
   const router = useRouter();
@@ -59,13 +65,44 @@ export default function CalorieTrackerScreen() {
     router.navigate("/calorieTracker/cameraScreen");
   }
 
+  const translateY = useSharedValue(0);
+  const opacity = useSharedValue(1);
+  const lastContentOffset = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      const currentOffset = event.contentOffset.y;
+
+      // Ignore small jitters or bounce effects at the top
+      if (currentOffset <= 0) {
+        translateY.value = withTiming(0);
+        return;
+      }
+
+      if (currentOffset > lastContentOffset.value && currentOffset > 10) {
+        // SCROLLING DOWN -> Hide the view
+        // translateY.value = withTiming(100, { duration: 100 }); // Adjust -100 to your view's height
+        opacity.value = withTiming(0, { duration: 200 });
+      } else if (currentOffset < lastContentOffset.value) {
+        // SCROLLING UP -> Show the view
+        // translateY.value = withTiming(0);
+        opacity.value = withTiming(1, { duration: 100 });
+      }
+
+      lastContentOffset.value = currentOffset;
+    },
+  });
+
+  const animatedHeaderStyle = useAnimatedStyle(() => {
+    return {
+      // transform: [{ translateY: translateY.value }],
+      opacity: opacity.value,
+    };
+  });
+
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        // { paddingBottom: tabBarHeight + headerHeight },
-      ]}
-    >
+    <View style={[styles.mainContainer]}>
+      <ProfileHeader />
       {/* MealType selection buttons */}
       <View style={styles.mealTabsContainer}>
         {mealTypes.map((mealType, index) => (
@@ -169,7 +206,9 @@ export default function CalorieTrackerScreen() {
             color={colors.lvPrimaryLight}
           />
         ) : (
-          <FlatList
+          <Animated.FlatList
+            onScroll={scrollHandler}
+            scrollEventThrottle={128}
             data={
               searchInput.length > 2 ? filteredFoods.slice(0, 35) : foodHistory
             }
@@ -193,16 +232,19 @@ export default function CalorieTrackerScreen() {
       </View>
 
       {/* Open logged foods and scan barcode buttons */}
-      <View
-        style={{
-          flexDirection: "row",
-          position: "absolute",
-          bottom: mainStyles.mainContainer.paddingBottom + 15,
-          right: "0%",
-          transform: [{ translateX: "-10%" }, { translateY: "0%" }],
-          backgroundColor: colors.lvPrimary,
-          borderRadius: 10,
-        }}
+      <Animated.View
+        style={[
+          {
+            flexDirection: "row",
+            position: "absolute",
+            bottom: mainStyles.mainContainer.paddingBottom + 15,
+            right: "3%",
+            transform: [{ translateX: "-10%" }, { translateY: "0%" }],
+            backgroundColor: colors.lvPrimary80,
+            borderRadius: 10,
+          },
+          animatedHeaderStyle,
+        ]}
       >
         <TouchableRipple
           onPress={() => loggedFoodsSheetRef.current?.snapToIndex(0)}
@@ -259,7 +301,7 @@ export default function CalorieTrackerScreen() {
             </Text>
           </View>
         </TouchableRipple>
-      </View>
+      </Animated.View>
 
       <LoggedFoodsSheet sheetRef={loggedFoodsSheetRef}></LoggedFoodsSheet>
       <FoodOptionsSheet
@@ -274,7 +316,6 @@ export default function CalorieTrackerScreen() {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    paddingTop: 20,
     gap: 12,
     flex: 1,
     backgroundColor: colors.lvBackground,

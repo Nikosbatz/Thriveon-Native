@@ -28,7 +28,7 @@ export default function ExerciseTrackerCard() {
     >
       <View
         style={[
-          mainStyles.card,
+          mainStyles.dashboardCard,
           {
             gap: 15,
             flex: 1,

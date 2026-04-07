@@ -79,7 +79,7 @@ export default function CaloriesProgressChart() {
     <TouchableRipple
       borderless
       rippleColor={colors.lvPrimary10}
-      style={[mainStyles.card, styles.mainContainer]}
+      style={[mainStyles.dashboardCard, styles.mainContainer]}
     >
       <View style={{ gap: 10 }}>
         {/* Chart Container */}
@@ -115,7 +115,7 @@ export default function CaloriesProgressChart() {
           >
             <Text
               variant="labelLarge"
-              style={{ fontSize: 12, color: "rgb(104, 104, 104)" }}
+              style={{ fontSize: 12, color: "rgb(189, 189, 189)" }}
             >
               REMAINING
             </Text>
@@ -129,7 +129,7 @@ export default function CaloriesProgressChart() {
             >
               {remainingCal}
             </Text>
-            <Text style={{ color: "rgb(82, 82, 82)" }}>kcal</Text>
+            <Text style={{ color: "rgb(157, 157, 157)" }}>kcal</Text>
           </View>
         </View>
         {/* Calories Info texts */}
@@ -244,7 +244,7 @@ const chartConfig = {
     // If opacity is low, it's usually the 'track' (unfilled space)
     // We can return a fixed Gray for the track
     if (opacity < 0.3) {
-      return `rgb(31, 35, 43)`; // Dark gray track
+      return `rgba(0, 0, 0, 0.3)`; // Dark gray track
     }
     // Return a bright, solid color for the filled part
     return `rgb(0, 250, 250)`;

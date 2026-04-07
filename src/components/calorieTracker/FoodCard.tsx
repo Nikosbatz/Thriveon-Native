@@ -44,7 +44,7 @@ export default function FoodCard({
       underlayColor={colors.primary20}
       onPress={handleOnPress}
       style={{
-        backgroundColor: colors.lvGradientCard,
+        backgroundColor: colors.lvFoodCardBg,
         borderRadius: 10,
         marginTop: 5,
       }}

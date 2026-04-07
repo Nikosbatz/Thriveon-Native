@@ -1,4 +1,3 @@
-import { colors } from "@/src/theme/colors";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { StyleSheet, View } from "react-native";
 import { Text, TouchableRipple } from "react-native-paper";
@@ -11,21 +10,22 @@ export default function CustomTabBar({
   return (
     <View
       style={{
-        backgroundColor: "rgba(30, 40, 52, 0.95)",
+        backgroundColor: "rgb(0, 0, 0)",
         borderWidth: 0,
         borderColor: "rgb(25, 28, 31)",
         position: "absolute",
         bottom: 10,
         width: "90%",
         alignSelf: "center",
-        padding: 3,
-        borderRadius: 20,
+        padding: 5,
+        borderRadius: 30,
       }}
     >
       <View
         style={{
           flexDirection: "row",
           justifyContent: "space-evenly",
+          gap: 10,
         }}
       >
         {state.routes.map((route, index) => {
@@ -66,15 +66,22 @@ export default function CustomTabBar({
               key={index}
               onPress={onPress}
               // Use a dynamic ripple color based on your theme
-              rippleColor="rgba(84, 98, 103, 0.52)"
+              rippleColor="rgba(164, 165, 165, 0.36)"
               borderless
-              style={{ borderRadius: 50, padding: 3, flex: 1 }}
+              style={{ borderRadius: 50, padding: 0, flex: 1 }}
             >
-              <View style={{ alignItems: "center" }}>
+              <View
+                style={{
+                  alignItems: "center",
+                  backgroundColor: isFocused
+                    ? "rgb(59, 59, 59)"
+                    : "transparent",
+                }}
+              >
                 {renderIcon &&
                   renderIcon({
                     focused: isFocused,
-                    color: isFocused ? colors.lvPrimary : "gray",
+                    color: isFocused ? "white" : "gray",
                     size: 23,
                   })}
 

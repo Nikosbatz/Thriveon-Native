@@ -45,7 +45,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
   const removeFood = useUserLogsStore((s) => s.removeFood);
   const headerHeight = useHeaderHeight();
   const bottomBarHeight = useBottomTabBarHeight();
-  const snapPoints = useMemo(() => ["98%"], []);
+  const snapPoints = useMemo(() => ["80%"], []);
   const paperTheme = useTheme();
   const backdropOpacity = useSharedValue(0);
 

@@ -7,8 +7,9 @@ import WeightHistoryChart from "@/src/components/dashboard/WeightHistory/WeightH
 import { useAuth } from "@/src/context/authContext";
 import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
-import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
+import { Food } from "@/src/types";
+import { LinearGradient } from "expo-linear-gradient";
 import { useEffect } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
@@ -25,6 +26,8 @@ export default function Dashboard() {
   const foods = useUserLogsStore((s) => s.foods);
   const loadFoods = useUserLogsStore((s) => s.loadFoods);
   const todaysFoods = useUserLogsStore((s) => s.todaysFoods);
+  const foodHistory: Food[] = useUserLogsStore((s) => s.foodHistory);
+
   const getTodayFoods = useUserLogsStore((s) => s.getTodayFoods);
   const fetchUserWeightLogs = useUserLogsStore((s) => s.fetchUserWeightLogs);
   const fetchUserActivites = useUserActivitiesStore(
@@ -61,7 +64,11 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <View style={{ flex: 1 }}>
+    <LinearGradient
+      colors={["#085062", "#073854", "#080722", "#020212", "#020212"]}
+      locations={[0, 0.05, 0.4, 0.5, 1]}
+      style={{ flex: 1 }}
+    >
       <CustomHeader scrollY={scrollY} />
       <Animated.ScrollView
         onScroll={scrollHandler}
@@ -109,13 +116,13 @@ export default function Dashboard() {
         </View>
         <Text> </Text>
       </Animated.ScrollView>
-    </View>
+    </LinearGradient>
   );
 }
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: colors.lvBackground,
+    backgroundColor: "transparent",
     paddingBottom: 100,
     paddingVertical: 0,
   },

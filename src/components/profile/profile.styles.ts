@@ -1,4 +1,5 @@
 import { colors } from "@/src/theme/colors";
+import { mainStyles } from "@/src/theme/styles";
 import { StyleSheet } from "react-native";
 
 export const profileStyles = StyleSheet.create({
@@ -9,6 +10,7 @@ export const profileStyles = StyleSheet.create({
   mainScrollView: {
     gap: 10,
     paddingHorizontal: 10,
+    paddingBottom: mainStyles.mainContainer.paddingBottom + 25,
   },
   imageContainer: {
     // backgroundColor: "rgba(67, 67, 67, 1)",
@@ -20,7 +22,7 @@ export const profileStyles = StyleSheet.create({
   card: {
     borderRadius: 20,
     backgroundColor: colors.lvGradientCard,
-    borderWidth: 1,
+    borderWidth: 0,
     borderColor: "rgba(74, 74, 74, 1)",
     padding: 15,
   },

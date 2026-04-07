@@ -1,10 +1,10 @@
-import BottomBarPlus from "@/src/components/UI/BottomBarPlus";
 import CustomTabBar from "@/src/components/UI/CustomTabBar";
 import { useAuth } from "@/src/context/authContext";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
 import { Redirect, Tabs, useSegments } from "expo-router";
 import { Image, View } from "react-native";
 import { Text } from "react-native-paper";
@@ -148,9 +148,23 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="calorieTracker"
         options={{
-          title: "Today's Calories",
-          tabBarButton: BottomBarPlus,
+          title: "Log Food",
+          // tabBarButton: BottomBarPlus,
           headerShown: false,
+          tabBarIcon: ({ color, size, focused }) =>
+            focused ? (
+              <MaterialCommunityIcons
+                name="book-search"
+                size={size}
+                color={color}
+              />
+            ) : (
+              <MaterialCommunityIcons
+                name="book-search-outline"
+                size={size}
+                color={color}
+              />
+            ),
         }}
       ></Tabs.Screen>
       <Tabs.Screen

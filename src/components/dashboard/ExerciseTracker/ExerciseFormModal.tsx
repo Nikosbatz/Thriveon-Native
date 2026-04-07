@@ -103,6 +103,7 @@ export default function ExerciseFormModal(props: Props) {
                 cursorColor="white"
                 keyboardType="number-pad"
                 placeholderTextColor={colors.lightGrayText}
+                theme={{ roundness: 10 }}
               ></TextInput>
             </View>
 
@@ -124,6 +125,7 @@ export default function ExerciseFormModal(props: Props) {
                 cursorColor="white"
                 placeholderTextColor={colors.lightGrayText}
                 keyboardType="number-pad"
+                theme={{ roundness: 10 }}
               ></TextInput>
             </View>
           </View>
@@ -144,8 +146,8 @@ export default function ExerciseFormModal(props: Props) {
               backgroundColor: colors.lvPrimary80,
             }}
             onPress={() => handleLogActivity()}
-            icon={() => <BookmarkPlus color={"white"} />}
-            textColor={"white"}
+            icon={() => <BookmarkPlus color={colors.lvBackground} />}
+            textColor={colors.lvBackground}
             loading={activitiesLoading}
             disabled={activitiesLoading}
           >
@@ -167,13 +169,14 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0, 0, 0, 0.77)",
     justifyContent: "center",
     alignItems: "center",
   },
 
   modalBox: {
     width: "80%",
+    elevation: 10,
     backgroundColor: colors.lvGradientCard,
     padding: 20,
     borderRadius: 20,

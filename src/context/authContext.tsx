@@ -15,6 +15,7 @@ import { setLogoutHandler } from "../api/authBridge";
 import {
   authToken,
   getUserInfo,
+  googleLogin,
   login,
   postEmailVerificationToken,
   postUserInfo,
@@ -22,6 +23,7 @@ import {
 } from "../api/requests";
 import { useUserLogsStore } from "../store/userLogsStore";
 import { useUserStore } from "../store/userStore";
+import { UserInterface } from "../types";
 
 type AuthContextType = {
   user: UserInterface | null;
@@ -37,6 +39,7 @@ type AuthContextType = {
   loadingUserInfo: boolean;
   updateUserInfo: (info: UserInterface) => void;
   verifyUserEmail: (verificationCode: string) => void;
+  googleSignIn: (googleData: any) => void;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -154,6 +157,17 @@ export default function AuthContextProvider({
     }
   }, []);
 
+  const googleSignIn = useCallback(async (googleData: any) => {
+    try {
+      const data = await googleLogin(googleData);
+      setIsLoggedIn(true);
+      setUser(data.user);
+      router.replace("/(tabs)");
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }, []);
+
   return (
     <AuthContext.Provider
       value={useMemo(
@@ -171,6 +185,7 @@ export default function AuthContextProvider({
           loadingUserInfo,
           updateUserInfo,
           verifyUserEmail,
+          googleSignIn,
         }),
         [
           signIn,
@@ -186,6 +201,7 @@ export default function AuthContextProvider({
           loadingUserInfo,
           updateUserInfo,
           verifyUserEmail,
+          googleSignIn,
         ],
       )}
     >
