@@ -37,6 +37,6 @@ export const mainStyles = StyleSheet.create({
     backgroundColor: colors.lvBackground,
   },
   mainContainer: {
-    paddingBottom: 60,
+    paddingBottom: 70,
   },
 });

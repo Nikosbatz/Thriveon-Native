@@ -28,9 +28,10 @@ export default function BarcodeFoodScreen() {
         food={barcodeStoreFood}
         selectedMealType={selectedMealType}
         setSelectedMealType={setSelectedMealType}
-        initialIndex={0}
+        initialIndex={1}
         enablePanDownToClose={false}
         setFoodLogged={setFoodLogged}
+        snapPoint="99%"
       />
     </View>
   );

@@ -1,5 +1,5 @@
 import { colors } from "@/src/theme/colors";
-import { ArrowDown } from "lucide-react-native";
+import { ArrowDown, ArrowUp } from "lucide-react-native";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Modal, Pressable, TouchableHighlight, View } from "react-native";
 import { Divider, Text } from "react-native-paper";
@@ -18,8 +18,10 @@ export default function MenuPicker(props: PickerProps) {
         <Pressable
           onPress={() => setModalVisible(true)}
           style={{
-            borderRadius: 4,
-            backgroundColor: colors.lvPrimary20,
+            borderRadius: 10,
+            borderWidth: 2,
+            borderColor: modalVisible ? colors.lvPrimary50 : "transparent",
+            backgroundColor: "rgb(45, 61, 69)",
             flex: 1,
             flexDirection: "row",
             // justifyContent: "center",
@@ -39,11 +41,19 @@ export default function MenuPicker(props: PickerProps) {
           >
             {props.selectedOptionIndex}
           </Text>
-          <ArrowDown
-            size={24}
-            color={"white"}
-            style={{ position: "absolute", right: 10 }}
-          ></ArrowDown>
+          {modalVisible ? (
+            <ArrowUp
+              size={24}
+              color={"white"}
+              style={{ position: "absolute", right: 10 }}
+            ></ArrowUp>
+          ) : (
+            <ArrowDown
+              size={24}
+              color={"white"}
+              style={{ position: "absolute", right: 10 }}
+            ></ArrowDown>
+          )}
         </Pressable>
       </View>
       <MenuPickerModal
@@ -105,23 +115,25 @@ function MenuPickerModal({
             gap: 10,
           }}
         >
-          <Text
-            style={{
-              textAlign: "center",
-              color: colors.lvPrimary80,
-              fontSize: 20,
-            }}
-            variant="headlineSmall"
-          >
-            Select option
-          </Text>
-          <Divider
-            style={{
-              backgroundColor: "rgb(155, 155, 155)",
-              width: "100%",
-              marginTop: 0,
-            }}
-          />
+          <View>
+            <Text
+              style={{
+                textAlign: "center",
+                color: colors.lvPrimary80,
+                fontSize: 20,
+              }}
+              variant="headlineSmall"
+            >
+              Select option
+            </Text>
+            <Divider
+              style={{
+                backgroundColor: "rgb(118, 118, 118)",
+                width: "100%",
+                height: 0.5,
+              }}
+            />
+          </View>
           {/* Meal Types Texts */}
           <View style={{ gap: 0 }}>
             {options.map((option, index) => (
@@ -158,6 +170,7 @@ function MenuPickerModal({
                         width: "70%",
                         marginTop: 5,
                         alignSelf: "center",
+                        height: 0.5,
                       }}
                     />
                   ) : null}

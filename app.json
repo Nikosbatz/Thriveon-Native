@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "thriveon",
-    "slug": "thriveon-native",
+    "name": "ThriveOn",
+    "slug": "thriveon",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo_transparent.png",
-    "scheme": "thriveonnative",
+    "icon": "./assets/images/logo_outer_blue.png",
+    "scheme": "thriveon",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -19,9 +19,9 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/logo_transparent.png",
-        "backgroundImage": "./assets/images/logo_transparent.png",
-        "monochromeImage": "./assets/images/logo_transparent.png"
+        "foregroundImage": "./assets/images/logo_outer_blue.png",
+        "backgroundImage": "./assets/images/logo_outer_blue.png",
+        "monochromeImage": "./assets/images/logo_outer_blue.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -66,7 +66,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "e5ccc36d-53f5-4e13-9f1c-0ff6b3db0496"
+        "projectId": "fe299774-83a7-4c02-913d-274f69dcd6ac"
       }
     },
     "owner": "nikosbatz"

@@ -1,8 +1,10 @@
+import PrivacyPolicyModal from "@/src/components/UI/PrivacyPolicyModal";
+import SplashScreen from "@/src/components/UI/SplashScreen";
 import { useAuth } from "@/src/context/authContext";
+import { EULAHTML, privacyPolicyHTML } from "@/src/privacy/privacyPolicy";
 import { colors } from "@/src/theme/colors";
 import {
   GoogleSignin,
-  GoogleSigninButton,
   isErrorWithCode,
 } from "@react-native-google-signin/google-signin";
 import { LinearGradient } from "expo-linear-gradient";
@@ -14,26 +16,36 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from "react-native";
-import { Button, Divider, Text, TextInput, useTheme } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Button,
+  Divider,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 
+// TODO: make webClientId a .env variable
 GoogleSignin.configure({
-  // UPDATED to match your screenshot image_45d865.png
   webClientId:
     "580194576437-t4bmg92pbh6a3mni97n6fi4v3s6k5a70.apps.googleusercontent.com",
   offlineAccess: true,
 });
 
 export default function AuthScreen() {
-  const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [emailInput, setEmailInput] = useState<string>("");
   const [passwordInput, setPasswordInput] = useState<string>("");
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [errorText, setErrorText] = useState<string | null>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  const [policyModalHTML, setPolicyModalHTML] = useState("");
   const theme = useTheme();
-  const { signUp, signIn, isLoggedIn, googleSignIn } = useAuth();
+  const { signIn, isLoggedIn, googleSignIn, splashScreenActive } = useAuth();
   const router = useRouter();
 
   async function handleAuth() {
@@ -63,26 +75,31 @@ export default function AuthScreen() {
     try {
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
+      setIsLoadingGoogle(true);
       const idToken = response.data?.idToken;
       const email = response.data?.user.email;
-      // console.log(response.data?.user);
       if (idToken && email) {
         await googleSignIn(response.data);
       } else {
         alert("Could not sign in with Google...");
       }
     } catch (error: any) {
+      setIsLoadingGoogle(false);
+
       if (isErrorWithCode(error)) {
-        console.log(error.stack);
       } else {
         alert(error.message);
       }
     }
   }
 
+  if (splashScreenActive) {
+    return <SplashScreen />;
+  }
   // Redirect user if he is already Logged in
   if (isLoggedIn) {
     return <Redirect href={"/(tabs)"} />;
+    // return <SplashScreen />;
   }
 
   return (
@@ -120,10 +137,10 @@ export default function AuthScreen() {
             <Image
               source={require("@/assets/images/logo_transparent.png")}
               style={{
-                width: 100,
-                height: 100,
+                width: 120,
+                height: 120,
                 alignSelf: "center",
-                borderRadius: 50,
+                borderRadius: 20,
               }}
             ></Image>
             <Text
@@ -226,63 +243,161 @@ export default function AuthScreen() {
           ) : null}
 
           <Button
-            mode="contained"
             onPress={handleAuth}
             loading={isLoading}
             disabled={isLoading}
             icon="login"
+            contentStyle={{ width: "100%" }}
             style={{
               backgroundColor: colors.lvPrimary,
               width: "80%",
               alignSelf: "center",
             }}
-            labelStyle={{ fontSize: 16 }}
+            // labelStyle={{ fontSize: 16 }}
             textColor={colors.lvBackground}
           >
-            Sign In
+            Sign In{"  "}
           </Button>
 
-          <Button
-            mode="text"
+          <TouchableOpacity
             onPress={() => router.navigate("/(auth)/register")}
-            labelStyle={{
-              color: colors.lightWhiteText,
-              fontSize: 14,
-            }}
+            activeOpacity={0.5}
           >
-            Don't have an account?
-            <Text variant="labelLarge" style={{ color: colors.lvPrimaryLight }}>
-              {" "}
-              Sign Up
-            </Text>
-          </Button>
-          {/* Alternative ways to login container */}
-          <View style={{ gap: 10 }}>
-            <Divider
-              style={{
-                width: "100%",
-                backgroundColor: "rgba(173, 173, 173, 0.39)",
-              }}
-            />
             <Text
               variant="labelLarge"
+              style={{ fontSize: 12, color: "white", alignSelf: "center" }}
+            >
+              Don't have an account?
+              <Text
+                variant="labelLarge"
+                style={{ color: colors.lvPrimaryLight, fontSize: 12 }}
+              >
+                {" "}
+                Sign Up{"    "}
+              </Text>
+            </Text>
+          </TouchableOpacity>
+          {/* Alternative ways to login container */}
+          <View style={{ gap: 10 }}>
+            <View
               style={{
-                color: "rgba(219, 219, 219, 0.97)",
-                textAlign: "center",
-                fontSize: 14,
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                justifyContent: "space-evenly",
               }}
             >
-              or
-            </Text>
-            <GoogleSigninButton
-              style={{ alignSelf: "center" }}
-              size={GoogleSigninButton.Size.Standard}
-              color={GoogleSigninButton.Color.Dark}
-              onPress={handleGoogleSignIn}
-              disabled={false}
-            />
+              <Divider
+                style={{
+                  width: "40%",
+                  backgroundColor: "rgba(173, 173, 173, 0.39)",
+                }}
+              />
+              <Text
+                style={{
+                  color: "rgba(219, 219, 219, 0.97)",
+                  textAlign: "center",
+                  fontSize: 14,
+                }}
+              >
+                or
+              </Text>
+              <Divider
+                style={{
+                  width: "40%",
+                  backgroundColor: "rgba(173, 173, 173, 0.39)",
+                }}
+              />
+            </View>
+
+            <TouchableOpacity onPress={handleGoogleSignIn} activeOpacity={0.7}>
+              <Image
+                source={require("@/assets/images/google.png")}
+                style={{ width: 200, height: 42, alignSelf: "center" }}
+              ></Image>
+            </TouchableOpacity>
           </View>
         </View>
+
+        <Text
+          variant="labelLarge"
+          style={{
+            color: "rgb(174, 174, 174)",
+            fontSize: 12,
+            textAlign: "center",
+            paddingHorizontal: 10,
+          }}
+        >
+          By signing up, you agree to our{" "}
+          {/* <Text
+            variant="labelLarge"
+            style={{
+              color: colors.lvPrimaryLight,
+              fontSize: 11,
+            }}
+            onPress={() => console.log("TErms of use")}
+          >
+            Terms of use
+          </Text>{" "} */}
+          <Text
+            variant="labelLarge"
+            style={{
+              color: colors.lvPrimaryLight,
+              // textDecorationLine: "underline",
+              fontSize: 11,
+            }}
+            onPress={() => {
+              setPrivacyModalOpen(true);
+              setPolicyModalHTML(EULAHTML);
+            }}
+          >
+            EULA
+          </Text>{" "}
+          and acknowledge that you have read our{" "}
+          <Text
+            variant="labelLarge"
+            style={{
+              color: colors.lvPrimaryLight,
+              // textDecorationLine: "underline",
+              fontSize: 11,
+            }}
+            onPress={() => {
+              setPrivacyModalOpen(true);
+              setPolicyModalHTML(privacyPolicyHTML);
+            }}
+          >
+            Privacy Policy
+          </Text>
+          .
+        </Text>
+
+        {privacyModalOpen ? (
+          <PrivacyPolicyModal
+            visible={privacyModalOpen}
+            onClose={() => setPrivacyModalOpen(false)}
+            url={policyModalHTML}
+          />
+        ) : null}
+
+        {isLoadingGoogle ? (
+          <View
+            style={{
+              flex: 1,
+              position: "absolute",
+              height: "100%",
+              width: "100%",
+              backgroundColor: "rgba(0, 0, 0, 0.55)",
+            }}
+          >
+            <ActivityIndicator
+              style={{
+                flex: 1,
+              }}
+              size={40}
+              color={colors.lvPrimaryLight}
+            />
+          </View>
+        ) : null}
       </KeyboardAvoidingView>
     </LinearGradient>
   );

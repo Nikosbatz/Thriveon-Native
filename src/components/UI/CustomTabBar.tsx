@@ -10,22 +10,22 @@ export default function CustomTabBar({
   return (
     <View
       style={{
-        backgroundColor: "rgb(0, 0, 0)",
+        backgroundColor: "rgba(0, 0, 0, 0.86)",
         borderWidth: 0,
         borderColor: "rgb(25, 28, 31)",
         position: "absolute",
-        bottom: 10,
+        bottom: 5,
         width: "90%",
         alignSelf: "center",
         padding: 5,
+        paddingVertical: 8,
         borderRadius: 30,
       }}
     >
       <View
         style={{
           flexDirection: "row",
-          justifyContent: "space-evenly",
-          gap: 10,
+          gap: 0,
         }}
       >
         {state.routes.map((route, index) => {
@@ -65,17 +65,19 @@ export default function CustomTabBar({
             <TouchableRipple
               key={index}
               onPress={onPress}
-              // Use a dynamic ripple color based on your theme
               rippleColor="rgba(164, 165, 165, 0.36)"
               borderless
-              style={{ borderRadius: 50, padding: 0, flex: 1 }}
+              style={{ borderRadius: 30, padding: 0, flex: 1 }}
             >
               <View
                 style={{
                   alignItems: "center",
-                  backgroundColor: isFocused
-                    ? "rgb(59, 59, 59)"
-                    : "transparent",
+                  justifyContent: "flex-end",
+                  flex: 1,
+                  // backgroundColor: isFocused
+                  //   ? colors.lvPrimaryLight
+                  //   : "transparent",
+                  backgroundColor: "transparent",
                 }}
               >
                 {renderIcon &&
@@ -88,7 +90,7 @@ export default function CustomTabBar({
                 <Text
                   variant="labelLarge"
                   style={{
-                    color: isFocused ? "#fff" : "#666",
+                    color: isFocused ? "white" : "#666",
                     fontWeight: isFocused ? "600" : "400",
                     fontSize: 11,
                   }}

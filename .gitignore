@@ -46,3 +46,5 @@ app-example
 # Google Services files
 google-services.json
 GoogleService-Info.plist
+
+notes.txt

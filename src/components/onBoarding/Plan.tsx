@@ -1,8 +1,7 @@
 import { useAuth } from "@/src/context/authContext";
 import { colors } from "@/src/theme/colors";
-import { mainStyles } from "@/src/theme/styles";
 import { useRouter } from "expo-router";
-import { CheckCheck } from "lucide-react-native";
+import { CheckCheck, Edit2, Info } from "lucide-react-native";
 import { StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import MacroHealthGoalsCard from "../profile/MacroHealthGoalsCard";
@@ -46,12 +45,13 @@ export default function Plan() {
       {/* Calories goal card */}
       <View
         style={[
-          mainStyles.card,
           {
             padding: 20,
+            borderRadius: 15,
+            marginHorizontal: 10,
             borderWidth: 1,
             borderColor: colors.lvPrimary50,
-            backgroundColor: colors.lvPrimary20,
+            backgroundColor: colors.lvPrimary10,
             elevation: 0,
           },
         ]}
@@ -88,6 +88,31 @@ export default function Plan() {
 
       {/* Nutrition and health goals  */}
       <MacroHealthGoalsCard />
+
+      <View
+        style={{
+          backgroundColor: colors.lvPrimary10,
+          borderRadius: 10,
+          padding: 10,
+        }}
+      >
+        <Info
+          // style={{ position: "absolute" }}
+          size={20}
+          color={colors.lvPrimary80}
+        ></Info>
+        <Text
+          variant="labelLarge"
+          style={{
+            color: "white",
+            marginTop: 0,
+            fontSize: 12,
+          }}
+        >
+          You can always edit your goals in the profile tab by pressing the{" "}
+          <Edit2 size={14} color={colors.lvPrimary}></Edit2> icon
+        </Text>
+      </View>
 
       <Button
         mode="contained"

@@ -1,11 +1,13 @@
 import { colors } from "@/src/theme/colors";
+import { UserInterface } from "@/src/types";
 import { View } from "react-native";
 import { Divider, Text } from "react-native-paper";
 
 type Props = {
   goalKey:
     | keyof UserInterface["healthGoals"]
-    | keyof UserInterface["nutritionGoals"];
+    | keyof UserInterface["nutritionGoals"]
+    | string;
   value: string | number;
   unit: string;
 };

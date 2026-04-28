@@ -1,7 +1,6 @@
 import { getSearchFoods } from "@/src/api/requests";
 import FoodCard from "@/src/components/calorieTracker/FoodCard";
 import FoodOptionsSheet from "@/src/components/calorieTracker/FoodOptionsSheet/FoodOptionsSheet";
-import LoggedFoodsSheet from "@/src/components/calorieTracker/LoggedFoodsSheet";
 import ProfileHeader from "@/src/components/profile/ProfileHeader";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
@@ -11,12 +10,11 @@ import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
-import { Barcode, ListCheck } from "lucide-react-native";
+import { Info } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
   ActivityIndicator,
-  Divider,
   Text,
   TextInput,
   TouchableRipple,
@@ -79,7 +77,7 @@ export default function CalorieTrackerScreen() {
         return;
       }
 
-      if (currentOffset > lastContentOffset.value && currentOffset > 10) {
+      if (currentOffset > lastContentOffset.value && currentOffset > 0) {
         // SCROLLING DOWN -> Hide the view
         // translateY.value = withTiming(100, { duration: 100 }); // Adjust -100 to your view's height
         opacity.value = withTiming(0, { duration: 200 });
@@ -103,6 +101,14 @@ export default function CalorieTrackerScreen() {
   return (
     <View style={[styles.mainContainer]}>
       <ProfileHeader />
+      <View>
+        <Text
+          variant="labelLarge"
+          style={{ color: "white", textAlign: "center", fontSize: 16 }}
+        >
+          Select Meal Type
+        </Text>
+      </View>
       {/* MealType selection buttons */}
       <View style={styles.mealTabsContainer}>
         {mealTypes.map((mealType, index) => (
@@ -231,8 +237,35 @@ export default function CalorieTrackerScreen() {
         )}
       </View>
 
+      {/* Hint for new users to use search to see the list of foods */}
+      {searchInput.length > 2 || foodHistory.length !== 0 ? null : (
+        <View
+          style={{
+            backgroundColor: colors.lvFoodCardBg,
+            padding: 15,
+            maxWidth: "90%",
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: [{ translateX: "-50%" }],
+            borderRadius: 10,
+            gap: 10,
+            alignItems: "center",
+            elevation: 50,
+          }}
+        >
+          <Info size={24} color={colors.lvPrimary}></Info>
+          <Text style={{ color: colors.lvPrimaryLight, fontSize: 16 }}>
+            Your logged foods history appears here!
+          </Text>
+          <Text style={{ color: "rgb(214, 214, 214)", textAlign: "center" }}>
+            Try searching for a food and a list of relevant foods will appear!
+          </Text>
+        </View>
+      )}
+
       {/* Open logged foods and scan barcode buttons */}
-      <Animated.View
+      {/* <Animated.View
         style={[
           {
             flexDirection: "row",
@@ -252,9 +285,9 @@ export default function CalorieTrackerScreen() {
           borderless
         >
           <View style={{ alignItems: "center", padding: 5 }}>
-            <ListCheck size={30} color={colors.lvBackground}></ListCheck>
-            {/* Logged Foods Counter Badge */}
-            <View
+            <ListCheck size={30} color={colors.lvBackground}></ListCheck> */}
+      {/* Logged Foods Counter Badge */}
+      {/* <View
               style={{
                 position: "absolute",
                 backgroundColor: "rgb(5, 59, 68)",
@@ -301,9 +334,9 @@ export default function CalorieTrackerScreen() {
             </Text>
           </View>
         </TouchableRipple>
-      </Animated.View>
+      </Animated.View> */}
 
-      <LoggedFoodsSheet sheetRef={loggedFoodsSheetRef}></LoggedFoodsSheet>
+      {/* <LoggedFoodsSheet sheetRef={loggedFoodsSheetRef} /> */}
       <FoodOptionsSheet
         bottomSheetRef={bottomSheetRef}
         food={selectedFood}
@@ -318,7 +351,6 @@ const styles = StyleSheet.create({
   mainContainer: {
     gap: 12,
     flex: 1,
-    backgroundColor: colors.lvBackground,
     paddingBottom: mainStyles.mainContainer.paddingBottom + 10,
   },
   mealTabsContainer: {

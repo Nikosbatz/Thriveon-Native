@@ -15,6 +15,7 @@ export default function calculateNutrition({
   activity,
   goal,
 }: Parameters) {
+  console.log(activity, goal);
   // 1. Initial health goals setup
   const healthGoals = { weight: weight, water: 0 };
   const activityMultipliers = [1.2, 1.375, 1.55, 1.725];

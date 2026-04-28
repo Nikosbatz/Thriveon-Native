@@ -23,7 +23,14 @@ export default function Layout() {
       />
       <Stack.Screen
         name="cameraScreen"
-        options={{ title: "Scan barcode", headerShown: false }}
+        options={{
+          title: "",
+          headerTransparent: true, // This makes the header sit on top of your content
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: "transparent", // Ensures no solid color is blocking the blur
+          },
+        }}
       />
       <Stack.Screen name="barcodeFoodScreen" options={{ title: "" }} />
     </Stack>

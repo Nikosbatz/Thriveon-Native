@@ -99,7 +99,7 @@ export default function WeightHistoryChart() {
                     color: "rgba(42, 213, 19, 1)",
                   }}
                 >
-                  {weightTrend} kg this week
+                  {weightTrend.toFixed(1)} kg this week
                 </Text>
               </View>
             ) : (
@@ -110,7 +110,7 @@ export default function WeightHistoryChart() {
                     color: "rgba(255, 37, 37, 1)",
                   }}
                 >
-                  {weightTrend} kg this week
+                  {weightTrend.toFixed(1)} kg this week
                 </Text>
               </View>
             )}

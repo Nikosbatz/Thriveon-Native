@@ -376,6 +376,8 @@ export async function getBarcodeFood(code: string) {
   } catch (error: any) {
     if (error.status === 404) {
       throw Error("Requested food doesn't exist in our database");
+    } else {
+      throw Error("");
     }
   }
 }

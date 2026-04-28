@@ -39,7 +39,7 @@ export default function DashboardMacroCards() {
   const data = {
     labels: ["Protein", "Fats", "Carbs"],
     data: macroPercentages,
-    icons: [Beef, Wheat, Droplets],
+    icons: [Beef, Droplets, Wheat],
     colors: ["rgb(0, 234, 255)", "rgba(0, 115, 255, 1)", "rgb(0, 255, 162)"],
   };
 
@@ -80,7 +80,8 @@ export default function DashboardMacroCards() {
                 <Text
                   variant="labelLarge"
                   style={{
-                    color: data.colors[index],
+                    // color: data.colors[index],
+                    color: "rgb(210, 210, 210)",
                     textAlign: "center",
                     fontSize: 14,
                   }}

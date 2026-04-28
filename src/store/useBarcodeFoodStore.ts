@@ -14,9 +14,13 @@ export const useBarcodeFoodStore = create<BarcodeFoodStoreState>((set) => ({
   loadingFood: false,
   code: "",
   fetchFood: async (code: string) => {
-    set({ loadingFood: true });
-    set({ code: code });
-    const res = await getBarcodeFood(code);
-    set({ food: res, loadingFood: false });
+    try {
+      set({ loadingFood: true });
+      set({ code: code });
+      const res = await getBarcodeFood(code);
+      set({ food: res, loadingFood: false });
+    } catch (error) {
+      throw new Error();
+    }
   },
 }));

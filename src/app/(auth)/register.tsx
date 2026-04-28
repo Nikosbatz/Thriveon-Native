@@ -1,13 +1,14 @@
 import { useAuth } from "@/src/context/authContext";
 import { colors } from "@/src/theme/colors";
+import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import { useState } from "react";
 import {
-  Image,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
@@ -50,7 +51,7 @@ export default function RegisterScreen() {
     } catch (error: any) {
       Toast.show({
         type: "error",
-        text1: "Sign Up Error",
+        text1: "Sign up error",
         text2: error.message,
       });
       setIsLoading(false);
@@ -63,188 +64,216 @@ export default function RegisterScreen() {
   }
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "padding"}
-      style={styles.container}
-      contentContainerStyle={{}}
+    <LinearGradient
+      // colors={["#130646", "#172e83", "#105b7e", "#131e32", "#0a0f17"]}
+      // locations={[0, 0.1, 0.2, 0.5, 1]}
+      colors={["#085062", "#073854", "#080722", "#020212", "#020212"]}
+      locations={[0, 0.05, 0.4, 0.5, 1]}
+      style={{
+        flex: 1,
+      }}
     >
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          paddingHorizontal: 10,
-          paddingVertical: 20,
-          gap: 20,
-        }}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "padding"}
+        style={styles.container}
+        contentContainerStyle={{}}
       >
-        {/* Logo and Slogan container */}
         <View
           style={{
-            width: "100%",
-            padding: 20,
-            gap: 10,
+            flex: 1,
+            justifyContent: "center",
+            paddingHorizontal: 10,
+            paddingVertical: 20,
+            gap: 20,
           }}
         >
-          <Image
-            source={require("@/assets/images/logo_chat.png")}
-            style={{ width: 150, height: 90, alignSelf: "center" }}
-          ></Image>
-        </View>
-
-        <View>
-          <Text
-            variant="headlineMedium"
-            style={{ color: colors.lvPrimaryLight, alignSelf: "center" }}
-          >
-            Create an account
-          </Text>
-          <Text
-            variant="labelLarge"
+          {/* Logo and Slogan container */}
+          <View
             style={{
-              color: colors.lightWhiteText,
-              alignSelf: "center",
-              fontSize: 15,
+              width: "100%",
+              padding: 20,
+              gap: 10,
             }}
           >
-            Begin your welness journey with{" "}
+            {/* <Image
+              source={require("@/assets/images/logo_transparent.png")}
+              style={{ width: 100, height: 100, alignSelf: "center" }}
+            ></Image> */}
+          </View>
+
+          <View style={{ marginBottom: 10 }}>
+            <Text
+              variant="headlineMedium"
+              style={{ color: colors.lvPrimaryLight, alignSelf: "center" }}
+            >
+              Create an account
+            </Text>
             <Text
               variant="labelLarge"
-              style={{ color: colors.lvPrimary80, fontSize: 18 }}
+              style={{
+                color: colors.lightWhiteText,
+                alignSelf: "center",
+                fontSize: 15,
+              }}
             >
-              Thriveon
+              Begin your welness journey with{" "}
+              <Text
+                variant="labelLarge"
+                style={{ color: colors.lvPrimary80, fontSize: 18 }}
+              >
+                Thriveon
+              </Text>
             </Text>
-          </Text>
-        </View>
+          </View>
 
-        {/* Email Input */}
-        <View>
-          <Text variant="labelLarge" style={styles.textInputLabel}>
-            Email Address
-          </Text>
-          <TextInput
-            disabled={false}
-            value={emailInput}
-            onChangeText={setEmailInput}
-            mode="outlined"
-            style={styles.textInput}
-            activeOutlineColor={colors.lvPrimary50}
-            outlineStyle={{ borderRadius: 25 }}
-            outlineColor={colors.lvPrimary20}
-            placeholder={"name@example.com"}
-            textColor="white"
-            cursorColor="white"
-            placeholderTextColor={colors.lightGrayText}
-          ></TextInput>
-        </View>
-
-        {/* Password Input */}
-        <View>
-          <Text variant="labelLarge" style={styles.textInputLabel}>
-            Password
-          </Text>
-          <TextInput
-            disabled={false}
-            value={passwordInput}
-            onChangeText={setPasswordInput}
-            mode="outlined"
-            style={styles.textInput}
-            secureTextEntry={!passwordVisible}
-            activeOutlineColor={colors.lvPrimary50}
-            outlineColor={colors.lvPrimary20}
-            outlineStyle={{ borderRadius: 25 }}
-            placeholder={"********"}
-            textColor="white"
-            cursorColor="white"
-            placeholderTextColor={colors.lightGrayText}
-            right={
-              <TextInput.Icon
-                icon={() =>
-                  passwordVisible ? (
-                    <Eye color={colors.lvPrimary80} size={20} />
-                  ) : (
-                    <EyeOff color={colors.lvPrimary80} size={20} />
-                  )
-                }
-                onPress={() => setPasswordVisible((prev) => !prev)}
-              />
-            }
-          ></TextInput>
-        </View>
-        <View>
-          <Text variant="labelLarge" style={styles.textInputLabel}>
-            Confirm Password
-          </Text>
-          <TextInput
-            disabled={false}
-            value={verifyPasswdInput}
-            onChangeText={setVerifyPasswdInput}
-            mode="outlined"
-            style={styles.textInput}
-            secureTextEntry={!passwordVisible}
-            activeOutlineColor={colors.lvPrimary50}
-            outlineColor={colors.lvPrimary20}
-            outlineStyle={{ borderRadius: 25 }}
-            placeholder={"********"}
-            textColor="white"
-            cursorColor="white"
-            placeholderTextColor={colors.lightGrayText}
-            right={
-              <TextInput.Icon
-                icon={() =>
-                  passwordVisible ? (
-                    <Eye color={colors.lvPrimary80} size={20} />
-                  ) : (
-                    <EyeOff color={colors.lvPrimary80} size={20} />
-                  )
-                }
-                onPress={() => setPasswordVisible((prev) => !prev)}
-              />
-            }
-          ></TextInput>
-        </View>
-
-        {errorText ? (
-          <Text style={{ color: theme.colors.error }}>{errorText}</Text>
-        ) : null}
-
-        <Button
-          mode="contained"
-          onPress={handleSignUp}
-          loading={isLoading}
-          disabled={isLoading}
-          icon={"account-plus"}
-          style={{
-            backgroundColor: colors.lvPrimary,
-            width: "80%",
-            alignSelf: "center",
-          }}
-          textColor={colors.lvBackground}
-        >
-          {"Sign Up"}
-        </Button>
-
-        <Button
-          mode="text"
-          textColor={colors.lvPrimary80}
-          onPress={() => router.push("/(auth)/auth")}
-        >
-          <Text variant="labelLarge" style={{ color: colors.lightWhiteText }}>
-            {"Already have an account?"}
-            <Text variant="labelLarge" style={{ color: colors.lvPrimary80 }}>
-              {" "}
-              {"Sign In"}
+          {/* Email Input */}
+          <View>
+            <Text variant="labelLarge" style={styles.textInputLabel}>
+              Email Address
             </Text>
-          </Text>
-        </Button>
-      </View>
-    </KeyboardAvoidingView>
+            <TextInput
+              disabled={false}
+              value={emailInput}
+              onChangeText={setEmailInput}
+              mode="outlined"
+              style={styles.textInput}
+              activeOutlineColor={colors.lvPrimary50}
+              outlineStyle={{ borderRadius: 25 }}
+              outlineColor={colors.lvPrimary20}
+              placeholder={"name@example.com"}
+              textColor="white"
+              cursorColor="white"
+              placeholderTextColor={colors.lightGrayText}
+            ></TextInput>
+          </View>
+
+          {/* Password Input */}
+          <View>
+            <Text variant="labelLarge" style={styles.textInputLabel}>
+              Password
+            </Text>
+            <TextInput
+              disabled={false}
+              value={passwordInput}
+              onChangeText={setPasswordInput}
+              mode="outlined"
+              style={styles.textInput}
+              secureTextEntry={!passwordVisible}
+              activeOutlineColor={colors.lvPrimary50}
+              outlineColor={colors.lvPrimary20}
+              outlineStyle={{ borderRadius: 25 }}
+              placeholder={"********"}
+              textColor="white"
+              cursorColor="white"
+              placeholderTextColor={colors.lightGrayText}
+              right={
+                <TextInput.Icon
+                  icon={() =>
+                    passwordVisible ? (
+                      <Eye color={colors.lvPrimary80} size={20} />
+                    ) : (
+                      <EyeOff color={colors.lvPrimary80} size={20} />
+                    )
+                  }
+                  onPress={() => setPasswordVisible((prev) => !prev)}
+                />
+              }
+            ></TextInput>
+          </View>
+          <View>
+            <Text variant="labelLarge" style={styles.textInputLabel}>
+              Confirm Password
+            </Text>
+            <TextInput
+              disabled={false}
+              value={verifyPasswdInput}
+              onChangeText={setVerifyPasswdInput}
+              mode="outlined"
+              style={styles.textInput}
+              secureTextEntry={!passwordVisible}
+              activeOutlineColor={colors.lvPrimary50}
+              outlineColor={colors.lvPrimary20}
+              outlineStyle={{ borderRadius: 25 }}
+              placeholder={"********"}
+              textColor="white"
+              cursorColor="white"
+              placeholderTextColor={colors.lightGrayText}
+              right={
+                <TextInput.Icon
+                  icon={() =>
+                    passwordVisible ? (
+                      <Eye color={colors.lvPrimary80} size={20} />
+                    ) : (
+                      <EyeOff color={colors.lvPrimary80} size={20} />
+                    )
+                  }
+                  onPress={() => setPasswordVisible((prev) => !prev)}
+                />
+              }
+            ></TextInput>
+          </View>
+
+          {errorText ? (
+            <Text style={{ color: theme.colors.error }}>{errorText}</Text>
+          ) : null}
+
+          <Button
+            mode="contained"
+            onPress={handleSignUp}
+            loading={isLoading}
+            disabled={isLoading}
+            icon={"account-plus"}
+            style={{
+              backgroundColor: colors.lvPrimary,
+              width: "80%",
+              alignSelf: "center",
+            }}
+            textColor={colors.lvBackground}
+          >
+            {"Sign Up"}
+          </Button>
+
+          <TouchableOpacity
+            onPress={() => router.navigate("/(auth)/auth")}
+            activeOpacity={0.5}
+          >
+            <Text
+              variant="labelLarge"
+              style={{ fontSize: 12, color: "white", alignSelf: "center" }}
+            >
+              Already have an account?
+              <Text
+                variant="labelLarge"
+                style={{ color: colors.lvPrimaryLight, fontSize: 12 }}
+              >
+                {" "}
+                Sign In{"    "}
+              </Text>
+            </Text>
+          </TouchableOpacity>
+          {/* <Button
+            mode="text"
+            textColor={colors.lvPrimary80}
+            onPress={() => router.push("/(auth)/auth")}
+          >
+            <Text variant="labelLarge" style={{ color: colors.lightWhiteText }}>
+              {"Already have an account?"}
+              <Text variant="labelLarge" style={{ color: colors.lvPrimary80 }}>
+                {" "}
+                {"Sign In"}
+              </Text>
+            </Text>
+          </Button> */}
+        </View>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.lvBackground,
+    // backgroundColor: "#030316",
     // justifyContent: "center",
     // alignItems: "center",
   },

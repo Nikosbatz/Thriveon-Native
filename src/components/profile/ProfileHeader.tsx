@@ -4,7 +4,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function ProfileHeader() {
   const insets = useSafeAreaInsets();
 
-  console.log(insets);
   return (
     <View style={[styles.mainContainer, { paddingTop: insets.top }]}></View>
   );

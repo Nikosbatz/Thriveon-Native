@@ -61,7 +61,7 @@ export default function WelcomeScreen() {
         {/* Card with text */}
         <View
           style={[
-            mainStyles.card,
+            mainStyles.dashboardCard,
             {
               padding: 20,
               gap: 15,

@@ -7,7 +7,9 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import { Check, X } from "lucide-react-native";
 import React from "react";
+import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   configureFonts,
@@ -81,13 +83,35 @@ const toastConfig = {
   success: (props: any) => (
     <BaseToast
       {...props}
-      style={{
-        borderLeftColor: "rgba(30, 215, 6, 1)",
-        borderLeftWidth: 15,
-        backgroundColor: "rgba(51, 51, 51, 1)",
+      renderLeadingIcon={() => (
+        <View
+          style={{
+            padding: 7,
+            alignSelf: "center",
+            backgroundColor: "rgb(21, 154, 3)",
+            borderRadius: 50,
+            position: "absolute",
+          }}
+        >
+          <Check size={30} color="white" />
+        </View>
+      )}
+      contentContainerStyle={{
+        paddingHorizontal: 0,
+        alignItems: "center",
+        justifyContent: "center",
       }}
-      text1Style={{ fontSize: 17, color: "white" }}
-      text2Style={{ fontSize: 13, color: "rgba(192, 192, 192, 1)" }}
+      style={{
+        padding: 0,
+        borderLeftColor: "rgba(30, 215, 6, 0)",
+        backgroundColor: "rgba(13, 93, 2, 0)",
+        elevation: 0,
+        alignSelf: "center",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+      text1Style={{ fontSize: 17, color: "white", textAlign: "center" }}
+      text2Style={{ fontSize: 13, color: "rgb(227, 227, 227)" }}
       text2NumberOfLines={5}
       text1NumberOfLines={3}
     />
@@ -95,13 +119,31 @@ const toastConfig = {
   error: (props: any) => (
     <ErrorToast
       {...props}
+      renderLeadingIcon={() => (
+        <View
+          style={{
+            justifyContent: "center",
+            padding: 3,
+            marginLeft: 5,
+            alignSelf: "center",
+            backgroundColor: "red",
+            borderRadius: 50,
+            marginRight: 5,
+          }}
+        >
+          <X size={26} color="white" />
+        </View>
+      )}
+      contentContainerStyle={{
+        paddingHorizontal: 0,
+      }}
       style={{
         borderLeftColor: theme.colors.error,
-        borderLeftWidth: 15,
-        backgroundColor: "rgba(51, 51, 51, 1)",
+        backgroundColor: "rgb(136, 3, 3)",
+        width: 300,
       }}
       text1Style={{ fontSize: 17, color: "white" }}
-      text2Style={{ fontSize: 13, color: "rgba(192, 192, 192, 1)" }}
+      text2Style={{ fontSize: 13, color: "rgb(230, 230, 230)" }}
       text2NumberOfLines={5}
       text1NumberOfLines={3}
     />

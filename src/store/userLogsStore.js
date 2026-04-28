@@ -143,10 +143,25 @@ export const useUserLogsStore = create((set, get) => ({
   ) => {
     const gramWeight =
       food.portions[selectedServingIndex].gramWeight * quantityInput;
-    const calories = Math.floor((food.calories / food.grams) * gramWeight);
-    const protein = Math.floor((food.protein / food.grams) * gramWeight);
-    const carbs = Math.floor((food.carbs / food.grams) * gramWeight);
-    const fats = Math.floor((food.fats / food.grams) * gramWeight);
+    let calories;
+    let protein;
+    let carbs;
+    let fats;
+
+    // grams if by default the food.grams property (100g)
+    let grams = food.grams;
+
+    // if food has already been logged calculate the grams based on the logged quantity
+    if (food.loggedQuantity) {
+      grams =
+        food.portions[food.selectedServingIndex].gramWeight *
+        food.loggedQuantity;
+    }
+
+    calories = Math.floor((food.calories / grams) * gramWeight);
+    protein = Math.floor((food.protein / grams) * gramWeight);
+    carbs = Math.floor((food.carbs / grams) * gramWeight);
+    fats = Math.floor((food.fats / grams) * gramWeight);
 
     const foodToUpload = {
       ...food,

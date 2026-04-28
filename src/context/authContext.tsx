@@ -40,6 +40,7 @@ type AuthContextType = {
   updateUserInfo: (info: UserInterface) => void;
   verifyUserEmail: (verificationCode: string) => void;
   googleSignIn: (googleData: any) => void;
+  splashScreenActive: boolean;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -54,6 +55,7 @@ export default function AuthContextProvider({
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string>("");
   const [loadingUserInfo, setLoadingUserInfo] = useState<boolean>(false);
+  const [splashScreenActive, setSplashScreenActive] = useState<boolean>(false);
   const resetLogsStore = useUserLogsStore((state) => state.resetLogs);
   const resetUserStore = useUserStore((state) => state.resetUser);
 
@@ -61,15 +63,22 @@ export default function AuthContextProvider({
   // else do not do anything
   useEffect(() => {
     (async () => {
+      setLoadingUserInfo(true);
       try {
+        setSplashScreenActive(true);
         const token = await SecureStore.getItemAsync("token");
+
         if (token) {
           await authToken();
           await fetchUserInfo();
           setIsLoggedIn(true);
         }
+        setTimeout(() => {
+          setSplashScreenActive(false);
+        }, 700);
       } catch (err) {
         // ignore errors retrieving token
+        setSplashScreenActive(false);
       }
     })();
   }, []);
@@ -186,6 +195,7 @@ export default function AuthContextProvider({
           updateUserInfo,
           verifyUserEmail,
           googleSignIn,
+          splashScreenActive,
         }),
         [
           signIn,
@@ -202,6 +212,7 @@ export default function AuthContextProvider({
           updateUserInfo,
           verifyUserEmail,
           googleSignIn,
+          splashScreenActive,
         ],
       )}
     >

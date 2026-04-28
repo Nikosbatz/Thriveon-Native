@@ -48,11 +48,10 @@ export default function CustomHeader({ scrollY }: Props) {
       <View>
         <View style={styles.headerContent}>
           <Image
-            source={require("@/assets/images/logo.png")}
+            source={require("@/assets/images/logo_transparent.png")}
             style={{
-              width: 45,
-              height: 43,
-              borderRadius: 50,
+              width: 50,
+              height: 50,
             }}
           ></Image>
           <View>
