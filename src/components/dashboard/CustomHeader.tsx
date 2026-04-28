@@ -7,6 +7,7 @@ import Animated, {
   SharedValue,
   useAnimatedStyle,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const HEADER_HEIGHT = 100;
 type Props = {
@@ -14,35 +15,43 @@ type Props = {
 };
 
 export default function CustomHeader({ scrollY }: Props) {
+  const insets = useSafeAreaInsets();
   // 2. Map scroll position to header Y-translation
   const headerAnimatedStyle = useAnimatedStyle(() => {
-    const translateY = interpolate(
-      scrollY.value,
-      [50, 50 + HEADER_HEIGHT], // Start at 100, end at 170
-      [0, -HEADER_HEIGHT], // Start at 0, end at -70
-      Extrapolation.CLAMP,
-    );
-    // const opacity = interpolate(
+    // const translateY = interpolate(
     //   scrollY.value,
-    //   [0, 100 + HEADER_HEIGHT],
-    //   [1, 0], // Start solid, end invisible
+    //   [0, 0 + HEADER_HEIGHT - insets.top], // Start at 100, end at 170
+    //   [0, -HEADER_HEIGHT], // Start at 0, end at -70
     //   Extrapolation.CLAMP,
     // );
+    const opacity = interpolate(
+      scrollY.value,
+      [0, 0 + HEADER_HEIGHT - insets.top - 10],
+      [1, 0], // Start solid, end invisible
+      Extrapolation.CLAMP,
+    );
 
     return {
-      transform: [{ translateY }],
-      //   opacity,
+      // transform: [{ translateY }],
+      opacity,
     };
   });
+
   return (
-    <Animated.View style={[styles.header, headerAnimatedStyle]}>
+    <Animated.View
+      style={[
+        styles.header,
+        { paddingTop: insets.top + 5 },
+        headerAnimatedStyle,
+      ]}
+    >
       <View>
         <View style={styles.headerContent}>
           <Image
-            source={require("@/assets/images/logo_chat.png")}
+            source={require("@/assets/images/logo_transparent.png")}
             style={{
-              width: 63,
-              height: 37,
+              width: 50,
+              height: 50,
             }}
           ></Image>
           <View>
@@ -71,11 +80,9 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: HEADER_HEIGHT,
-    backgroundColor: colors.lvBackground,
+    backgroundColor: "transparent",
     zIndex: 1000,
     justifyContent: "flex-end",
-    paddingBottom: 15,
   },
   headerContent: {
     flexDirection: "row",

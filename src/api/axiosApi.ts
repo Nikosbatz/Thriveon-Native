@@ -1,7 +1,8 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { triggerLogout } from "./authBridge";
-export const BASE_URI = "http://192.168.2.8:8080/api";
+// export const BASE_URI = "http://192.168.2.7:8080/api";
+export const BASE_URI = "http://192.168.1.211:8080/api";
 // export const BASE_URI = "https://thriveon.fit/api";
 
 export const api = axios.create({
@@ -24,5 +25,6 @@ api.interceptors.response.use(
     if (error.response.status === 401) {
       triggerLogout();
     }
+    return Promise.reject(error);
   },
 );

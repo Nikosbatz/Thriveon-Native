@@ -57,8 +57,8 @@ export default function WeightHistoryChart() {
         style={{
           padding: 5,
           gap: 10,
-          borderWidth: 1,
-          backgroundColor: "#222a3700",
+          borderWidth: 0,
+          backgroundColor: colors.lvDashboardCardBg,
           // borderLeftWidth: 1,
           // borderColor: colors.lvPrimary50,
           borderColor: "rgb(46, 47, 70)",
@@ -99,7 +99,7 @@ export default function WeightHistoryChart() {
                     color: "rgba(42, 213, 19, 1)",
                   }}
                 >
-                  {weightTrend} kg this week
+                  {weightTrend.toFixed(1)} kg this week
                 </Text>
               </View>
             ) : (
@@ -110,7 +110,7 @@ export default function WeightHistoryChart() {
                     color: "rgba(255, 37, 37, 1)",
                   }}
                 >
-                  {weightTrend} kg this week
+                  {weightTrend.toFixed(1)} kg this week
                 </Text>
               </View>
             )}

@@ -1,4 +1,5 @@
 import { colors } from "@/src/theme/colors";
+import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 
@@ -10,6 +11,7 @@ type Props = {
   onChangeText: (text: string) => void;
 };
 export default function CustomNumInput(props: Props) {
+  const [isFocused, setIsFocused] = useState(false);
   return (
     <View style={{ gap: 5, flexGrow: 1 }}>
       {/* Label */}
@@ -29,6 +31,9 @@ export default function CustomNumInput(props: Props) {
         }}
       >
         <TextInput
+          keyboardType="numeric"
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           mode="outlined"
           value={props.value}
           onChangeText={(text) => props.onChangeText(text)}
@@ -38,6 +43,7 @@ export default function CustomNumInput(props: Props) {
             color: "white",
             fontSize: 20,
             minWidth: 80,
+            height: 45,
             flexGrow: 1,
           }}
           outlineColor="transparent"
@@ -48,7 +54,7 @@ export default function CustomNumInput(props: Props) {
         <Text
           variant="labelLarge"
           style={{
-            color: "rgba(190, 190, 190, 1)",
+            color: isFocused ? "white" : "rgb(132, 132, 132)",
             fontSize: 20,
             lineHeight: 23,
           }}

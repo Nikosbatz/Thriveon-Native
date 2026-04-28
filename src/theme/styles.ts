@@ -2,8 +2,8 @@ import { StyleSheet } from "react-native";
 import { colors } from "./colors";
 
 export const mainStyles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.lvGradientCard,
+  dashboardCard: {
+    backgroundColor: colors.lvDashboardCardBg,
     // backgroundColor: "transparent",
     borderWidth: 0,
     borderColor: "rgb(40, 46, 58)",
@@ -15,8 +15,9 @@ export const mainStyles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 12,
     // Android shadow
-    elevation: 3,
+    elevation: 0,
   },
+
   cardTitle: {
     marginStart: 10,
     fontSize: 20,
@@ -36,6 +37,6 @@ export const mainStyles = StyleSheet.create({
     backgroundColor: colors.lvBackground,
   },
   mainContainer: {
-    paddingBottom: 60,
+    paddingBottom: 70,
   },
 });

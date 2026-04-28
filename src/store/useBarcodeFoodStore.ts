@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import { getBarcodeFood } from "../api/requests";
+import { Food } from "../types";
 
 interface BarcodeFoodStoreState {
-  food: BarcodeFoodType | null;
+  food: Food | null;
   loadingFood: boolean;
   code: string;
   fetchFood: (code: string) => void;
@@ -13,9 +14,13 @@ export const useBarcodeFoodStore = create<BarcodeFoodStoreState>((set) => ({
   loadingFood: false,
   code: "",
   fetchFood: async (code: string) => {
-    set({ loadingFood: true });
-    set({ code: code });
-    const res = await getBarcodeFood(code);
-    set({ food: res, loadingFood: false });
+    try {
+      set({ loadingFood: true });
+      set({ code: code });
+      const res = await getBarcodeFood(code);
+      set({ food: res, loadingFood: false });
+    } catch (error) {
+      throw new Error();
+    }
   },
 }));

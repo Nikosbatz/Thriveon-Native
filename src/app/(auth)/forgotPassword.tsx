@@ -17,7 +17,7 @@ export default function ForgotPasswordScreen() {
       await postForgotPasswordEmail(emailInput, "mobile");
       Toast.show({
         type: "success",
-        text1: "Code sent! Check your email.",
+        text1: "",
       });
       setShowTokenForm(true);
     } catch (error: any) {

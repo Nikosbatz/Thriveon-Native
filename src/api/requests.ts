@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-import { Food } from "../types";
+import { Food, UserInterface } from "../types";
 import { api, BASE_URI } from "./axiosApi";
 
 export async function login(email: string, password: string) {
@@ -27,6 +27,34 @@ export async function login(email: string, password: string) {
       throw new Error("Wrong Credentials...");
     } else if (error.status === 403) {
       return error.response.data;
+    }
+  }
+}
+
+export async function googleLogin(googleData: any) {
+  const authData = { googleData: googleData };
+
+  try {
+    const res = await axios.post(`${BASE_URI}/user/googleAuth`, authData, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+    });
+
+    if (res.status === 200 || res.status === 201) {
+      if (res.data.accessToken) {
+        await SecureStore.setItemAsync("token", res.data.accessToken);
+      } else {
+        throw new Error("Could not create new session...");
+      }
+      return res.data;
+    }
+  } catch (error: any) {
+    if (error.status === 401) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error(error.message);
     }
   }
 }
@@ -159,8 +187,8 @@ export async function postResetPassword(password: string, token: string) {
     }
   }
 }
-//TODO: change any
-export async function postUserInfo(info: any) {
+
+export async function postUserInfo(info: Partial<UserInterface>) {
   const res = await api.post(`${BASE_URI}/user/update-info`, info, {
     headers: {
       Accept: "application/json",
@@ -230,7 +258,6 @@ export async function postFood(data: Food, path: string) {
   }
 }
 
-//TODO:change any type
 export async function deleteUserLogsFood(food: Food) {
   const res = await api.delete(`/foods/userlogs/${food._id}`, {
     headers: {
@@ -349,6 +376,8 @@ export async function getBarcodeFood(code: string) {
   } catch (error: any) {
     if (error.status === 404) {
       throw Error("Requested food doesn't exist in our database");
+    } else {
+      throw Error("");
     }
   }
 }

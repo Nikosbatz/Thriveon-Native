@@ -7,7 +7,6 @@ import { Text } from "react-native-paper";
 import ExerciseFormModal from "./ExerciseFormModal";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-//TODO: Must subscribe to zustand store and take real data
 export default function ExerciseTrackerCard() {
   const [modalVisible, setModalVisible] = useState(false);
   const activitiesDurationSum = useUserActivitiesStore(
@@ -28,7 +27,7 @@ export default function ExerciseTrackerCard() {
     >
       <View
         style={[
-          mainStyles.card,
+          mainStyles.dashboardCard,
           {
             gap: 15,
             flex: 1,

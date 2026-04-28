@@ -1,24 +1,48 @@
 import { useBarcodeFoodStore } from "@/src/store/useBarcodeFoodStore";
+import { useIsFocused } from "@react-navigation/native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { View } from "react-native";
+import { useEffect, useState } from "react";
+import { Alert, Linking, View } from "react-native";
 import { Text } from "react-native-paper";
+import Toast from "react-native-toast-message";
 
 export default function BarcodeScanner() {
   const [scanned, setScanned] = useState(false);
+  const isFocused = useIsFocused(); // Returns true when tab is active
   const [scannerCounter, setScannerCounter] = useState(0);
   const [dataFreq, setDataFreq] = useState<Record<string, number>>({});
   const [permission, requestPermission] = useCameraPermissions();
   const barcodeStoreFetchFood = useBarcodeFoodStore((state) => state.fetchFood);
-  const barcodeStoreFood = useBarcodeFoodStore((state) => state.food);
   const router = useRouter();
 
-  const overlayColor = "rgba(0, 0, 0, 0.3)";
+  useEffect(() => {
+    if (isFocused) {
+      setScanned(false);
+      setScannerCounter(0);
+      setDataFreq({});
+    }
+  }, [isFocused]);
 
-  if (!permission?.granted) {
-    requestPermission();
-  }
+  useEffect(() => {
+    if (!permission) return; // Wait until permission object is loaded
+
+    if (!permission.granted) {
+      if (permission.canAskAgain) {
+        requestPermission();
+      } else {
+        // The user denied it and we can't ask anymore
+        Alert.alert(
+          "Permission Required",
+          "Camera access is required to scan barcodes. Please enable it in settings.",
+          [
+            { text: "Cancel", style: "cancel" },
+            { text: "Open Settings", onPress: () => Linking.openSettings() },
+          ],
+        );
+      }
+    }
+  }, [permission]);
 
   async function handlebarcodeScanned(data: { data: string }) {
     setScannerCounter((prev) => prev + 1);
@@ -29,16 +53,27 @@ export default function BarcodeScanner() {
     });
 
     // Find the value with the maximum frequency
-    if (scannerCounter > 2) {
+    if (scannerCounter > 5) {
       const maxKey = Object.entries(dataFreq).reduce((max, curr) =>
         curr[1] < max[1] ? curr : max,
       );
       const code = maxKey[0];
-      await barcodeStoreFetchFood(code);
       setScanned(true);
       setDataFreq({});
       setScannerCounter(0);
-      router.replace("/calorieTracker/barcodeFoodScreen");
+      try {
+        await barcodeStoreFetchFood(code);
+        router.replace("/calorieTracker/barcodeFoodScreen");
+        setScanned(false);
+      } catch (error) {
+        Toast.show({
+          type: "error",
+          text1: "Could not find food!",
+          text2: "Seems like this food does not exist in our database...",
+        });
+        router.back();
+        setScanned(false);
+      }
     }
   }
 
@@ -86,15 +121,15 @@ export default function BarcodeScanner() {
       )}
 
       {/* Text for testing purposes */}
-      {scanned ? null : (
+      {/* {scanned ? null : (
         <Text
-          style={{ backgroundColor: "red" }}
+          style={{ backgroundColor: "red", position: "absolute", top: 100 }}
           onPress={() => handlebarcodeScanned({ data: "100000006535" })}
         >
           {" "}
           100000006535
         </Text>
-      )}
+      )} */}
     </View>
   );
 }

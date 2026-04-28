@@ -1,5 +1,6 @@
 import { useAuth } from "@/src/context/authContext";
 import { colors } from "@/src/theme/colors";
+import { MacrosKeys, UserInterface } from "@/src/types";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
@@ -29,8 +30,8 @@ export default function EditUserInfo() {
         await updateUserInfo(userInfoInputs);
         Toast.show({
           type: "success",
-          text1: "Profile Updated",
-          text2: "Your info has been changed succeSssfully",
+          text1: "",
+          text2: "",
         });
         // Navigate back to profile screen
         router.back();
@@ -60,7 +61,10 @@ export default function EditUserInfo() {
       enableOnAndroid={true}
       enableAutomaticScroll={true}
       enableResetScrollToCoords={false}
-      style={{ backgroundColor: colors.lvBackground, flex: 1 }}
+      style={{
+        backgroundColor: colors.lvBackground,
+        flex: 1,
+      }}
       contentContainerStyle={styles.scrollViewContainer}
     >
       {/* Email Input */}
@@ -237,7 +241,7 @@ const macros = [
 const styles = StyleSheet.create({
   scrollViewContainer: {
     paddingHorizontal: 10,
-    paddingBottom: 10,
+    paddingBottom: 75,
     gap: 20,
   },
   cardTitle: {

@@ -25,8 +25,8 @@ export default function EmailForm({
           marginTop: 5,
         }}
       >
-        Enter your email address associeted with your account and we will send
-        you a code to reset your password
+        Enter your email address linked with your account and we will send you a
+        code to reset your password
       </Text>
       {/* Input Container */}
       <View>

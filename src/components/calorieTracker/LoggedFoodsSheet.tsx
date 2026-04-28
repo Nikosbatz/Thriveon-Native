@@ -1,5 +1,6 @@
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
+import { mainStyles } from "@/src/theme/styles";
 import { Food, mealType } from "@/src/types";
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -12,7 +13,6 @@ import { Apple, EggFried, Salad, Soup, Trash2 } from "lucide-react-native";
 import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Divider, Text, TouchableRipple, useTheme } from "react-native-paper";
-import { useSharedValue } from "react-native-reanimated";
 import Toast from "react-native-toast-message";
 
 type LoggedFoodsSheetProps = {
@@ -45,9 +45,8 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
   const removeFood = useUserLogsStore((s) => s.removeFood);
   const headerHeight = useHeaderHeight();
   const bottomBarHeight = useBottomTabBarHeight();
-  const snapPoints = useMemo(() => ["98%"], []);
+  const snapPoints = useMemo(() => ["93%"], []);
   const paperTheme = useTheme();
-  const backdropOpacity = useSharedValue(0);
 
   //TODO: maybe add todaysFoodsByMeal property to Zustand store (It should be calculated when todaysFoods changes)
   const todaysFoodsByMeal = useMemo<todaysFoodsByMealType>(() => {
@@ -152,7 +151,7 @@ export default function LoggedFoodsSheet({ sheetRef }: LoggedFoodsSheetProps) {
         }}
         contentContainerStyle={{
           gap: 2,
-          paddingBottom: 10,
+          paddingBottom: mainStyles.mainContainer.paddingBottom,
           paddingHorizontal: 5,
           paddingTop: 5,
         }}

@@ -5,7 +5,9 @@ import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
 import { Redirect, Tabs, useSegments } from "expo-router";
+import { Barcode } from "lucide-react-native";
 import { Image, View } from "react-native";
 import { Text } from "react-native-paper";
 
@@ -30,30 +32,6 @@ export default function TabsLayout() {
     <Tabs
       tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{
-        // tabBarButton: (props) => {
-        //   const { style, children, ...rest } = props;
-
-        //   return (
-        //     <Pressable
-        //       {...rest} // Spread the navigation logic (onPress, etc.)
-        //       android_ripple={{
-        //         color: "rgba(125, 125, 125, 0.52)",
-        //         borderless: false,
-        //         foreground: true,
-        //         radius: 60,
-        //       }}
-        //       // Map the style correctly to the Pressable state
-        //       style={({ pressed }): StyleProp<ViewStyle> => [
-        //         style, // Cast the incoming style from the tab bar
-        //         {
-        //           opacity: pressed && Platform.OS === "ios" ? 0.6 : 1,
-        //         },
-        //       ]}
-        //     >
-        //       {children}
-        //     </Pressable>
-        //   );
-        // },
         tabBarActiveTintColor: "white",
         tabBarBackground: () => colors.lvBackground,
         tabBarStyle: {
@@ -62,7 +40,7 @@ export default function TabsLayout() {
           marginBottom: 0,
           borderTopColor: "rgba(91, 91, 91, 1)",
         },
-        freezeOnBlur: true,
+        freezeOnBlur: false,
         headerStatusBarHeight: 20,
         headerStyle: {
           backgroundColor: colors.lvBackground,
@@ -78,7 +56,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Dashboard",
+          title: "Home",
           headerShown: false,
           headerTitle: () => null,
           header: () => (
@@ -91,7 +69,7 @@ export default function TabsLayout() {
               }}
             >
               <Image
-                source={require("@/assets/images/logo_chat.png")}
+                source={require("@/assets/images/logo_transparent.png")}
                 style={{
                   width: 70,
                   height: 42,
@@ -146,17 +124,66 @@ export default function TabsLayout() {
         }}
       ></Tabs.Screen>
       <Tabs.Screen
-        name="calorieTracker"
+        name="diaryScreen"
         options={{
-          title: "Today's Calories",
-          tabBarButton: BottomBarPlus,
+          title: "Diary",
           headerShown: false,
+          tabBarIcon: ({ color, size, focused }) =>
+            focused ? (
+              <MaterialCommunityIcons
+                name="book-search"
+                size={size}
+                color={color}
+              />
+            ) : (
+              <MaterialCommunityIcons
+                name="book-search-outline"
+                size={size}
+                color={color}
+              />
+            ),
         }}
       ></Tabs.Screen>
       <Tabs.Screen
+        name="calorieTracker"
+        options={{
+          title: "Log Food",
+          tabBarButton: BottomBarPlus,
+          headerShown: false,
+          // tabBarIcon: ({ color, size, focused }) =>
+          //   focused ? (
+          //     <MaterialCommunityIcons
+          //       name="book-search"
+          //       size={size}
+          //       color={color}
+          //     />
+          //   ) : (
+          //     <MaterialCommunityIcons
+          //       name="book-search-outline"
+          //       size={size}
+          //       color={color}
+          //     />
+          //   ),
+        }}
+      ></Tabs.Screen>
+      <Tabs.Screen
+        name="cameraScreen"
+        options={{
+          title: "Scanner",
+          headerShown: false,
+          tabBarIcon: ({ color, size, focused }) =>
+            focused ? (
+              <Barcode size={size} color={color} />
+            ) : (
+              <Barcode size={size} color={color} />
+            ),
+        }}
+      ></Tabs.Screen>
+
+      <Tabs.Screen
         name="profile"
         options={{
-          title: "My Profile",
+          title: "Profile",
           headerShown: false,
           tabBarIcon: ({ color, size, focused }) =>
             focused ? (

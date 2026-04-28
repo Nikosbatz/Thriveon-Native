@@ -47,8 +47,8 @@ export default function ResetTokenForm() {
       await postResetPassword(password, code.join(""));
       Toast.show({
         type: "success",
-        text1: "Successful password reset!",
-        text2: "You can now login with your new password",
+        text1: "",
+        text2: "",
       });
       setLoading(false);
 

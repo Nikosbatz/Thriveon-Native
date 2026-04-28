@@ -1,5 +1,6 @@
 import { useAuth } from "@/src/context/authContext";
 import { colors } from "@/src/theme/colors";
+import { UserInterface } from "@/src/types";
 import { Link } from "expo-router";
 import { Edit2 } from "lucide-react-native";
 import { View } from "react-native";

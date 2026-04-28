@@ -1,6 +1,6 @@
 import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
 import { colors } from "@/src/theme/colors";
-import { BookmarkPlus } from "lucide-react-native";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
@@ -50,8 +50,8 @@ export default function ExerciseFormModal(props: Props) {
       setActivityType("");
       Toast.show({
         type: "success",
-        text1: "Success",
-        text2: "Activity Logged Successfully.",
+        text1: "",
+        text2: "",
       });
       props.setVisible(false);
     } catch (error: any) {
@@ -74,14 +74,14 @@ export default function ExerciseFormModal(props: Props) {
           <Text
             variant="labelLarge"
             style={{
-              color: colors.primary,
+              color: colors.lvPrimaryLight,
               fontSize: 20,
               textAlign: "center",
               marginBottom: 10,
               lineHeight: 25,
             }}
           >
-            Log Your Activity
+            Activity details
           </Text>
 
           <View style={{ gap: 10 }}>
@@ -90,6 +90,7 @@ export default function ExerciseFormModal(props: Props) {
                 Burned Calories:
               </Text>
               <TextInput
+                maxLength={4}
                 value={inputValues.calories}
                 onChangeText={(text) =>
                   setInputValues({ ...inputValues, calories: text })
@@ -97,12 +98,13 @@ export default function ExerciseFormModal(props: Props) {
                 mode="outlined"
                 style={styles.input}
                 outlineColor="transparent"
-                activeOutlineColor={colors.lightGrayText}
+                activeOutlineColor={colors.lvPrimary50}
                 placeholder="Cal"
                 textColor="white"
                 cursorColor="white"
                 keyboardType="number-pad"
                 placeholderTextColor={colors.lightGrayText}
+                theme={{ roundness: 10 }}
               ></TextInput>
             </View>
 
@@ -111,6 +113,7 @@ export default function ExerciseFormModal(props: Props) {
                 Duration
               </Text>
               <TextInput
+                maxLength={3}
                 value={inputValues.duration}
                 onChangeText={(text) =>
                   setInputValues({ ...inputValues, duration: text })
@@ -118,12 +121,13 @@ export default function ExerciseFormModal(props: Props) {
                 mode="outlined"
                 style={styles.input}
                 outlineColor="transparent"
-                activeOutlineColor={colors.lightGrayText}
+                activeOutlineColor={colors.lvPrimary50}
                 placeholder="Minutes"
                 textColor="white"
                 cursorColor="white"
                 placeholderTextColor={colors.lightGrayText}
                 keyboardType="number-pad"
+                theme={{ roundness: 10 }}
               ></TextInput>
             </View>
           </View>
@@ -144,8 +148,8 @@ export default function ExerciseFormModal(props: Props) {
               backgroundColor: colors.lvPrimary80,
             }}
             onPress={() => handleLogActivity()}
-            icon={() => <BookmarkPlus color={"white"} />}
-            textColor={"white"}
+            icon={() => <FontAwesome5 name="running" size={24} color="black" />}
+            textColor={colors.lvBackground}
             loading={activitiesLoading}
             disabled={activitiesLoading}
           >
@@ -159,7 +163,7 @@ export default function ExerciseFormModal(props: Props) {
 
 const activityTypes = ["Cardiovascular", "Strength", "Flexibility", "Balance"];
 
-const inputBackground = "rgba(34, 34, 42, 1)";
+const inputBackground = "rgb(31, 41, 46)";
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -167,14 +171,15 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0, 0, 0, 0.77)",
     justifyContent: "center",
     alignItems: "center",
   },
 
   modalBox: {
     width: "80%",
-    backgroundColor: colors.lvGradientCard,
+    elevation: 10,
+    backgroundColor: colors.lvBackground,
     padding: 20,
     borderRadius: 20,
   },
@@ -194,7 +199,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
-    height: 50,
+    height: 45,
     fontSize: 20,
     backgroundColor: inputBackground,
     color: "white",

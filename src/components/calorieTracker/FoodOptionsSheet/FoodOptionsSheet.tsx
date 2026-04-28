@@ -1,4 +1,3 @@
-import { useAuth } from "@/src/context/authContext";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import { Food, mealType } from "@/src/types";
@@ -23,8 +22,6 @@ import Toast from "react-native-toast-message";
 import MenuPicker from "../../UI/MenuPicker";
 import MacrosInfo from "./MacrosInfo";
 
-// const SCREEN_WIDTH = Dimensions.get("window").width;
-
 type FoodSheetProps = {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
   food: Food | null;
@@ -33,6 +30,7 @@ type FoodSheetProps = {
   initialIndex?: number;
   enablePanDownToClose?: boolean;
   setFoodLogged?: Dispatch<SetStateAction<boolean>>;
+  snapPoint?: string;
 };
 
 export type macroKey = "fats" | "protein" | "carbs";
@@ -44,9 +42,6 @@ const macrosInfo = {
   macrosIcons: [Beef, Wheat, Droplets],
 };
 
-//TODO: add a grams choice in all foods portions
-//TODO: fix bug trying to read portions array on items that portions array is empty (Partialy solved by the previous TODO)
-
 export default function FoodOptionsSheet({
   bottomSheetRef,
   food,
@@ -55,37 +50,29 @@ export default function FoodOptionsSheet({
   initialIndex,
   enablePanDownToClose,
   setFoodLogged,
+  snapPoint,
 }: FoodSheetProps) {
   // Hooks
   const [quantityInput, setQuantityInput] = useState(
-    String(
-      food && "selectedServingIndex" in food
-        ? (food.selectedServingIndex ?? "1")
-        : "1",
-    ),
+    String(food?.loggedQuantity ?? "1"),
   );
   const quantityInputRef = useRef<RNTextInput>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const snapPoints = useMemo(() => ["98%"], []);
+  const snapPoints = useMemo(() => [snapPoint ?? "90%"], []);
   const [prevFood, setPrevFood] = useState<Food | null>(food);
   const [selectedServingIndex, setSelectedServingIndex] = useState(
-    food && "selectedServingIndex" in food
-      ? (food.selectedServingIndex ?? 0)
-      : 0,
+    food?.selectedServingIndex ?? 0,
   );
   const handleAddFood = useUserLogsStore((s) => s.handleAddFood);
   const logsLoading = useUserLogsStore((s) => s.logsLoading);
-  const { user } = useAuth();
 
   // Called when Sheet closes or opens
   const handleSheetChanges = useCallback((index: number) => {
     if (index === -1) {
       setSheetOpen(false);
-      // setQuantityInput("100");
       if (quantityInputRef.current?.isFocused()) {
         quantityInputRef.current.blur();
       }
-      setSelectedServingIndex(0);
     } else {
       setSheetOpen(true);
     }
@@ -101,7 +88,7 @@ export default function FoodOptionsSheet({
       );
       Toast.show({
         type: "success",
-        text1: "Food Logged Successfully",
+        text1: "",
         text2: "",
       });
       bottomSheetRef.current?.close();
@@ -109,7 +96,7 @@ export default function FoodOptionsSheet({
     } catch (error) {
       Toast.show({
         type: "error",
-        text1: "Food Log Failed!",
+        text1: "Food log failed!",
         text2: "There was an error logging your food!",
       });
     }
@@ -121,24 +108,24 @@ export default function FoodOptionsSheet({
     }
   }
 
-  // When a food is selected, check whether a "quantity" property exists,
-  // if "quantity" exists make its value is the default quantityInput value
+  // When sheet is opened set the selected foods quantityInput and selectedServingIndex based on the foods data
+  // This condition is used in case the food is from food history and has logged foods data in its object
   if (
-    prevFood?.name !== food?.name ||
-    prevFood?.loggedQuantity !== food?.loggedQuantity
+    prevFood !== undefined &&
+    (prevFood?.name !== food?.name ||
+      prevFood?.loggedQuantity !== food?.loggedQuantity)
   ) {
     setQuantityInput(String(food?.loggedQuantity ?? "1"));
+    setSelectedServingIndex(food?.selectedServingIndex ?? 0);
     setPrevFood(food);
   }
 
-  // Calculate Macros and Calories based on food quantity
-  const currentCalories = Math.floor(
-    ((food?.calories ?? 0) / (food?.grams ?? 0)) *
-      Number(quantityInput) *
-      (food?.portions[selectedServingIndex].gramWeight ?? 1),
+  // Calculate current food calories based on input
+  const currentCalories = calculateCurrentCalories(
+    food,
+    selectedServingIndex,
+    quantityInput,
   );
-
-  console.log(food);
 
   // BackDrop component used as prop to BottomSheet
   const renderBackdrop = useCallback(
@@ -177,18 +164,24 @@ export default function FoodOptionsSheet({
         >
           <Text
             variant="headlineSmall"
-            style={{ color: "white", width: "75%" }}
+            style={{
+              color: "white",
+              width: "75%",
+              fontSize: 18,
+              lineHeight: 21,
+            }}
           >
             {food?.name}
           </Text>
+
           <Text
             variant="headlineSmall"
             style={{
-              fontSize: 20,
+              fontSize: 17,
               color: "rgba(162, 162, 162, 1)",
             }}
           >
-            cal{" "}
+            kcal{" "}
             <Text variant="headlineSmall" style={{ color: colors.primary }}>
               {currentCalories}
             </Text>
@@ -203,7 +196,9 @@ export default function FoodOptionsSheet({
               Serving
             </Text>
             <MenuPicker
-              selectedOptionIndex={food?.portions[selectedServingIndex].label}
+              selectedOptionIndex={
+                food?.portions[selectedServingIndex]?.label ?? 0
+              }
               setSelectedOptionIndex={setSelectedServingIndex}
               options={food?.portions.map((portion) => portion.label) ?? []}
             />
@@ -222,11 +217,12 @@ export default function FoodOptionsSheet({
               placeholder="Quantity"
               style={styles.textInput}
               outlineColor="transparent"
-              activeOutlineColor="transparent"
+              activeOutlineColor={colors.lvPrimary50}
               cursorColor="white"
               placeholderTextColor={colors.lightGrayText}
               textColor={"white"}
               maxLength={6}
+              theme={{ roundness: 10 }}
             ></TextInput>
           </View>
           {/* <MenuPicker
@@ -237,8 +233,10 @@ export default function FoodOptionsSheet({
         </View>
         <Text variant="labelLarge" style={{ color: "white" }}>
           Grams in total:{" "}
-          {Number(quantityInput) *
-            (food?.portions[selectedServingIndex].gramWeight ?? 0)}
+          {(
+            Number(quantityInput) *
+            (food?.portions[selectedServingIndex]?.gramWeight ?? 0)
+          ).toFixed(1)}
           g
         </Text>
 
@@ -309,8 +307,8 @@ const styles = StyleSheet.create({
   },
   textInput: {
     // width: SCREEN_WIDTH / 2 - 25,
-    height: 53,
-    backgroundColor: colors.lvPrimary20,
+    height: 45,
+    backgroundColor: "rgb(45, 61, 69)",
     fontSize: 18,
   },
   divider: {
@@ -344,3 +342,34 @@ const styles = StyleSheet.create({
     // borderWidth: 1.5,
   },
 });
+
+function calculateCurrentCalories(
+  food: Food | null,
+  selectedServingIndex: number,
+  quantityInput: string,
+) {
+  if (!food) {
+    return 0;
+  }
+  let currentCalories = food?.calories;
+  if (food?.loggedQuantity && food.portions[selectedServingIndex]) {
+    const loggedGramsWeight =
+      food.portions[Number(food.selectedServingIndex)].gramWeight *
+      Number(food.loggedQuantity);
+    const currentInputGramsWeight =
+      food.portions[selectedServingIndex].gramWeight * Number(quantityInput);
+
+    currentCalories = Math.round(
+      (food.calories * currentInputGramsWeight) / loggedGramsWeight,
+    );
+  } else {
+    const weightInGrams =
+      food.portions[selectedServingIndex]?.gramWeight * Number(quantityInput);
+
+    currentCalories = Math.round(
+      (food?.calories * weightInGrams) / food?.grams,
+    );
+  }
+
+  return currentCalories;
+}

@@ -38,7 +38,6 @@ export default function MacrosInfo(props: Props) {
   // Calculate Macros and Calories based on food quantity
   const currentMacros = macrosKeys.map((macro) => {
     const macroValue = props.food?.[macro] ?? 0;
-    const grams = props.food?.loggedQuantity ?? props.food?.grams ?? 0;
     if (loggedGramsWeight) {
       return Math.floor(
         (macroValue * currentInputGramsWeight) / loggedGramsWeight,

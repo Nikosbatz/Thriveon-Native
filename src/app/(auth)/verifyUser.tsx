@@ -35,7 +35,7 @@ export default function VerifyUser() {
       await verifyUserEmail(verificationCode);
       Toast.show({
         type: "success",
-        text1: "Successful verification!",
+        text1: "",
       });
       router.replace("/(tabs)");
     } catch (error: any) {
@@ -63,7 +63,7 @@ export default function VerifyUser() {
       Toast.show({
         type: "error",
         text1: error.message,
-        text2: "Please Contact support if error persists",
+        text2: "Please Contact support if error persists...",
       });
     }
   }

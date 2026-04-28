@@ -1,10 +1,9 @@
 import { useAuth } from "@/src/context/authContext";
 import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
-import { useUserStore } from "@/src/store/userStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
-import { userActivity } from "@/src/types";
+import { router } from "expo-router";
 import { Apple, CircleEqual, Flame } from "lucide-react-native";
 import { StyleSheet, View } from "react-native";
 import { ProgressChart } from "react-native-chart-kit";
@@ -16,15 +15,10 @@ type chartInfoItem = {
   Icon: React.ComponentType<{ size?: number; color?: string }>;
   color: string;
 };
-//TODO: Must subscribe to zustand store and take real data
+
 export default function CaloriesProgressChart() {
   const { user } = useAuth();
-  const userProfile = useUserStore((s) => s.userProfile);
-  const mealCalories = useUserLogsStore((s) => s.mealCalories);
   const todaysMacros = useUserLogsStore((s) => s.todaysMacros);
-  const userActivities: userActivity[] = useUserActivitiesStore(
-    (s) => s.userActivities,
-  );
   const activitiesCaloriesSum = useUserActivitiesStore(
     (s) => s.activitiesCaloriesSum,
   );
@@ -35,8 +29,11 @@ export default function CaloriesProgressChart() {
   if (user?.nutritionGoals.calories) {
     // Calculate remaining calories decimal for chart
     remainingCalDecimal =
-      todaysMacros.calories / user.nutritionGoals.calories <= 1
-        ? todaysMacros.calories / user.nutritionGoals.calories
+      (todaysMacros.calories - activitiesCaloriesSum) /
+        user.nutritionGoals.calories <=
+      1
+        ? (todaysMacros.calories - activitiesCaloriesSum) /
+          user.nutritionGoals.calories
         : 1;
     // Calculate remaining calories for text in center of the chart
     remainingCal =
@@ -78,8 +75,9 @@ export default function CaloriesProgressChart() {
   return (
     <TouchableRipple
       borderless
-      rippleColor={colors.lvPrimary10}
-      style={[mainStyles.card, styles.mainContainer]}
+      rippleColor={"rgba(106, 106, 106, 0.28)"}
+      onPress={() => router.navigate("/(tabs)/diaryScreen")}
+      style={[mainStyles.dashboardCard, styles.mainContainer]}
     >
       <View style={{ gap: 10 }}>
         {/* Chart Container */}
@@ -115,7 +113,7 @@ export default function CaloriesProgressChart() {
           >
             <Text
               variant="labelLarge"
-              style={{ fontSize: 12, color: "rgb(104, 104, 104)" }}
+              style={{ fontSize: 12, color: "rgb(189, 189, 189)" }}
             >
               REMAINING
             </Text>
@@ -129,7 +127,7 @@ export default function CaloriesProgressChart() {
             >
               {remainingCal}
             </Text>
-            <Text style={{ color: "rgb(82, 82, 82)" }}>kcal</Text>
+            <Text style={{ color: "rgb(157, 157, 157)" }}>kcal</Text>
           </View>
         </View>
         {/* Calories Info texts */}
@@ -244,7 +242,7 @@ const chartConfig = {
     // If opacity is low, it's usually the 'track' (unfilled space)
     // We can return a fixed Gray for the track
     if (opacity < 0.3) {
-      return `rgb(31, 35, 43)`; // Dark gray track
+      return `rgba(0, 0, 0, 0.3)`; // Dark gray track
     }
     // Return a bright, solid color for the filled part
     return `rgb(0, 250, 250)`;

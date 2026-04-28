@@ -48,8 +48,8 @@ export const nestedSchema = yup.object({
   activity: yup.number().oneOf([0, 1, 2, 3]),
   nutritionGoals: yup.object({
     calories: yup.number().label("Calories").min(1000).max(15000).required(),
-    protein: yup.number().label("Protein").min(50).max(500).required(),
-    fats: yup.number().label("Fats").min(50).max(1000).required(),
+    protein: yup.number().label("Protein").min(0).max(500).required(),
+    fats: yup.number().label("Fats").min(0).max(1000).required(),
     carbs: yup.number().label("Carbs").min(0).max(1000).required(),
   }),
   healthGoals: yup.object({

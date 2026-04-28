@@ -54,8 +54,8 @@ export default function WeightFormModal(props: Props) {
       setFormError("");
       Toast.show({
         type: "success",
-        text1: "Success",
-        text2: "Weight has been Logged Successfully",
+        text1: "",
+        text2: "",
       });
       props.setVisible(false);
     } catch (error: any) {
@@ -75,7 +75,7 @@ export default function WeightFormModal(props: Props) {
           <Text
             variant="labelLarge"
             style={{
-              color: colors.primary,
+              color: colors.lvPrimaryLight,
               fontSize: 20,
               textAlign: "center",
               marginBottom: 10,
@@ -94,6 +94,7 @@ export default function WeightFormModal(props: Props) {
               right={<TextInput.Icon icon="calendar" />}
               style={styles.input}
               textColor="white"
+              theme={{ roundness: 10 }}
             />
           </Pressable>
 
@@ -111,6 +112,7 @@ export default function WeightFormModal(props: Props) {
               Weight
             </Text>
             <TextInput
+              maxLength={4}
               value={formInputs.weight}
               onChangeText={(text) =>
                 setFormInputs({ ...formInputs, weight: text })
@@ -118,11 +120,12 @@ export default function WeightFormModal(props: Props) {
               mode="outlined"
               style={styles.input}
               outlineColor="transparent"
-              activeOutlineColor={colors.lightGrayText}
+              activeOutlineColor={colors.lvPrimary50}
               placeholder="Kgs"
               textColor="white"
               cursorColor="white"
               placeholderTextColor={colors.lightGrayText}
+              theme={{ roundness: 10 }}
               keyboardType="number-pad"
             ></TextInput>
           </View>
@@ -147,8 +150,8 @@ export default function WeightFormModal(props: Props) {
               backgroundColor: colors.lvPrimary80,
             }}
             onPress={handleLogWeight}
-            icon={() => <Weight color={"white"} />}
-            textColor={"white"}
+            icon={() => <Weight color={colors.lvBackground} />}
+            textColor={colors.lvBackground}
             loading={weightLogsLoading}
             disabled={weightLogsLoading}
           >
@@ -160,7 +163,7 @@ export default function WeightFormModal(props: Props) {
   );
 }
 
-const inputBackground = "rgba(34, 34, 42, 1)";
+const inputBackground = "rgb(31, 41, 46)";
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -168,14 +171,15 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0, 0, 0, 0.77)",
     justifyContent: "center",
     alignItems: "center",
   },
 
   modalBox: {
     width: "80%",
-    backgroundColor: colors.lvGradientCard,
+    backgroundColor: colors.lvBackground,
+    elevation: 10,
     padding: 20,
     borderRadius: 20,
     gap: 15,
@@ -198,7 +202,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
-    height: 50,
+    height: 45,
     fontSize: 20,
     backgroundColor: inputBackground,
     color: "white",

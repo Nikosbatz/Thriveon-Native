@@ -41,12 +41,12 @@ export default function FoodCard({
     <TouchableHighlight
       key={index}
       // activeOpacity={0.5}
-      underlayColor={colors.primary20}
+      underlayColor={"rgba(68, 73, 107, 0.6)"}
       onPress={handleOnPress}
       style={{
-        backgroundColor: colors.lvGradientCard,
+        backgroundColor: colors.lvFoodCardBg,
         borderRadius: 10,
-        marginTop: 5,
+        marginTop: 2,
       }}
     >
       <View style={styles.foodCard}>
@@ -60,18 +60,18 @@ export default function FoodCard({
           }}
         >
           <Text
-            variant="headlineMedium"
+            variant="labelLarge"
             style={{
-              fontSize: 17,
+              fontSize: 15,
               color: "white",
-              lineHeight: 21,
+              lineHeight: 19,
             }}
           >
             {food.name}
           </Text>
           {food.brands ? (
             <Text
-              variant="labelLarge"
+              variant="bodyLarge"
               style={{
                 fontSize: 14,
                 color: "rgb(184, 184, 184)",
@@ -106,8 +106,8 @@ export default function FoodCard({
             padding: 5,
             position: "absolute",
             right: 10,
-            top: "60%",
-            transform: [{ translateX: "0%" }, { translateY: "-50%" }],
+            top: "50%",
+            transform: [{ translateX: "0%" }, { translateY: "-10%" }],
           }}
         >
           <Plus size={18} color={colors.primary} style={{}} />
@@ -122,17 +122,19 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderRadius: 10,
     elevation: 0,
-    padding: 8,
+    padding: 12,
     paddingHorizontal: 10,
     borderWidth: 0,
     borderColor: "rgba(135, 191, 244, 0)",
-    gap: 7,
+    gap: 0,
   },
   foodMacroText: {
-    color: colors.lightWhiteText,
+    color: "rgb(167, 167, 167)",
+    fontSize: 13,
   },
   foodMacroValue: {
-    color: colors.lvPrimaryLight,
-    fontSize: 14,
+    // color: colors.lvPrimaryLight,
+    color: "rgb(176, 176, 176)",
+    fontSize: 13,
   },
 });

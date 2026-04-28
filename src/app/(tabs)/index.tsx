@@ -4,13 +4,12 @@ import DashboardMacroCards from "@/src/components/dashboard/DashboardMacroCards"
 import ExerciseTrackerCard from "@/src/components/dashboard/ExerciseTracker/ExerciseTrackerCard";
 import WaterCard from "@/src/components/dashboard/WaterCard";
 import WeightHistoryChart from "@/src/components/dashboard/WeightHistory/WeightHistoryChart";
-import { useAuth } from "@/src/context/authContext";
 import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
-import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
+import { LinearGradient } from "expo-linear-gradient";
 import { useEffect } from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import Animated, {
   useAnimatedScrollHandler,
@@ -18,13 +17,9 @@ import Animated, {
 } from "react-native-reanimated";
 import Toast from "react-native-toast-message";
 
-const ITEM_WIDTH = Dimensions.get("window").width - 50;
-const SCREEN_WIDTH = Dimensions.get("window").width;
-
 export default function Dashboard() {
   const foods = useUserLogsStore((s) => s.foods);
   const loadFoods = useUserLogsStore((s) => s.loadFoods);
-  const todaysFoods = useUserLogsStore((s) => s.todaysFoods);
   const getTodayFoods = useUserLogsStore((s) => s.getTodayFoods);
   const fetchUserWeightLogs = useUserLogsStore((s) => s.fetchUserWeightLogs);
   const fetchUserActivites = useUserActivitiesStore(
@@ -37,7 +32,7 @@ export default function Dashboard() {
     scrollY.value = event.contentOffset.y;
   });
 
-  const { logOut } = useAuth();
+  // TODO: Add functinality to change data dates (Let user see the dashboard with data of previous dates)
 
   // Bootstrap app by fetching all required data
   useEffect(() => {
@@ -61,7 +56,11 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <View style={{ flex: 1 }}>
+    <LinearGradient
+      colors={["#085062", "#073854", "#080722", "#020212", "#020212"]}
+      locations={[0, 0.05, 0.4, 0.5, 1]}
+      style={{ flex: 1 }}
+    >
       <CustomHeader scrollY={scrollY} />
       <Animated.ScrollView
         onScroll={scrollHandler}
@@ -77,12 +76,6 @@ export default function Dashboard() {
         <View style={[, { width: "100%", alignSelf: "center" }]}>
           <CaloriesProgressChart></CaloriesProgressChart>
         </View>
-
-        {/* FOR TESTING */}
-        {/* <Button onPress={() => logOut()}>log out</Button>
-        <Button onPress={() => router.navigate("/(onBoarding)/welcomeScreen")}>
-          to welcome screen
-        </Button> */}
 
         {/* Cards container (Every card but those from Horizontal ScrollView) */}
         <View style={styles.cardsContainer}>
@@ -109,13 +102,13 @@ export default function Dashboard() {
         </View>
         <Text> </Text>
       </Animated.ScrollView>
-    </View>
+    </LinearGradient>
   );
 }
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: colors.lvBackground,
+    backgroundColor: "transparent",
     paddingBottom: 100,
     paddingVertical: 0,
   },

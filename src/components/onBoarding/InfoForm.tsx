@@ -31,7 +31,7 @@ export default function InfoForm() {
   const onBoardingFormData = useOnBoardingFormStore((state) => state.formData);
   const storeUpdateForm = useOnBoardingFormStore((state) => state.updateForm);
   const [formInputs, setFormInputs] = useState<FormInputs>({
-    goal: "",
+    goal: "-1",
     age: "",
     weight: "",
     height: "",
@@ -96,13 +96,14 @@ export default function InfoForm() {
               }
               rippleColor={"rgba(8, 147, 159, 0.52)"}
               style={[
-                mainStyles.card,
+                mainStyles.dashboardCard,
                 {
                   backgroundColor: "rgba(18, 105, 143, 0.29)",
                   elevation: 0,
                   borderRadius: 10,
                   padding: 10,
                   borderWidth: 1,
+                  marginTop: 5,
                   borderColor:
                     Number(formInputs.goal) === index
                       ? colors.lvPrimary80
@@ -126,7 +127,7 @@ export default function InfoForm() {
                 </View>
                 <Text
                   variant="labelLarge"
-                  style={{ color: "white", fontSize: 20 }}
+                  style={{ color: "white", fontSize: 20, lineHeight: 23 }}
                 >
                   {obj.goal}
                 </Text>

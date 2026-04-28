@@ -45,7 +45,7 @@ export default function WaterCard() {
     >
       <View
         style={[
-          mainStyles.card,
+          mainStyles.dashboardCard,
           {
             gap: 20,
             backgroundColor: "#016dc6",

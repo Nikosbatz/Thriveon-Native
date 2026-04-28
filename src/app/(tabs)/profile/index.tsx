@@ -3,8 +3,9 @@ import MainCardGoal from "@/src/components/profile/MainGoalCard";
 import { profileStyles } from "@/src/components/profile/profile.styles";
 import { useAuth } from "@/src/context/authContext";
 import { colors } from "@/src/theme/colors";
+import { LogOutIcon } from "lucide-react-native";
 import { ScrollView, View } from "react-native";
-import { Text } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 
 export default function ProfileScreen() {
   const { user } = useAuth();
@@ -15,9 +16,14 @@ export default function ProfileScreen() {
     { label: "Gender", value: user?.gender },
   ];
 
+  const { logOut } = useAuth();
+
   return (
     <View style={profileStyles.container}>
-      <ScrollView contentContainerStyle={profileStyles.mainScrollView}>
+      <ScrollView
+        contentContainerStyle={profileStyles.mainScrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Image and Name Container */}
         <View style={profileStyles.imageContainer}>
           {/* <Image
@@ -74,6 +80,19 @@ export default function ProfileScreen() {
         <MainCardGoal />
         {/* Macros and Health Goals Card */}
         <MacroHealthGoalsCard showEdit={true} />
+        <Button
+          mode="contained"
+          style={{
+            backgroundColor: "transparent",
+            borderColor: colors.lvPrimary20,
+            borderWidth: 1,
+          }}
+          textColor="rgb(241, 71, 71)"
+          onPress={() => logOut()}
+          icon={() => <LogOutIcon size={24} color={"rgb(241, 71, 71)"} />}
+        >
+          Log out
+        </Button>
       </ScrollView>
     </View>
   );
