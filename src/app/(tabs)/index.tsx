@@ -1,3 +1,4 @@
+import CalendarView from "@/src/components/dashboard/Calendar/Calendar";
 import CaloriesProgressChart from "@/src/components/dashboard/CaloriesProgressChart";
 import CustomHeader from "@/src/components/dashboard/CustomHeader";
 import DashboardMacroCards from "@/src/components/dashboard/DashboardMacroCards";
@@ -6,11 +7,12 @@ import WaterCard from "@/src/components/dashboard/WaterCard";
 import WeightHistoryChart from "@/src/components/dashboard/WeightHistory/WeightHistoryChart";
 import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
+import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { ActivityIndicator } from "react-native-paper";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -18,31 +20,30 @@ import Animated, {
 import Toast from "react-native-toast-message";
 
 export default function Dashboard() {
-  const foods = useUserLogsStore((s) => s.foods);
-  const loadFoods = useUserLogsStore((s) => s.loadFoods);
   const getTodayFoods = useUserLogsStore((s) => s.getTodayFoods);
   const fetchUserWeightLogs = useUserLogsStore((s) => s.fetchUserWeightLogs);
+  const userLogsLoading = useUserLogsStore((s) => s.logsLoading);
+  const selectedDate = useUserLogsStore((s) => s.selectedDate);
+  const getWaterIntake = useUserLogsStore((s) => s.getWaterIntake);
   const fetchUserActivites = useUserActivitiesStore(
     (s) => s.fetchUserActivites,
   );
-
   const scrollY = useSharedValue(0);
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
   });
 
-  // TODO: Add functinality to change data dates (Let user see the dashboard with data of previous dates)
-
+  // TODO: does not reflect the changes immediatly when adding foods (needs to change the date and go back again to show the changes)
   // Bootstrap app by fetching all required data
   useEffect(() => {
     const bootstrap = async () => {
       try {
         await Promise.all([
           getTodayFoods(),
-          foods.length === 0 ? loadFoods() : Promise.resolve(),
-          fetchUserActivites(),
+          fetchUserActivites(selectedDate),
           fetchUserWeightLogs(),
+          getWaterIntake(),
         ]);
       } catch (error: any) {
         Toast.show({
@@ -53,7 +54,7 @@ export default function Dashboard() {
       }
     };
     bootstrap();
-  }, []);
+  }, [selectedDate]);
 
   return (
     <LinearGradient
@@ -72,15 +73,25 @@ export default function Dashboard() {
         }}
         showsVerticalScrollIndicator={false}
       >
+        {/* Calendar */}
+        <CalendarView />
+
         {/* Calories Chart */}
-        <View style={[, { width: "100%", alignSelf: "center" }]}>
+        <View style={[, { width: "100%", alignSelf: "center", maxWidth: 600 }]}>
           <CaloriesProgressChart></CaloriesProgressChart>
         </View>
 
         {/* Cards container (Every card but those from Horizontal ScrollView) */}
         <View style={styles.cardsContainer}>
           {/* Macros Cards 3-columns container */}
-          <View style={{ marginTop: 15 }}>
+          <View
+            style={{
+              marginTop: 15,
+              maxWidth: 600,
+              width: "100%",
+              alignSelf: "center",
+            }}
+          >
             <DashboardMacroCards />
           </View>
           {/* Row 2-Cards Container */}
@@ -100,8 +111,26 @@ export default function Dashboard() {
           {/* Weight History Chart Container */}
           <WeightHistoryChart />
         </View>
-        <Text> </Text>
       </Animated.ScrollView>
+      {userLogsLoading ? (
+        <View
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.66)",
+          }}
+        >
+          <ActivityIndicator
+            size={70}
+            color={colors.lvPrimaryLight}
+            style={{
+              flex: 1,
+              alignSelf: "center",
+            }}
+          />
+        </View>
+      ) : null}
     </LinearGradient>
   );
 }

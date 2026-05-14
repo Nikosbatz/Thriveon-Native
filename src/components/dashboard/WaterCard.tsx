@@ -1,40 +1,21 @@
-import { getUserWaterIntake, postUserWaterIntake } from "@/src/api/requests";
 import { useAuth } from "@/src/context/authContext";
+import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { mainStyles } from "@/src/theme/styles";
 import { Droplet, Plus } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, TouchableRipple } from "react-native-paper";
-import Toast from "react-native-toast-message";
 import ProgressBar from "../UI/ProgressBar";
 
 export default function WaterCard() {
   const [cardWidth, setCardWidth] = useState<number>(0);
-  const [waterIntake, setWaterIntake] = useState<number>(0);
+  const postWaterIntake = useUserLogsStore((s) => s.postWaterIntake);
+  const waterIntake = useUserLogsStore((s) => s.waterIntake);
   const { user } = useAuth();
-
-  useEffect(() => {
-    const fetchWaterIntake = async () => {
-      try {
-        const data = await getUserWaterIntake();
-        if (user) {
-          setWaterIntake(data);
-        }
-      } catch (error: any) {
-        Toast.show({ type: "error", text1: "Error", text2: error.message });
-      }
-    };
-    fetchWaterIntake();
-  }, [user]);
 
   async function handlePress() {
     const next = Number((waterIntake + 0.2).toFixed(1));
-    setWaterIntake(next);
-    const water = await postUserWaterIntake(next);
-    //TODO: need to debounce the code in the if to avoid setting stale state
-    if (water) {
-      setWaterIntake(water);
-    }
+    await postWaterIntake(next);
   }
   return (
     <TouchableRipple

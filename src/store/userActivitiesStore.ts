@@ -21,8 +21,11 @@ interface ActivityStore {
   userActivities: ActivityType[];
   activitiesCaloriesSum: number;
   activitiesDurationSum: number;
-  fetchUserActivites: () => Promise<void>;
-  postUserActivity: (activityValues: ActivityInputValues) => Promise<void>;
+  fetchUserActivites: (date: string) => Promise<void>;
+  postUserActivity: (
+    activityValues: ActivityInputValues,
+    date: string,
+  ) => Promise<void>;
   calculateUserActivitiesSums: () => void;
 }
 
@@ -31,10 +34,10 @@ export const useUserActivitiesStore = create<ActivityStore>((set, get) => ({
   userActivities: [],
   activitiesCaloriesSum: 0,
   activitiesDurationSum: 0,
-  fetchUserActivites: async () => {
+  fetchUserActivites: async (date) => {
     try {
       set({ activitiesLoading: true });
-      const data = await getUserActivities();
+      const data = await getUserActivities(date);
       set({
         userActivities: data.data,
         activitiesLoading: false,
@@ -44,10 +47,11 @@ export const useUserActivitiesStore = create<ActivityStore>((set, get) => ({
       throw new Error("Could not fetch user activities");
     }
   },
-  postUserActivity: async (activityValues: ActivityInputValues) => {
+  postUserActivity: async (activityValues, date) => {
     set({ activitiesLoading: true });
     try {
-      const activities = await postUserActivityAPI(activityValues);
+      const activities = await postUserActivityAPI(activityValues, date);
+      console.log(activities);
       set({ activitiesLoading: false, userActivities: activities });
       get().calculateUserActivitiesSums();
     } catch (error) {

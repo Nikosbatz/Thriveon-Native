@@ -63,6 +63,8 @@ export default function WeightHistoryChart() {
           // borderColor: colors.lvPrimary50,
           borderColor: "rgb(46, 47, 70)",
           borderRadius: 20,
+          maxWidth: 600,
+          alignSelf: "center",
         }}
       >
         {/* Header and Weight Trend texts at the top of the component */}

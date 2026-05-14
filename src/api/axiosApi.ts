@@ -1,9 +1,9 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { triggerLogout } from "./authBridge";
-// export const BASE_URI = "http://192.168.2.7:8080/api";
-export const BASE_URI = "http://192.168.1.211:8080/api";
-// export const BASE_URI = "https://thriveon.fit/api";
+// export const BASE_URI = "http://192.168.2.6:8080/api";
+// export const BASE_URI = "http://192.168.1.211:8080/api";
+export const BASE_URI = "https://thriveon.fit/api";
 
 export const api = axios.create({
   baseURL: BASE_URI,

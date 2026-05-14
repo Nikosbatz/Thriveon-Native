@@ -6,6 +6,8 @@ import { api, BASE_URI } from "./axiosApi";
 export async function login(email: string, password: string) {
   const loginData = { email: email, password: password };
 
+  console.log("login");
+
   try {
     const res = await axios.post(`${BASE_URI}/user/login`, loginData, {
       headers: {
@@ -222,14 +224,13 @@ export async function getUserInfo() {
   }
 }
 
-export async function getFoods(path: string) {
+export async function getFoods(path: string, date: string) {
   /* 
   path = "/foods" to fetch all the foods from the DB
   path = "/foods/userlogs" to fetch the User's food logs (Today currently...)
   */
-
   try {
-    const res = await api.get(`${path}`, {
+    const res = await api.get(`${path}/${date}`, {
       headers: { Accept: "application/json" },
     });
     if (res.status === 200) {
@@ -241,9 +242,9 @@ export async function getFoods(path: string) {
 }
 
 // Posts food object on /api/foods/userlogs
-export async function postFood(data: Food, path: string) {
+export async function postFood(data: Food, path: string, date: string) {
   try {
-    const res = await api.post(`${path}`, data, {
+    const res = await api.post(`${path}/${date}`, data, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json;charset=UTF-8",
@@ -258,8 +259,8 @@ export async function postFood(data: Food, path: string) {
   }
 }
 
-export async function deleteUserLogsFood(food: Food) {
-  const res = await api.delete(`/foods/userlogs/${food._id}`, {
+export async function deleteUserLogsFood(food: Food, date: string) {
+  const res = await api.delete(`/foods/userlogs/${date}/${food._id}`, {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json;charset=UTF-8",
@@ -273,9 +274,9 @@ export async function deleteUserLogsFood(food: Food) {
   }
 }
 
-export async function getUserWaterIntake() {
+export async function getUserWaterIntake(date: string) {
   try {
-    const res = await api.get(`/health/water-logs`, {
+    const res = await api.get(`/health/water-logs/${date}`, {
       headers: { Accept: "application/json" },
     });
     if (res.status === 200) {
@@ -286,10 +287,10 @@ export async function getUserWaterIntake() {
   }
 }
 
-export async function postUserWaterIntake(water: number) {
+export async function postUserWaterIntake(water: number, date: string) {
   try {
     const res = await api.post(
-      `/health/water-logs`,
+      `/health/water-logs/${date}`,
       { water: water },
       {
         headers: {
@@ -300,16 +301,16 @@ export async function postUserWaterIntake(water: number) {
     );
 
     if (res.status === 200 || res.status === 201) {
-      return res.data;
+      return water;
     }
   } catch (error) {
     throw Error("Could not find userId...");
   }
 }
 
-export async function getUserActivities() {
+export async function getUserActivities(date: string) {
   try {
-    const res = await api.get(`/activities/user-logs`, {
+    const res = await api.get(`/activities/user-logs/${date}`, {
       headers: { Accept: "application/json" },
     });
 
@@ -322,8 +323,8 @@ export async function getUserActivities() {
 }
 
 //TODO:change any type
-export async function postUserActivity(activityValues: any) {
-  const res = await api.post(`/activities/user-logs`, activityValues, {
+export async function postUserActivity(activityValues: any, date: string) {
+  const res = await api.post(`/activities/user-logs/${date}`, activityValues, {
     headers: { Accept: "application/json", "Content-Type": "application/json" },
   });
 
@@ -334,9 +335,9 @@ export async function postUserActivity(activityValues: any) {
   }
 }
 
-export async function getUserWeightLogs() {
+export async function getUserWeightLogs(date: string) {
   try {
-    let res = await api.get(`/health/weight-logs`, {
+    let res = await api.get(`/health/weight-logs/${date}`, {
       headers: { Accept: "application/json" },
     });
 
@@ -348,10 +349,10 @@ export async function getUserWeightLogs() {
   }
 }
 
-export async function postUserWeightLogs(weight: number) {
+export async function postUserWeightLogs(weight: number, date: string) {
   try {
     const res = await api.post(
-      `/health/weight-logs`,
+      `/health/weight-logs/${date}`,
       { weight: weight },
       {
         headers: {
@@ -362,7 +363,7 @@ export async function postUserWeightLogs(weight: number) {
     );
 
     if (res.status === 200 || res.status === 201) {
-      return res.data;
+      return res.data.data;
     }
   } catch (error) {
     throw Error();

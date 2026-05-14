@@ -7,7 +7,7 @@ import DateTimePicker, {
 import { Weight } from "lucide-react-native";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Modal, Platform, Pressable, StyleSheet, View } from "react-native";
-import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import { Button, Text, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
 
 type Props = {
@@ -25,8 +25,8 @@ export default function WeightFormModal(props: Props) {
   });
   const weightLogsLoading = useUserLogsStore((s) => s.weightLogsLoading);
   const postUserWeight = useUserLogsStore((s) => s.postUserWeight);
+  const selectedDate = useUserLogsStore((s) => s.selectedDate);
   const { fetchUserInfo } = useAuth();
-  const theme = useTheme();
 
   const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     setShow(false);
@@ -51,6 +51,7 @@ export default function WeightFormModal(props: Props) {
       await postUserWeight(weightNum);
       // Update the user info in authContext
       await fetchUserInfo();
+      setFormInputs({ ...formInputs, weight: "" });
       setFormError("");
       Toast.show({
         type: "success",
@@ -89,7 +90,8 @@ export default function WeightFormModal(props: Props) {
               mode="outlined"
               outlineColor={colors.lightGrayText}
               label="Date"
-              value={formInputs.date.toLocaleDateString()}
+              value={selectedDate}
+              // value={formInputs.date.toLocaleDateString()}
               editable={false}
               right={<TextInput.Icon icon="calendar" />}
               style={styles.input}

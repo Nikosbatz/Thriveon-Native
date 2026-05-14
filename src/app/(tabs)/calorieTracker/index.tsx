@@ -59,10 +59,6 @@ export default function CalorieTrackerScreen() {
     setSearchEnded(false);
   }
 
-  function handleBarcodeScannerPress() {
-    router.navigate("/calorieTracker/cameraScreen");
-  }
-
   const translateY = useSharedValue(0);
   const opacity = useSharedValue(1);
   const lastContentOffset = useSharedValue(0);
@@ -151,8 +147,11 @@ export default function CalorieTrackerScreen() {
           right={
             searchInput !== "" ? (
               <TextInput.Icon
+                forceTextInputFocus={false}
                 rippleColor={colors.lvPrimary20}
-                onPress={() => setSearchInput("")}
+                onPress={(e) => {
+                  setSearchInput("");
+                }}
                 icon={() => (
                   <Entypo
                     name="circle-with-cross"

@@ -42,7 +42,7 @@ export default function RegisterScreen() {
     }
     setErrorText(null);
     try {
-      await signUp(emailInput, passwordInput);
+      await signUp(emailInput.toLowerCase(), passwordInput);
       setIsLoading(false);
       router.navigate({
         params: { email: emailInput },

@@ -1,4 +1,5 @@
 import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
+import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -22,6 +23,7 @@ export default function ExerciseFormModal(props: Props) {
   const [formError, setFormError] = useState(false);
   const activitiesLoading = useUserActivitiesStore((s) => s.activitiesLoading);
   const postUserActivity = useUserActivitiesStore((s) => s.postUserActivity);
+  const selectedDate = useUserLogsStore((s) => s.selectedDate);
 
   async function handleLogActivity() {
     // Initialize a singular object
@@ -42,7 +44,7 @@ export default function ExerciseFormModal(props: Props) {
 
     try {
       setFormError(false);
-      postUserActivity(activityValues);
+      postUserActivity(activityValues, selectedDate);
       setInputValues({
         duration: "",
         calories: "",

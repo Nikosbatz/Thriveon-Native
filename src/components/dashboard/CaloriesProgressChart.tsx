@@ -16,6 +16,8 @@ type chartInfoItem = {
   color: string;
 };
 
+// TODO: Change the calculations of the remainingCalDecimal, remainingCal to calculate based on just teh consumption not burned calories
+
 export default function CaloriesProgressChart() {
   const { user } = useAuth();
   const todaysMacros = useUserLogsStore((s) => s.todaysMacros);
@@ -29,19 +31,13 @@ export default function CaloriesProgressChart() {
   if (user?.nutritionGoals.calories) {
     // Calculate remaining calories decimal for chart
     remainingCalDecimal =
-      (todaysMacros.calories - activitiesCaloriesSum) /
-        user.nutritionGoals.calories <=
-      1
-        ? (todaysMacros.calories - activitiesCaloriesSum) /
-          user.nutritionGoals.calories
-        : 1;
+      todaysMacros.calories / user.nutritionGoals.calories >= 0
+        ? todaysMacros.calories / user.nutritionGoals.calories
+        : 0;
     // Calculate remaining calories for text in center of the chart
     remainingCal =
-      user.nutritionGoals.calories -
-        (todaysMacros.calories - activitiesCaloriesSum) >=
-      0
-        ? user.nutritionGoals.calories -
-          (todaysMacros.calories - activitiesCaloriesSum)
+      user.nutritionGoals.calories - todaysMacros.calories >= 0
+        ? user.nutritionGoals.calories - todaysMacros.calories
         : 0;
   }
 

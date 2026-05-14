@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.nikosbatz.thriveon",
+      "bundleIdentifier": "com.enbydev.thriveon",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -25,7 +25,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.nikosbatz.thriveon",
+      "package": "com.enbydev.thriveon",
       "softwareKeyboardLayoutMode": "pan",
       "googleServicesFile": "./google-services.json"
     },
@@ -63,12 +63,12 @@
       "typedRoutes": true,
       "reactCompiler": true
     },
+    "owner": "nikosbatz",
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "fe299774-83a7-4c02-913d-274f69dcd6ac"
+        "projectId": "8e66ffd5-f464-4e20-8321-d82295604da9"
       }
-    },
-    "owner": "nikosbatz"
+    }
   }
 }

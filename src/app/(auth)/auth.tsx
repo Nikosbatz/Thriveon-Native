@@ -61,7 +61,7 @@ export default function AuthScreen() {
     }
 
     try {
-      await signIn(emailInput, passwordInput);
+      await signIn(emailInput.toLowerCase(), passwordInput);
     } catch (error: any) {
       setErrorText(error.message);
       setIsLoading(false);
@@ -82,8 +82,10 @@ export default function AuthScreen() {
         await googleSignIn(response.data);
       } else {
         alert("Could not sign in with Google...");
+        setIsLoadingGoogle(false);
       }
     } catch (error: any) {
+      console.log(error.message);
       setIsLoadingGoogle(false);
 
       if (isErrorWithCode(error)) {

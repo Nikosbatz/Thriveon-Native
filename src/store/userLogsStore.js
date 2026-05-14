@@ -1,19 +1,24 @@
+import moment from "moment";
 import { create } from "zustand";
 import {
   deleteUserLogsFood,
   getFoods,
+  getUserWaterIntake,
   getUserWeightLogs,
   postFood,
+  postUserWaterIntake,
   postUserWeightLogs,
 } from "../api/requests";
 
 //TODO: define type for the store (convert the fine to .tsx)
 
 const initialState = {
+  selectedDate: moment().format("YYYY-MM-DD"),
   logsLoading: true,
   foodsLoading: true,
   weightLogsLoading: false,
   weightLogs: [],
+  waterIntake: 0,
   foods: [],
   foodHistory: [],
   todaysFoods: [],
@@ -33,6 +38,7 @@ const initialState = {
 
 export const useUserLogsStore = create((set, get) => ({
   ...initialState,
+  setSelectedDate: (date) => set({ selectedDate: date }),
   resetLogs: () => {
     set(initialState);
   },
@@ -40,7 +46,7 @@ export const useUserLogsStore = create((set, get) => ({
   fetchUserWeightLogs: async () => {
     set({ weightLogsLoading: true });
     try {
-      const logs = await getUserWeightLogs();
+      const logs = await getUserWeightLogs(get().selectedDate);
       set({ weightLogs: logs });
       set({ weightLogsLoading: false });
     } catch (error) {
@@ -51,7 +57,7 @@ export const useUserLogsStore = create((set, get) => ({
   postUserWeight: async (weight) => {
     set({ weightLogsLoading: true });
     try {
-      const weightLogs = await postUserWeightLogs(weight);
+      const weightLogs = await postUserWeightLogs(weight, get().selectedDate);
       set({ weightLogs: weightLogs });
       set({ weightLogsLoading: false });
     } catch (error) {
@@ -59,6 +65,24 @@ export const useUserLogsStore = create((set, get) => ({
       throw new Error("Could not post weight...\nPlease try later!");
     }
   },
+
+  getWaterIntake: async () => {
+    try {
+      const data = await getUserWaterIntake(get().selectedDate);
+      set({ waterIntake: data });
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+  postWaterIntake: async (water) => {
+    try {
+      const waterIntake = await postUserWaterIntake(water, get().selectedDate);
+      set({ waterIntake: waterIntake });
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+
   // Fetch all foods
   loadFoods: async () => {
     set({ foodsLoading: true });
@@ -76,9 +100,15 @@ export const useUserLogsStore = create((set, get) => ({
   getTodayFoods: async () => {
     set({ logsLoading: true });
     try {
-      const { data, foodHistory } = await getFoods("/foods/userlogs");
+      const { data, foodHistory } = await getFoods(
+        "/foods/userlogs",
+        get().selectedDate,
+      );
       set({ todaysFoods: data, foodHistory: foodHistory });
       get().updateTodayMacros();
+      // setTimeout(() => {
+      //
+      // }, 500);
       set({ logsLoading: false });
     } catch (error) {
       set({ logsLoading: false });
@@ -124,7 +154,7 @@ export const useUserLogsStore = create((set, get) => ({
   },
   removeFood: async (foodToDelete) => {
     try {
-      const res = await deleteUserLogsFood(foodToDelete);
+      const res = await deleteUserLogsFood(foodToDelete, get().selectedDate);
       set((state) => ({
         todaysFoods: state.todaysFoods.filter(
           (food) => food._id !== foodToDelete._id,
@@ -180,7 +210,11 @@ export const useUserLogsStore = create((set, get) => ({
 
     set({ logsLoading: true });
     try {
-      const res = await postFood(foodToUpload, "/foods/userlogs");
+      const res = await postFood(
+        foodToUpload,
+        "/foods/userlogs",
+        get().selectedDate,
+      );
 
       set((state) => ({
         todaysFoods: res.message,
