@@ -81,18 +81,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: colors.lvPrimary10,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    // backgroundColor: "rgba(6, 51, 66, 0.1)",
+    // borderTopLeftRadius: 28,
+    // borderTopRightRadius: 28,
+    borderRadius: 20,
+    // backgroundColor: "rgba(6, 29, 66, 0.32)",
+    marginHorizontal: 5,
     paddingVertical: 8,
     paddingHorizontal: 8,
     borderColor: "#66c2b13b",
   },
   buttonWrapper: {
-    // backgroundColor: "red",
     justifyContent: "center",
-    // flex: 1,
     minWidth: 100,
     borderRadius: 30,
   },
@@ -108,7 +107,7 @@ const styles = StyleSheet.create({
     // backgroundColor: colors.lvGradientCard,
   },
   activeIconContainer: {
-    backgroundColor: "#d1fae500", // Soft teal/green background tint for the active tab
+    backgroundColor: "#03576900", // Soft teal/green background tint for the active tab
     borderColor: colors.lvPrimary80,
   },
   label: {

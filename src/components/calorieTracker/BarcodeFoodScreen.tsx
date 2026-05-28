@@ -8,8 +8,9 @@ import { View } from "react-native";
 import FoodOptionsSheet from "./FoodOptionsSheet/FoodOptionsSheet";
 
 export default function BarcodeFoodScreen() {
-  const [selectedMealType, setSelectedMealType] =
-    useState<mealType>("Breakfast");
+  const [selectedMealType, setSelectedMealType] = useState<
+    mealType | undefined
+  >("Breakfast");
   const [foodLogged, setFoodLogged] = useState(false);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const barcodeStoreFood = useBarcodeFoodStore((state) => state.food);

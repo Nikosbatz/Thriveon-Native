@@ -214,17 +214,30 @@ export default function FoodOptionsSheet({
             gap: 5,
           }}
         >
-          <Text
-            variant="headlineSmall"
-            style={{
-              color: "white",
-              width: "65%",
-              fontSize: 18,
-              lineHeight: 21,
-            }}
-          >
-            {food?.name}
-          </Text>
+          <View style={{ width: "65%" }}>
+            <Text
+              variant="headlineSmall"
+              style={{
+                color: "white",
+
+                fontSize: 18,
+                lineHeight: 21,
+              }}
+            >
+              {food?.name}
+            </Text>
+            {food?.brands && (
+              <Text
+                style={{
+                  color: "rgb(206, 206, 206)",
+                  fontSize: 14,
+                  lineHeight: 21,
+                }}
+              >
+                {food.brands}
+              </Text>
+            )}
+          </View>
           <View style={{ flexDirection: "row" }}>
             {food?.starred ? (
               <View style={{ flexDirection: "row", alignItems: "center" }}>

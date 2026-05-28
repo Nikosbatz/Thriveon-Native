@@ -1,6 +1,6 @@
+import ActionSelectionBar from "@/src/components/calorieTracker/action tabs/ActionSelectionBar";
 import MyFoodsTab from "@/src/components/calorieTracker/action tabs/myFoodsTab/MyFoodsTab";
 import SearchTab from "@/src/components/calorieTracker/action tabs/SearchTab";
-import ActionSelectionBar from "@/src/components/calorieTracker/ActionSelectionBar";
 import FoodOptionsSheet from "@/src/components/calorieTracker/FoodOptionsSheet/FoodOptionsSheet";
 import ProfileHeader from "@/src/components/profile/ProfileHeader";
 import { colors } from "@/src/theme/colors";

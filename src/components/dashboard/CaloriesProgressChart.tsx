@@ -107,7 +107,7 @@ export default function CaloriesProgressChart() {
           >
             <Text
               variant="labelLarge"
-              style={{ fontSize: 12, color: "rgb(189, 189, 189)" }}
+              style={{ fontSize: 12, color: "rgb(208, 208, 208)" }}
             >
               REMAINING
             </Text>
@@ -121,7 +121,7 @@ export default function CaloriesProgressChart() {
             >
               {remainingCal}
             </Text>
-            <Text style={{ color: "rgb(157, 157, 157)" }}>kcal</Text>
+            <Text style={{ color: "rgb(214, 214, 214)" }}>kcal</Text>
           </View>
         </View>
         {/* Calories Info texts */}
