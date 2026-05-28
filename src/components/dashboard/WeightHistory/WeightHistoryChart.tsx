@@ -14,6 +14,9 @@ export default function WeightHistoryChart() {
   const [modalVisible, setModalVisible] = useState(false);
   const weightLogs = useUserLogsStore((s) => s.weightLogs);
 
+  for (let log of weightLogs) {
+    log.weight;
+  }
   // Build arrays for chart data
   const labels = [];
   const weights = [];
@@ -38,7 +41,10 @@ export default function WeightHistoryChart() {
   };
 
   // Calculate current weight and weight trend
-  const currentWeight = weightLogs?.at(-1)?.weight ?? 0;
+  // const currentWeight = weightLogs?.at(-1)?.weight ?? 0;
+  const currentWeight = weightLogs
+    .filter((log: any) => log.weight !== null)
+    .at(-1)?.weight;
   let weightTrend = 0;
   for (let log of weightLogs) {
     if (log.weight !== null) {
@@ -81,12 +87,12 @@ export default function WeightHistoryChart() {
           </Text>
           <View style={{ alignItems: "center" }}>
             <Plus
-              size={0}
+              size={26}
               color={"white"}
               style={{
-                backgroundColor: colors.primary,
                 borderRadius: 8,
-                alignSelf: "flex-end",
+                position: "absolute",
+                right: 5,
               }}
             ></Plus>
             {/* Weight Text */}

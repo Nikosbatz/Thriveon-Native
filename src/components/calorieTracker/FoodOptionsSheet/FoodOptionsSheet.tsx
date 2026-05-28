@@ -1,13 +1,15 @@
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import { Food, mealType } from "@/src/types";
+import buildLoggedFoodObject from "@/src/utilities/buildLoggedFoodObject";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
 } from "@gorhom/bottom-sheet";
-import { Beef, Check, Droplets, Wheat } from "lucide-react-native";
+import { ArrowDown, ArrowUp, Check } from "lucide-react-native";
 import React, {
   Dispatch,
   SetStateAction,
@@ -16,30 +18,30 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
+import {
+  BackHandler,
+  TextInput as RNTextInput,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Button, Divider, Menu, Text, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
-import MenuPicker from "../../UI/MenuPicker";
+import { Tooltip } from "../../UI/ToolTip";
 import MacrosInfo from "./MacrosInfo";
 
 type FoodSheetProps = {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
   food: Food | null;
-  selectedMealType: mealType;
-  setSelectedMealType: Dispatch<SetStateAction<mealType>>;
+  selectedMealType: mealType | undefined;
+  setSelectedMealType?: Dispatch<SetStateAction<mealType | undefined>>;
   initialIndex?: number;
   enablePanDownToClose?: boolean;
   setFoodLogged?: Dispatch<SetStateAction<boolean>>;
   snapPoint?: string;
-};
-
-export type macroKey = "fats" | "protein" | "carbs";
-
-const macrosKeys: macroKey[] = ["protein", "carbs", "fats"];
-
-const macrosInfo = {
-  macrosLabels: ["Protein", "Carbs", "Fats"],
-  macrosIcons: [Beef, Wheat, Droplets],
+  isIngredient?: boolean;
+  setAddedIngredients?: Dispatch<SetStateAction<Food[]>>;
+  addedIngredients?: Food[];
 };
 
 export default function FoodOptionsSheet({
@@ -51,6 +53,10 @@ export default function FoodOptionsSheet({
   enablePanDownToClose,
   setFoodLogged,
   snapPoint,
+  // below props are mandatory for ingredient usage of the component
+  isIngredient,
+  setAddedIngredients,
+  addedIngredients,
 }: FoodSheetProps) {
   // Hooks
   const [quantityInput, setQuantityInput] = useState(
@@ -58,6 +64,7 @@ export default function FoodOptionsSheet({
   );
   const quantityInputRef = useRef<RNTextInput>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [showServingMenu, setShowServingMenu] = useState(false);
   const snapPoints = useMemo(() => [snapPoint ?? "90%"], []);
   const [prevFood, setPrevFood] = useState<Food | null>(food);
   const [selectedServingIndex, setSelectedServingIndex] = useState(
@@ -65,6 +72,26 @@ export default function FoodOptionsSheet({
   );
   const handleAddFood = useUserLogsStore((s) => s.handleAddFood);
   const logsLoading = useUserLogsStore((s) => s.logsLoading);
+
+  // Handle hardware back button / back gesture safely
+  React.useEffect(() => {
+    const onBackPress = () => {
+      if (sheetOpen) {
+        bottomSheetRef.current?.close();
+        return true; // Stop default behavior (don't exit app/screen)
+      }
+      return false; // Let default back behavior happen
+    };
+
+    // addEventListener returns a NativeEventSubscription object
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress,
+    );
+
+    // Clean up by calling .remove() directly on the subscription
+    return () => subscription.remove();
+  }, [sheetOpen, bottomSheetRef]);
 
   // Called when Sheet closes or opens
   const handleSheetChanges = useCallback((index: number) => {
@@ -78,6 +105,7 @@ export default function FoodOptionsSheet({
     }
   }, []);
 
+  // handler for default usage of the component for logging foods
   async function handleLogFood() {
     try {
       await handleAddFood(
@@ -100,6 +128,28 @@ export default function FoodOptionsSheet({
         text2: "There was an error logging your food!",
       });
     }
+  }
+
+  // Handler in case of adding foods in food creating
+  function handleAddIngredient() {
+    if (!food) {
+      return;
+    }
+
+    const addedFood = buildLoggedFoodObject({
+      food,
+      quantityInput,
+      mealType: "Breakfast",
+      selectedServingIndex,
+    });
+
+    if (addedIngredients) {
+      const updatedIngredients = addedIngredients.slice();
+      updatedIngredients.push(addedFood);
+      setAddedIngredients ? setAddedIngredients(updatedIngredients) : null;
+    }
+
+    bottomSheetRef.current?.close();
   }
 
   function handleQuantityInputChange(text: string) {
@@ -160,32 +210,47 @@ export default function FoodOptionsSheet({
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
+            alignItems: "center",
+            gap: 5,
           }}
         >
           <Text
             variant="headlineSmall"
             style={{
               color: "white",
-              width: "75%",
+              width: "65%",
               fontSize: 18,
               lineHeight: 21,
             }}
           >
             {food?.name}
           </Text>
+          <View style={{ flexDirection: "row" }}>
+            {food?.starred ? (
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Tooltip text="This food is certified by our team">
+                  <Ionicons
+                    name="shield-checkmark-sharp"
+                    size={22}
+                    color="rgb(4, 195, 151)"
+                  />
+                </Tooltip>
+              </View>
+            ) : null}
 
-          <Text
-            variant="headlineSmall"
-            style={{
-              fontSize: 17,
-              color: "rgba(162, 162, 162, 1)",
-            }}
-          >
-            kcal{" "}
-            <Text variant="headlineSmall" style={{ color: colors.primary }}>
-              {currentCalories}
+            <Text
+              variant="headlineSmall"
+              style={{
+                fontSize: 17,
+                color: "rgba(162, 162, 162, 1)",
+              }}
+            >
+              kcal{" "}
+              <Text variant="headlineSmall" style={{ color: colors.primary }}>
+                {currentCalories}
+              </Text>
             </Text>
-          </Text>
+          </View>
         </View>
 
         {/* MealType Picker and TextInput Container */}
@@ -195,13 +260,89 @@ export default function FoodOptionsSheet({
             <Text variant="labelLarge" style={{ color: colors.lightGrayText }}>
               Serving
             </Text>
-            <MenuPicker
+            {/* <MenuPicker
               selectedOptionIndex={
                 food?.portions[selectedServingIndex]?.label ?? 0
               }
               setSelectedOptionIndex={setSelectedServingIndex}
               options={food?.portions.map((portion) => portion.label) ?? []}
-            />
+            /> */}
+            <Menu
+              visible={showServingMenu}
+              onDismiss={() => setShowServingMenu(false)}
+              style={{}}
+              contentStyle={{
+                backgroundColor: colors.lvBackground,
+                borderRadius: 20,
+                borderWidth: 1,
+                borderColor: colors.lvPrimary20,
+                marginTop: 37,
+              }}
+              anchor={
+                <TouchableOpacity
+                  style={{
+                    alignItems: "center",
+                    alignSelf: "center",
+                    marginBottom: 10,
+                  }}
+                  onPress={() => setShowServingMenu(true)}
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: 10,
+                      borderRadius: 10,
+                      borderWidth: 1,
+                      borderColor: colors.lvPrimary50,
+                      minWidth: "100%",
+                    }}
+                  >
+                    <Text
+                      variant="labelLarge"
+                      style={{
+                        color: "white",
+                        textAlign: "center",
+                        fontSize: 16,
+                      }}
+                    >
+                      {food?.portions[selectedServingIndex]?.label}
+                    </Text>
+                    {showServingMenu ? (
+                      <ArrowUp size={22} color={"white"} />
+                    ) : (
+                      <ArrowDown size={22} color={"white"} />
+                    )}
+                  </View>
+                </TouchableOpacity>
+              }
+            >
+              {food?.portions.map((portion, index) => (
+                <React.Fragment key={index}>
+                  <Menu.Item
+                    onPress={() => {
+                      setShowServingMenu(false);
+                      setSelectedServingIndex(index);
+                    }}
+                    titleStyle={{
+                      color: "white",
+                      fontWeight: "900",
+                      fontFamily: "quicksand",
+                    }}
+                    title={portion.label}
+                  />
+                  {index < food?.portions.length - 1 && (
+                    <Divider
+                      style={{
+                        backgroundColor: colors.lvPrimary10,
+                        marginHorizontal: 10,
+                      }}
+                    />
+                  )}
+                </React.Fragment>
+              ))}
+            </Menu>
           </View>
           {/* Quantity Input */}
           <View style={{ width: "40%" }}>
@@ -216,7 +357,7 @@ export default function FoodOptionsSheet({
               onChangeText={(text) => handleQuantityInputChange(text)}
               placeholder="Quantity"
               style={styles.textInput}
-              outlineColor="transparent"
+              outlineColor={colors.lvPrimary50}
               activeOutlineColor={colors.lvPrimary50}
               cursorColor="white"
               placeholderTextColor={colors.lightGrayText}
@@ -231,14 +372,16 @@ export default function FoodOptionsSheet({
             options={mealTypes}
           /> */}
         </View>
-        <Text variant="labelLarge" style={{ color: "white" }}>
-          Grams in total:{" "}
-          {(
-            Number(quantityInput) *
-            (food?.portions[selectedServingIndex]?.gramWeight ?? 0)
-          ).toFixed(1)}
-          g
-        </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text variant="labelLarge" style={{ color: "white" }}>
+            Grams in total:{" "}
+            {(
+              Number(quantityInput) *
+              (food?.portions[selectedServingIndex]?.gramWeight ?? 0)
+            ).toFixed(1)}
+            g
+          </Text>
+        </View>
 
         {/* Macros Values Component */}
         <MacrosInfo
@@ -268,7 +411,7 @@ export default function FoodOptionsSheet({
           }}
           icon={() => <Check color={colors.lvBackground}></Check>}
           onPress={() => {
-            handleLogFood();
+            isIngredient ? handleAddIngredient() : handleLogFood();
           }}
           loading={logsLoading}
           disabled={logsLoading}
@@ -277,7 +420,7 @@ export default function FoodOptionsSheet({
             variant="labelLarge"
             style={{ color: colors.lvBackground, fontSize: 17 }}
           >
-            Log Food
+            {isIngredient ? "Add ingredient" : "Log Food"}
           </Text>
         </Button>
       </BottomSheetView>
@@ -308,7 +451,7 @@ const styles = StyleSheet.create({
   textInput: {
     // width: SCREEN_WIDTH / 2 - 25,
     height: 45,
-    backgroundColor: "rgb(45, 61, 69)",
+    backgroundColor: "rgba(45, 61, 69, 0)",
     fontSize: 18,
   },
   divider: {

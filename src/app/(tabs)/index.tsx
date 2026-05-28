@@ -17,6 +17,7 @@ import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
 export default function Dashboard() {
@@ -29,12 +30,12 @@ export default function Dashboard() {
     (s) => s.fetchUserActivites,
   );
   const scrollY = useSharedValue(0);
+  const insets = useSafeAreaInsets();
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
   });
 
-  // TODO: does not reflect the changes immediatly when adding foods (needs to change the date and go back again to show the changes)
   // Bootstrap app by fetching all required data
   useEffect(() => {
     const bootstrap = async () => {
@@ -69,7 +70,7 @@ export default function Dashboard() {
         style={[styles.mainContainer]}
         contentContainerStyle={{
           paddingTop: 100,
-          paddingBottom: mainStyles.mainContainer.paddingBottom,
+          paddingBottom: mainStyles.mainContainer.paddingBottom + insets.bottom,
         }}
         showsVerticalScrollIndicator={false}
       >
@@ -122,7 +123,7 @@ export default function Dashboard() {
           }}
         >
           <ActivityIndicator
-            size={70}
+            size={55}
             color={colors.lvPrimaryLight}
             style={{
               flex: 1,

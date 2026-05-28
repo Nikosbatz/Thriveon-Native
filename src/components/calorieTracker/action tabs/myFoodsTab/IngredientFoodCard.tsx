@@ -1,32 +1,35 @@
-import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import { Food } from "@/src/types";
 import { Trash2 } from "lucide-react-native";
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { TouchableOpacity, View } from "react-native";
-import { ActivityIndicator, Text, TouchableRipple } from "react-native-paper";
-import Toast from "react-native-toast-message";
+import { Text, TouchableRipple } from "react-native-paper";
 
 type Props = {
   food: Food;
+  addedIngredients: Food[];
+  setAddedIngredients: Dispatch<SetStateAction<Food[]>>;
 };
-export default function DiaryFoodCard({ food }: Props) {
-  const removeFood = useUserLogsStore((s) => s.removeFood);
-  const [pendingRemoval, setPendingRemoval] = useState(false);
+export default function IngredientFoodCard({
+  food,
+  addedIngredients,
+  setAddedIngredients,
+}: Props) {
+  function handleFoodRemoval() {
+    // Find the index of the first matching ingredient
+    const indexToDelete = addedIngredients.findIndex(
+      (filteredFood) =>
+        filteredFood.name === food.name &&
+        filteredFood.loggedQuantity === food.loggedQuantity &&
+        filteredFood.selectedServingIndex === food.selectedServingIndex,
+    );
 
-  async function handleFoodRemoval(food: Food) {
-    setPendingRemoval(true);
-    try {
-      await removeFood(food);
-      setPendingRemoval(false);
-    } catch (error: any) {
-      setPendingRemoval(false);
-      Toast.show({
-        type: "error",
-        text1: error.message,
-        text2: "Please try again later",
-      });
-    }
+    // If a match was found (index is not -1), remove only that one item
+    const updatedAddedIngredients =
+      indexToDelete !== -1
+        ? addedIngredients.toSpliced(indexToDelete, 1) // Creates a new shallow-copied array without mutating the original
+        : addedIngredients; // If no match, keep array as is
+    setAddedIngredients(updatedAddedIngredients);
   }
 
   let quantityText = food.grams + "g";
@@ -48,7 +51,7 @@ export default function DiaryFoodCard({ food }: Props) {
       borderless
       rippleColor={"rgba(11, 150, 160, 0.43)"}
       style={{
-        width: "95%",
+        width: "100%",
         borderRadius: 17,
         paddingHorizontal: 10,
         padding: 8,
@@ -164,13 +167,9 @@ export default function DiaryFoodCard({ food }: Props) {
             transform: [{ translateY: "-50%" }],
             padding: 4,
           }}
-          onPress={() => handleFoodRemoval(food)}
+          onPress={() => handleFoodRemoval()}
         >
-          {pendingRemoval ? (
-            <ActivityIndicator size={26} color="rgb(167, 42, 42)" />
-          ) : (
-            <Trash2 size={26} color={"rgb(167, 42, 42)"} />
-          )}
+          <Trash2 size={26} color={"rgb(167, 42, 42)"} />
         </TouchableOpacity>
       </View>
     </TouchableRipple>

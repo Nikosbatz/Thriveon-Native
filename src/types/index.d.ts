@@ -24,7 +24,9 @@ type UserInterfaceKeys =
   | keyof UserInterface["healthGoals"]
   | keyof UserInterface["nutritionGoals"];
 
-type MacrosKeys = { protein: number; fats: number; carbs: number };
+type MacrosKeysTypes = { protein: number; fats: number; carbs: number };
+
+type MacroKeys = "fats" | "protein" | "carbs";
 
 type mealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
 
@@ -47,16 +49,22 @@ interface BaseFood {
   portions: Portion[];
   brands?: string;
   code?: string;
+  starred: boolean;
 }
 
 // 3. The "Unified" App Type
 // We make UI-specific fields optional so the compiler knows they *might* be there
 export interface Food extends BaseFood {
   _id?: string;
+  __v?: number;
   quantity?: number;
   loggedQuantity?: number;
   selectedServingIndex?: number;
   mealType?: "Breakfast" | "Lunch" | "Dinner" | "Snack";
+}
+
+export interface Recipe extends Food {
+  ingredients: Food[];
 }
 
 type userActivity = {

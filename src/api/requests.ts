@@ -1,12 +1,10 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-import { Food, UserInterface } from "../types";
+import { Food, Recipe, UserInterface } from "../types";
 import { api, BASE_URI } from "./axiosApi";
 
 export async function login(email: string, password: string) {
   const loginData = { email: email, password: password };
-
-  console.log("login");
 
   try {
     const res = await axios.post(`${BASE_URI}/user/login`, loginData, {
@@ -256,6 +254,40 @@ export async function postFood(data: Food, path: string, date: string) {
     }
   } catch (error: any) {
     throw new Error("Something went wrong while logging your food...");
+  }
+}
+
+export async function postRecipe(recipe: Recipe) {
+  try {
+    const res = await api.post(`foods/userlogs/recipes`, recipe, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+    });
+
+    if (res.status === 201 || res.status === 200) {
+      return res.data.myFoods;
+    }
+  } catch (error) {
+    throw new Error("Could not create recipe...");
+  }
+}
+
+export async function deleteRecipe(recipe: Recipe) {
+  try {
+    const res = await api.delete(`foods/userlogs/recipes/${recipe._id}`, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+    });
+
+    if (res.status === 200) {
+      return res.data.myFoods;
+    }
+  } catch (error) {
+    throw new Error("Could not delete recipe...");
   }
 }
 

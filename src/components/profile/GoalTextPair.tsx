@@ -10,6 +10,7 @@ type Props = {
     | string;
   value: string | number;
   unit: string;
+  color?: string;
 };
 
 export default function GoalTextPair(props: Props) {
@@ -18,7 +19,11 @@ export default function GoalTextPair(props: Props) {
       <Text
         variant="labelLarge"
         style={[
-          { fontSize: 12, color: colors.lvPrimary80, textAlign: "center" },
+          {
+            fontSize: 12,
+            color: props.color ? props.color : colors.lvPrimary80,
+            textAlign: "center",
+          },
         ]}
       >
         {props.goalKey.toUpperCase()}

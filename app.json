@@ -2,7 +2,7 @@
   "expo": {
     "name": "ThriveOn",
     "slug": "thriveon",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo_outer_blue.png",
     "scheme": "thriveon",
@@ -69,6 +69,12 @@
       "eas": {
         "projectId": "8e66ffd5-f464-4e20-8321-d82295604da9"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/8e66ffd5-f464-4e20-8321-d82295604da9"
     }
   }
 }

@@ -1,7 +1,7 @@
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
-import { Food, mealType } from "@/src/types";
+import { Food, MacroKeys, mealType } from "@/src/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { Apple, LucideIcon, Moon, Sun, Utensils } from "lucide-react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -86,7 +86,10 @@ export default function Diary() {
         </View>
 
         <ScrollView
-          contentContainerStyle={{ gap: 30 }}
+          contentContainerStyle={{
+            gap: 30,
+            paddingBottom: insets.bottom,
+          }}
           showsVerticalScrollIndicator={true}
         >
           {/* Nutrients sum values */}
@@ -247,6 +250,4 @@ type todaysFoodsByMealType = {
   Snack: Food[];
 };
 
-type macroKey = "fats" | "protein" | "carbs";
-
-const macrosKeys: macroKey[] = ["protein", "carbs", "fats"];
+const macrosKeys: MacroKeys[] = ["protein", "carbs", "fats"];

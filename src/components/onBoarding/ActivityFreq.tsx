@@ -92,7 +92,6 @@ export default function ActivityFreq() {
             onPress={() => {
               setSelectedActivity(index);
               storeUpdateForm({ activity: index });
-              console.log(index);
             }}
             rippleColor={"rgba(8, 147, 159, 0.52)"}
             style={[

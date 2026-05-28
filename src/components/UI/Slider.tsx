@@ -1,4 +1,5 @@
 import { colors } from "@/src/theme/colors";
+import { MacrosKeysTypes } from "@/src/types";
 import Slider from "@react-native-community/slider";
 import React, { useState } from "react";
 import { View } from "react-native";
@@ -9,7 +10,7 @@ type SliderProps = {
   onChangeValue: (num: number) => void;
   maxValue?: number;
   minValue?: number;
-  objectKey: keyof MacrosKeys;
+  objectKey: keyof MacrosKeysTypes;
 };
 
 export default function AppSlider({

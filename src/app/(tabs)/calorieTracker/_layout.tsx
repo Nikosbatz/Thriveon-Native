@@ -33,6 +33,20 @@ export default function Layout() {
         }}
       />
       <Stack.Screen name="barcodeFoodScreen" options={{ title: "" }} />
+      <Stack.Screen
+        name="(createFood)/createFoodScreen"
+        options={{
+          title: "Create a food",
+          headerTitleStyle: { color: "white", fontSize: 17 },
+        }}
+      />
+      <Stack.Screen
+        name="(createFood)/NewFoodPreviewScreen"
+        options={{
+          title: "Food overview",
+          headerTitleStyle: { color: "white", fontSize: 17 },
+        }}
+      />
     </Stack>
   );
 }

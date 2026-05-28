@@ -1,341 +1,214 @@
-import { getSearchFoods } from "@/src/api/requests";
-import FoodCard from "@/src/components/calorieTracker/FoodCard";
+import MyFoodsTab from "@/src/components/calorieTracker/action tabs/myFoodsTab/MyFoodsTab";
+import SearchTab from "@/src/components/calorieTracker/action tabs/SearchTab";
+import ActionSelectionBar from "@/src/components/calorieTracker/ActionSelectionBar";
 import FoodOptionsSheet from "@/src/components/calorieTracker/FoodOptionsSheet/FoodOptionsSheet";
 import ProfileHeader from "@/src/components/profile/ProfileHeader";
-import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
 import { Food, mealType } from "@/src/types";
-import Entypo from "@expo/vector-icons/Entypo";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { useRouter } from "expo-router";
-import { Info } from "lucide-react-native";
-import { useEffect, useRef, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import {
-  ActivityIndicator,
-  Text,
-  TextInput,
-  TouchableRipple,
-} from "react-native-paper";
+import { ArrowDown, ArrowUp } from "lucide-react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Divider, Menu, Text } from "react-native-paper";
 import Animated, {
-  useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function CalorieTrackerScreen() {
-  const [selectedMealType, setselectedMealType] =
-    useState<mealType>("Breakfast");
-  const [searchInput, setSearchInput] = useState<string>("");
-  const [searchEnded, setSearchEnded] = useState<boolean>(false);
   const [selectedFood, setSelectedFood] = useState<Food | null>(null);
-  const [filteredFoods, setFilteredFoods] = useState<Food[]>([]);
+  const [selectedMealType, setselectedMealType] = useState<
+    mealType | undefined
+  >();
+  const [selectedActionTabId, setSelectedActionTabId] =
+    useState<string>("search");
+  const [showMealSelectionMenu, setShowMealSelectionMenu] =
+    useState<boolean>(true);
+  const openSelectioMenuRef = useRef<View>(null);
+  const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const loggedFoodsSheetRef = useRef<BottomSheet>(null);
-  const todaysFoods: Food[] = useUserLogsStore((s) => s.todaysFoods);
-  const foodHistory: Food[] = useUserLogsStore((s) => s.foodHistory);
-  const router = useRouter();
+  const insets = useSafeAreaInsets();
 
+  // UseEffect for initiail meal selection Menu coordinates calculation
+  // useEffect(() => {
+  //   console.log(openSelectioMenuRef.current !== null);
+  //   if (openSelectioMenuRef.current) {
+  //     openSelectioMenuRef.current?.measure(
+  //       (x, y, width, height, pageX, pageY) => {
+  //         setMenuAnchor({ x: x + 13, y: y + 79 });
+  //         setShowMealSelectionMenu(true);
+  //       },
+  //     );
+  //   }
+  // }, []);
+
+  const openMenu = () => {
+    // openSelectioMenuRef.current?.measure(
+    //   (x, y, width, height, pageX, pageY) => {
+    //     setMenuAnchor({ x: x - 9, y: y + 79 });
+    //     setShowMealSelectionMenu(true);
+    //   },
+    // );
+    setShowMealSelectionMenu(true);
+  };
+
+  // Create shared opacity values for each tab
+  const searchOpacity = useSharedValue(1);
+  const myFoodsOpacity = useSharedValue(0);
+
+  // Animate the values whenever the active tab ID changes
   useEffect(() => {
-    // If text is too short, don't even start the timer
-    if (searchInput.length <= 2) return;
+    searchOpacity.value = withTiming(selectedActionTabId === "search" ? 1 : 0, {
+      duration: 200,
+    });
+    myFoodsOpacity.value = withTiming(
+      selectedActionTabId === "myFoods" ? 1 : 0,
+      { duration: 200 },
+    );
+  }, [selectedActionTabId]);
 
-    const timer = setTimeout(async () => {
-      // Search for foods in the backend, based on user input
-      const searchedFoods = await getSearchFoods(searchInput);
-      setSearchEnded(true);
-      setFilteredFoods(searchedFoods);
-    }, 700);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [searchInput]);
+  // Create the animated styles
+  const searchStyle = useAnimatedStyle(() => ({
+    opacity: searchOpacity.value,
+  }));
 
-  async function handleSearchInputChange(text: string) {
-    setSearchInput(text);
-    setSearchEnded(false);
-  }
-
-  const translateY = useSharedValue(0);
-  const opacity = useSharedValue(1);
-  const lastContentOffset = useSharedValue(0);
-
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      const currentOffset = event.contentOffset.y;
-
-      // Ignore small jitters or bounce effects at the top
-      if (currentOffset <= 0) {
-        translateY.value = withTiming(0);
-        return;
-      }
-
-      if (currentOffset > lastContentOffset.value && currentOffset > 0) {
-        // SCROLLING DOWN -> Hide the view
-        // translateY.value = withTiming(100, { duration: 100 }); // Adjust -100 to your view's height
-        opacity.value = withTiming(0, { duration: 200 });
-      } else if (currentOffset < lastContentOffset.value) {
-        // SCROLLING UP -> Show the view
-        // translateY.value = withTiming(0);
-        opacity.value = withTiming(1, { duration: 100 });
-      }
-
-      lastContentOffset.value = currentOffset;
-    },
-  });
-
-  const animatedHeaderStyle = useAnimatedStyle(() => {
-    return {
-      // transform: [{ translateY: translateY.value }],
-      opacity: opacity.value,
-    };
-  });
+  const myFoodsStyle = useAnimatedStyle(() => ({
+    opacity: myFoodsOpacity.value,
+  }));
 
   return (
-    <View style={[styles.mainContainer]}>
+    <View
+      style={[
+        styles.mainContainer,
+        {
+          paddingBottom: mainStyles.mainContainer.paddingBottom + insets.bottom,
+        },
+      ]}
+    >
       <ProfileHeader />
-      <View>
-        <Text
-          variant="labelLarge"
-          style={{ color: "white", textAlign: "center", fontSize: 16 }}
-        >
-          Select Meal Type
-        </Text>
-      </View>
-      {/* MealType selection buttons */}
-      <View style={styles.mealTabsContainer}>
-        {mealTypes.map((mealType, index) => (
-          <TouchableRipple
-            key={index}
-            rippleColor={"rgba(0, 234, 255, 0.52)"}
-            borderless
-            onPress={() => setselectedMealType(mealType)}
-            style={{ borderRadius: 10 }}
-          >
-            <Text
-              variant="labelLarge"
-              style={[
-                styles.mealTab,
-                selectedMealType === mealType ? styles.selectedMealTab : null,
-              ]}
-            >
-              {mealType}
-            </Text>
-          </TouchableRipple>
-        ))}
-      </View>
-      {/* Food Search*/}
-      <View style={{ backgroundColor: "" }}>
-        <TextInput
-          mode="outlined"
-          activeOutlineColor={colors.lvPrimary50}
-          cursorColor="white"
-          outlineColor={colors.lvPrimary20}
-          keyboardType="default"
-          autoCapitalize="none"
-          placeholder="Search Food..."
-          left={
-            <TextInput.Icon
-              icon={() => (
-                <MaterialIcons name="search" size={24} color={"white"} />
-              )}
-            />
+
+      <View style={{ backgroundColor: "transparent", alignSelf: "center" }}>
+        <Menu
+          visible={showMealSelectionMenu}
+          onDismiss={() =>
+            selectedMealType ? setShowMealSelectionMenu(false) : null
           }
-          right={
-            searchInput !== "" ? (
-              <TextInput.Icon
-                forceTextInputFocus={false}
-                rippleColor={colors.lvPrimary20}
-                onPress={(e) => {
-                  setSearchInput("");
-                }}
-                icon={() => (
-                  <Entypo
-                    name="circle-with-cross"
-                    size={26}
-                    color="rgb(255, 103, 103)"
-                  />
-                )}
-              />
-            ) : null
-          }
-          value={searchInput}
-          onChangeText={handleSearchInputChange}
-          style={{
-            fontSize: 17,
-            padding: 0,
-            height: 45,
-            borderWidth: 0,
-            backgroundColor: colors.lvBackground,
-          }}
-          placeholderTextColor={colors.lightWhiteText}
-          textColor={"white"}
-          theme={{ roundness: 30 }}
-          //error={hasEmailError()}
-        />
-      </View>
-
-      {/* Food History and Search Results */}
-      <View
-        style={{
-          gap: 5,
-          borderRadius: 20,
-          borderBottomLeftRadius: 0,
-          borderBottomRightRadius: 0,
-          overflow: "hidden",
-          flex: 1,
-          marginHorizontal: 0,
-          marginBottom: 0,
-        }}
-      >
-        <Text
-          variant="headlineSmall"
-          style={{
-            fontSize: 21,
-            paddingLeft: 15,
-            alignSelf: "flex-start",
-            color: colors.lvPrimaryLight,
-          }}
-        >
-          {searchInput.length > 2 ? "Search Results: " : "History"}
-        </Text>
-        {/* <Divider /> */}
-        {/* Foods List */}
-        {!searchEnded && searchInput.length > 2 ? (
-          <ActivityIndicator
-            style={{ flex: 1, paddingBottom: 150 }}
-            size={50}
-            color={colors.lvPrimaryLight}
-          />
-        ) : (
-          <Animated.FlatList
-            onScroll={scrollHandler}
-            scrollEventThrottle={128}
-            data={
-              searchInput.length > 2 ? filteredFoods.slice(0, 35) : foodHistory
-            }
-            keyExtractor={(item, i) => i.toString()}
-            renderItem={({ item, index }) => (
-              <FoodCard
-                food={item}
-                index={index}
-                setSelectedFood={setSelectedFood}
-                bottomSheetRef={bottomSheetRef}
-              />
-            )}
-            contentContainerStyle={{
-              gap: 2,
-              paddingBottom: 10,
-              paddingHorizontal: 5,
-            }}
-            showsVerticalScrollIndicator={false}
-          />
-        )}
-      </View>
-
-      {/* Hint for new users to use search to see the list of foods */}
-      {searchInput.length > 2 || foodHistory.length !== 0 ? null : (
-        <View
-          style={{
-            backgroundColor: colors.lvFoodCardBg,
-            padding: 15,
-            maxWidth: "90%",
-            position: "absolute",
-            left: "50%",
-            top: "50%",
-            transform: [{ translateX: "-50%" }],
-            borderRadius: 10,
-            gap: 10,
-            alignItems: "center",
-            elevation: 50,
-          }}
-        >
-          <Info size={24} color={colors.lvPrimary}></Info>
-          <Text style={{ color: colors.lvPrimaryLight, fontSize: 16 }}>
-            Your logged foods history appears here!
-          </Text>
-          <Text style={{ color: "rgb(214, 214, 214)", textAlign: "center" }}>
-            Try searching for a food and a list of relevant foods will appear!
-          </Text>
-        </View>
-      )}
-
-      {/* Open logged foods and scan barcode buttons */}
-      {/* <Animated.View
-        style={[
-          {
-            flexDirection: "row",
-            position: "absolute",
-            bottom: mainStyles.mainContainer.paddingBottom + 15,
-            right: "3%",
-            transform: [{ translateX: "-10%" }, { translateY: "0%" }],
-            backgroundColor: colors.lvPrimary80,
-            borderRadius: 10,
-          },
-          animatedHeaderStyle,
-        ]}
-      >
-        <TouchableRipple
-          onPress={() => loggedFoodsSheetRef.current?.snapToIndex(0)}
-          rippleColor={"rgba(8, 147, 159, 0.52)"}
-          borderless
-        >
-          <View style={{ alignItems: "center", padding: 5 }}>
-            <ListCheck size={30} color={colors.lvBackground}></ListCheck> */}
-      {/* Logged Foods Counter Badge */}
-      {/* <View
+          style={{ alignSelf: "center" }}
+          anchor={
+            <TouchableOpacity
               style={{
-                position: "absolute",
-                backgroundColor: "rgb(5, 59, 68)",
-                borderRadius: "100%",
-                right: "10%",
-                padding: todaysFoods.length > 0 ? 3 : 0,
+                alignItems: "center",
+                alignSelf: "center",
+                marginBottom: 10,
               }}
+              onPress={openMenu}
             >
-              <Text
-                variant="labelLarge"
+              <View
                 style={{
-                  textAlign: "center",
-                  lineHeight: 15,
-                  color: colors.lvPrimaryLight,
-                  fontSize: 16,
-                  width: todaysFoods.length > 0 ? 17 : 0,
-                  height: 17,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 7,
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  borderColor: selectedMealType
+                    ? mealTypeColors[selectedMealType]
+                    : colors.lvPrimary20,
+                  width: 150,
                 }}
               >
-                {todaysFoods.length > 0 ? todaysFoods.length : null}
-              </Text>
-            </View>
-            <Text variant="labelLarge" style={{ fontSize: 12, lineHeight: 10 }}>
-              Foods
-            </Text>
-          </View>
-        </TouchableRipple>
-        <Divider
-          style={{
-            width: 0.5,
-            height: "100%",
+                <Text
+                  variant="labelLarge"
+                  style={{ color: "white", textAlign: "center", fontSize: 14 }}
+                >
+                  {selectedMealType ? selectedMealType : "Select meal type"}
+                </Text>
+                {showMealSelectionMenu ? (
+                  <ArrowUp size={22} color={"white"} />
+                ) : (
+                  <ArrowDown size={22} color={"white"} />
+                )}
+              </View>
+            </TouchableOpacity>
+          }
+          /* 2. CONTROL THE OFFSET RELATIVE TO THE BUTTON HERE
+        Instead of adding hardcoded pixel numbers to a screen-wide 'y' state,
+        use 'marginTop' to push the menu down exactly relative to your button.
+      */
+          contentStyle={{
             backgroundColor: colors.lvBackground,
+            borderRadius: 20,
+            borderWidth: 1,
+            borderColor: colors.lvPrimary20,
+            marginTop: 31,
+            alignSelf: "center",
           }}
-        />
-        <TouchableRipple
-          onPress={handleBarcodeScannerPress}
-          rippleColor={"rgba(8, 147, 159, 0.52)"}
-          borderless
         >
-          <View style={{ alignItems: "center", padding: 5 }}>
-            <Barcode size={30} color={colors.lvBackground} />
-            <Text variant="labelLarge" style={{ fontSize: 12, lineHeight: 10 }}>
-              Scan Barcode
-            </Text>
-          </View>
-        </TouchableRipple>
-      </Animated.View> */}
+          {mealTypes.map((mealType, index) => (
+            <React.Fragment key={index}>
+              <Menu.Item
+                onPress={() => {
+                  setShowMealSelectionMenu(false);
+                  setselectedMealType(mealType);
+                }}
+                titleStyle={{
+                  color: "white",
+                  fontWeight: "900",
+                  fontFamily: "quicksand",
+                }}
+                title={mealType}
+              />
+              {index < mealTypes.length - 1 && (
+                <Divider
+                  style={{
+                    backgroundColor: colors.lvPrimary10,
+                    marginHorizontal: 10,
+                  }}
+                />
+              )}
+            </React.Fragment>
+          ))}
+        </Menu>
+      </View>
 
-      {/* <LoggedFoodsSheet sheetRef={loggedFoodsSheetRef} /> */}
+      {/* Action selection buttons */}
+      <ActionSelectionBar
+        selectedTabId={selectedActionTabId}
+        setSelectedTabId={setSelectedActionTabId}
+      />
+
+      {/* Search tab goes HERE */}
+      <View style={{ flex: 1 }}>
+        {/* Search Tab Wrapper */}
+        <Animated.View
+          style={[styles.tabOverlay, searchStyle]}
+          pointerEvents={selectedActionTabId === "search" ? "auto" : "none"}
+        >
+          <SearchTab
+            selectedMealType={selectedMealType}
+            setSelectedFood={setSelectedFood}
+            bottomSheetRef={bottomSheetRef}
+          />
+        </Animated.View>
+
+        {/* MyFoods Tab Wrapper */}
+        <Animated.View
+          style={[styles.tabOverlay, myFoodsStyle]}
+          pointerEvents={selectedActionTabId === "myFoods" ? "auto" : "none"}
+        >
+          <MyFoodsTab
+            setSelectedFood={setSelectedFood}
+            selectedMealType={selectedMealType}
+            bottomSheetRef={bottomSheetRef}
+          />
+        </Animated.View>
+      </View>
+
+      {/* <AnotherTab /> */}
+
       <FoodOptionsSheet
         bottomSheetRef={bottomSheetRef}
         food={selectedFood}
@@ -348,9 +221,7 @@ export default function CalorieTrackerScreen() {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    gap: 12,
     flex: 1,
-    paddingBottom: mainStyles.mainContainer.paddingBottom + 10,
   },
   mealTabsContainer: {
     flexDirection: "row",
@@ -358,6 +229,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lvGradientCard,
     padding: 4,
     marginHorizontal: 20,
+    marginVertical: 15,
     borderRadius: 16,
     shadowColor: "#000",
     shadowOpacity: 0.2,
@@ -373,6 +245,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "rgba(178, 22, 22, 0)",
   },
+  tabOverlay: {
+    ...StyleSheet.absoluteFillObject, // Stacks them directly on top of each other
+  },
   selectedMealTab: { backgroundColor: colors.lvPrimary, color: "black" },
   foodCardsContainer: {
     paddingHorizontal: 7,
@@ -384,3 +259,10 @@ const styles = StyleSheet.create({
 });
 
 const mealTypes: mealType[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
+
+const mealTypeColors = {
+  Breakfast: "rgba(3, 232, 198, 0.73)",
+  Lunch: "rgba(3, 114, 232, 0.73)",
+  Dinner: "rgba(11, 3, 232, 0.73)",
+  Snack: "rgba(1, 200, 87, 0.73)",
+};

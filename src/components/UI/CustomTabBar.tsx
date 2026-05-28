@@ -1,12 +1,15 @@
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { StyleSheet, View } from "react-native";
 import { Text, TouchableRipple } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function CustomTabBar({
   state,
   descriptors,
   navigation,
 }: BottomTabBarProps) {
+  const insets = useSafeAreaInsets();
+
   return (
     <View
       style={{
@@ -14,7 +17,7 @@ export default function CustomTabBar({
         borderWidth: 0,
         borderColor: "rgb(25, 28, 31)",
         position: "absolute",
-        bottom: 5,
+        bottom: insets.bottom + 5,
         width: "90%",
         alignSelf: "center",
         padding: 5,

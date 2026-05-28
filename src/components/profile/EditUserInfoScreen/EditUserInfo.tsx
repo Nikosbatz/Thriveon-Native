@@ -1,11 +1,13 @@
 import { useAuth } from "@/src/context/authContext";
 import { colors } from "@/src/theme/colors";
-import { MacrosKeys, UserInterface } from "@/src/types";
+import { mainStyles } from "@/src/theme/styles";
+import { MacrosKeysTypes, UserInterface } from "@/src/types";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Button, Text } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import AppSlider from "../../UI/Slider";
 import { profileStyles } from "../profile.styles";
@@ -18,6 +20,7 @@ export default function EditUserInfo() {
   const [userInfoInputs, setUserInfoInputs] = useState<UserInterface | null>(
     user,
   );
+  const insets = useSafeAreaInsets();
   const router = useRouter();
 
   // Submit Form Data
@@ -65,7 +68,11 @@ export default function EditUserInfo() {
         backgroundColor: colors.lvBackground,
         flex: 1,
       }}
-      contentContainerStyle={styles.scrollViewContainer}
+      contentContainerStyle={{
+        paddingHorizontal: 10,
+        paddingBottom: mainStyles.mainContainer.paddingBottom + insets.bottom,
+        gap: 20,
+      }}
     >
       {/* Email Input */}
       <CustomTextInput
@@ -147,8 +154,9 @@ export default function EditUserInfo() {
             <AppSlider
               key={index}
               value={
-                userInfoInputs?.nutritionGoals[macro.key as keyof MacrosKeys] ??
-                0
+                userInfoInputs?.nutritionGoals[
+                  macro.key as keyof MacrosKeysTypes
+                ] ?? 0
               }
               onChangeValue={(num) =>
                 setUserInfoInputs((prev) =>
@@ -163,7 +171,7 @@ export default function EditUserInfo() {
                     : null,
                 )
               }
-              objectKey={macro.key as keyof MacrosKeys}
+              objectKey={macro.key as keyof MacrosKeysTypes}
             />
           ))}
         </View>

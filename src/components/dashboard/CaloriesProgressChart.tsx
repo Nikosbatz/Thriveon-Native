@@ -16,8 +16,6 @@ type chartInfoItem = {
   color: string;
 };
 
-// TODO: Change the calculations of the remainingCalDecimal, remainingCal to calculate based on just teh consumption not burned calories
-
 export default function CaloriesProgressChart() {
   const { user } = useAuth();
   const todaysMacros = useUserLogsStore((s) => s.todaysMacros);

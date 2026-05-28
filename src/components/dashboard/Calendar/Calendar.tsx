@@ -1,8 +1,9 @@
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import moment from "moment";
-import { View } from "react-native";
+import { Dimensions, View } from "react-native";
 import CalendarStrip from "react-native-calendar-strip";
+const screenWidthDp = Dimensions.get("screen").width;
 
 type Props = {};
 
@@ -14,11 +15,10 @@ export default function CalendarView({}: Props) {
     <View
       style={{
         backgroundColor: colors.lvDashboardCardBg,
-        marginHorizontal: 10,
-        marginTop: 10,
+        marginTop: 20,
         borderRadius: 20,
         padding: 5,
-        width: "95%",
+        width: screenWidthDp - 20,
         maxWidth: 450,
         alignSelf: "center",
       }}

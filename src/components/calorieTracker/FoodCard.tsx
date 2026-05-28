@@ -1,9 +1,11 @@
 import { colors } from "@/src/theme/colors";
 import { Food } from "@/src/types";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { Plus } from "lucide-react-native";
 import { StyleSheet, TouchableHighlight, View } from "react-native";
 import { Text } from "react-native-paper";
+import { Tooltip } from "../UI/ToolTip";
 
 type FoodCardProps = {
   food: Food;
@@ -41,10 +43,12 @@ export default function FoodCard({
     <TouchableHighlight
       key={index}
       // activeOpacity={0.5}
-      underlayColor={"rgba(68, 73, 107, 0.6)"}
+      underlayColor={"rgba(43, 45, 60, 0.6)"}
       onPress={handleOnPress}
       style={{
         backgroundColor: colors.lvFoodCardBg,
+        // borderLeftWidth: 0,
+        // borderColor: food.starred ? "rgba(0, 153, 255, 0.5)" : "transparent",
         borderRadius: 10,
         marginTop: 2,
       }}
@@ -59,16 +63,20 @@ export default function FoodCard({
             maxWidth: "90%",
           }}
         >
-          <Text
-            variant="labelLarge"
-            style={{
-              fontSize: 15,
-              color: "white",
-              lineHeight: 19,
-            }}
-          >
-            {food.name}
-          </Text>
+          <View style={{ flexDirection: "row", maxWidth: "90%" }}>
+            <Text
+              variant="labelLarge"
+              style={{
+                fontSize: 15,
+                color: "white",
+                lineHeight: 19,
+                // backgroundColor: "red",
+                textAlign: "left",
+              }}
+            >
+              {food.name}
+            </Text>
+          </View>
           {food.brands ? (
             <Text
               variant="bodyLarge"
@@ -85,7 +93,7 @@ export default function FoodCard({
         {/* Food Macro Info Text*/}
         <View
           style={{
-            flexDirection: "column",
+            flexDirection: "row",
             gap: 7,
             // alignSelf: "flex-end",
             // marginRight: 40,
@@ -97,6 +105,15 @@ export default function FoodCard({
               , {quantityText}
             </Text>
           </Text>
+          {food.starred ? (
+            <Tooltip text="This food's values are certified by ThriveOn">
+              <Ionicons
+                name="shield-checkmark-sharp"
+                size={18}
+                color="rgb(4, 195, 151)"
+              />
+            </Tooltip>
+          ) : null}
         </View>
         {/* Plus Icon */}
         <View

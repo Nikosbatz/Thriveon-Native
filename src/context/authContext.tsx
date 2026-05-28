@@ -79,6 +79,8 @@ export default function AuthContextProvider({
       } catch (err) {
         // ignore errors retrieving token
         setSplashScreenActive(false);
+      } finally {
+        setLoadingUserInfo(false);
       }
     })();
   }, []);

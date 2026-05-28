@@ -51,7 +51,6 @@ export const useUserActivitiesStore = create<ActivityStore>((set, get) => ({
     set({ activitiesLoading: true });
     try {
       const activities = await postUserActivityAPI(activityValues, date);
-      console.log(activities);
       set({ activitiesLoading: false, userActivities: activities });
       get().calculateUserActivitiesSums();
     } catch (error) {

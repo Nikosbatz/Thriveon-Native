@@ -44,7 +44,7 @@ export default function BottomBarPlus({
     >
       {/* 4. Wrap the icon in an Animated.View */}
       <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
-        <AntDesign name="plus" size={27} color={colors.lvSecondary} />
+        <AntDesign name="plus" size={22} color={colors.lvSecondary} />
       </Animated.View>
     </TouchableRipple>
   );
@@ -53,10 +53,10 @@ export default function BottomBarPlus({
 const styles = StyleSheet.create({
   wrapper: {},
   container: {
-    padding: 7,
+    padding: 15,
     position: "absolute",
     left: "50%",
-    top: 0,
+    top: -15,
     transform: [{ translateX: "-50%" }],
     backgroundColor: colors.lvPrimary, // required for ripple
     borderRadius: 50,

@@ -1,14 +1,17 @@
 import moment from "moment";
 import { create } from "zustand";
 import {
+  deleteRecipe,
   deleteUserLogsFood,
   getFoods,
   getUserWaterIntake,
   getUserWeightLogs,
   postFood,
+  postRecipe,
   postUserWaterIntake,
   postUserWeightLogs,
 } from "../api/requests";
+import buildLoggedFoodObject from "../utilities/buildLoggedFoodObject";
 
 //TODO: define type for the store (convert the fine to .tsx)
 
@@ -20,6 +23,7 @@ const initialState = {
   weightLogs: [],
   waterIntake: 0,
   foods: [],
+  myFoods: [],
   foodHistory: [],
   todaysFoods: [],
   todaysMacros: {
@@ -100,15 +104,17 @@ export const useUserLogsStore = create((set, get) => ({
   getTodayFoods: async () => {
     set({ logsLoading: true });
     try {
-      const { data, foodHistory } = await getFoods(
+      const { data, foodHistory, myFoods } = await getFoods(
         "/foods/userlogs",
         get().selectedDate,
       );
-      set({ todaysFoods: data, foodHistory: foodHistory });
+
+      set({
+        todaysFoods: data,
+        foodHistory: foodHistory,
+        myFoods: myFoods ?? [],
+      });
       get().updateTodayMacros();
-      // setTimeout(() => {
-      //
-      // }, 500);
       set({ logsLoading: false });
     } catch (error) {
       set({ logsLoading: false });
@@ -154,7 +160,7 @@ export const useUserLogsStore = create((set, get) => ({
   },
   removeFood: async (foodToDelete) => {
     try {
-      const res = await deleteUserLogsFood(foodToDelete, get().selectedDate);
+      await deleteUserLogsFood(foodToDelete, get().selectedDate);
       set((state) => ({
         todaysFoods: state.todaysFoods.filter(
           (food) => food._id !== foodToDelete._id,
@@ -171,42 +177,12 @@ export const useUserLogsStore = create((set, get) => ({
     mealType,
     selectedServingIndex,
   ) => {
-    const gramWeight =
-      food.portions[selectedServingIndex].gramWeight * quantityInput;
-    let calories;
-    let protein;
-    let carbs;
-    let fats;
-
-    // grams if by default the food.grams property (100g)
-    let grams = food.grams;
-
-    // if food has already been logged calculate the grams based on the logged quantity
-    if (food.loggedQuantity) {
-      grams =
-        food.portions[food.selectedServingIndex].gramWeight *
-        food.loggedQuantity;
-    }
-
-    calories = Math.floor((food.calories / grams) * gramWeight);
-    protein = Math.floor((food.protein / grams) * gramWeight);
-    carbs = Math.floor((food.carbs / grams) * gramWeight);
-    fats = Math.floor((food.fats / grams) * gramWeight);
-
-    const foodToUpload = {
-      ...food,
-      foodId: food._id,
-      calories: calories,
-      loggedQuantity: quantityInput,
-      selectedServingIndex: selectedServingIndex,
-      protein: protein,
-      carbs: carbs,
-      fats: fats,
-      mealType: mealType,
-    };
-
-    delete foodToUpload._id;
-    delete foodToUpload.__v;
+    const foodToUpload = buildLoggedFoodObject({
+      food,
+      quantityInput,
+      mealType,
+      selectedServingIndex,
+    });
 
     set({ logsLoading: true });
     try {
@@ -221,6 +197,31 @@ export const useUserLogsStore = create((set, get) => ({
         foodHistory: res.foodHistory,
       }));
       get().updateTodayMacros();
+      set({ logsLoading: false });
+    } catch (err) {
+      set({ logsLoading: false });
+      throw new Error(err.message);
+    }
+  },
+  handleUploadRecipe: async (recipe) => {
+    set({ logsLoading: true });
+    try {
+      const myFoods = await postRecipe(recipe);
+
+      set({ myFoods: myFoods });
+      set({ logsLoading: false });
+    } catch (err) {
+      set({ logsLoading: false });
+      throw new Error(err.message);
+    }
+  },
+
+  deleteRecipe: async (recipe) => {
+    set({ logsLoading: true });
+
+    try {
+      const updatedMyFoods = await deleteRecipe(recipe);
+      updatedMyFoods ? set({ myFoods: updatedMyFoods }) : null;
       set({ logsLoading: false });
     } catch (err) {
       set({ logsLoading: false });
