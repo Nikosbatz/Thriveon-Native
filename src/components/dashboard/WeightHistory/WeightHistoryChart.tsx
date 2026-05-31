@@ -99,29 +99,25 @@ export default function WeightHistoryChart() {
             <Text variant="headlineSmall" style={{ color: colors.lvPrimary }}>
               {currentWeight} Kg
             </Text>
-            {weightTrend <= 0 ? (
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {weightTrend <= 0 ? (
                 <ArrowDown color={"rgba(42, 213, 19, 1)"} />
-                <Text
-                  style={{
-                    color: "rgba(42, 213, 19, 1)",
-                  }}
-                >
-                  {weightTrend.toFixed(1)} kg this week
-                </Text>
-              </View>
-            ) : (
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+              ) : (
                 <ArrowUp color={"rgba(255, 37, 37, 1)"} />
-                <Text
-                  style={{
-                    color: "rgba(255, 37, 37, 1)",
-                  }}
-                >
-                  {weightTrend.toFixed(1)} kg this week
-                </Text>
-              </View>
-            )}
+              )}
+
+              <Text
+                style={{
+                  color:
+                    weightTrend <= 0
+                      ? "rgba(42, 213, 19, 1)"
+                      : "rgba(255, 37, 37, 1)",
+                }}
+              >
+                {weightTrend.toFixed(1)} kg this week
+              </Text>
+            </View>
           </View>
         </View>
         <View

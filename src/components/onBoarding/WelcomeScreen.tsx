@@ -4,18 +4,17 @@ import { router } from "expo-router";
 import { ArrowRight } from "lucide-react-native";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const screenWidth = Dimensions.get("window").width;
 
 export default function WelcomeScreen() {
+  const insets = useSafeAreaInsets();
   return (
     <View style={styles.mainContainer}>
       <View
         style={{
-          //   backgroundColor: "red",
-          //   alignSelf: "center",
           borderRadius: 20,
-          //   overflow: "hidden",
           borderBottomWidth: 2,
           borderColor: colors.lvPrimary50,
         }}
@@ -29,17 +28,6 @@ export default function WelcomeScreen() {
             borderRadius: 0,
           }}
         ></Image>
-        {/* <LinearGradient
-          colors={["transparent", "rgba(4, 4, 4, 0.8)"]}
-          style={{
-            // backgroundColor: "blue",
-            width: "100%",
-            height: "100%",
-            zIndex: 1000,
-            position: "absolute",
-          }}
-        >
-        </LinearGradient> */}
       </View>
       <View style={styles.textContentContainer}>
         {/* Headlines */}
@@ -67,6 +55,7 @@ export default function WelcomeScreen() {
               gap: 15,
               borderWidth: 1,
               borderColor: colors.cardBorderColor,
+              backgroundColor: colors.lvHeader,
             },
           ]}
         >
@@ -78,7 +67,7 @@ export default function WelcomeScreen() {
           </Text>
           <Text
             variant="labelLarge"
-            style={{ color: colors.lightGrayText, fontSize: 17 }}
+            style={{ color: "rgb(180, 180, 180)", fontSize: 17 }}
           >
             Thrive on is the ultimate tool for calorie tracking and nutrition
             insights. Precision meets simplicity.
@@ -92,7 +81,8 @@ export default function WelcomeScreen() {
         style={{
           backgroundColor: colors.lvPrimary,
           position: "absolute",
-          bottom: 30,
+          bottom: 0,
+          marginBottom: insets.bottom + 5,
           left: "50%",
           transform: [{ translateX: "-50%" }],
           width: "80%",

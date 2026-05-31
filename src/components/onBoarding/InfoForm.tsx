@@ -22,13 +22,13 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Button, Text, TouchableRipple } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import CustomNumInput from "../UI/CustomNumInput";
 
 const statusBarHeight = StatusBar.currentHeight;
 
 export default function InfoForm() {
-  const onBoardingFormData = useOnBoardingFormStore((state) => state.formData);
   const storeUpdateForm = useOnBoardingFormStore((state) => state.updateForm);
   const [formInputs, setFormInputs] = useState<FormInputs>({
     goal: "-1",
@@ -38,6 +38,7 @@ export default function InfoForm() {
     gender: "",
   });
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   function handleFormSubmit() {
     const formattedFormInputs = {
@@ -224,7 +225,8 @@ export default function InfoForm() {
           style={{
             backgroundColor: colors.lvPrimary,
             position: "absolute",
-            bottom: 30,
+            bottom: 0,
+            marginBottom: insets.bottom + 5,
             left: "50%",
             transform: [{ translateX: "-50%" }],
             width: "80%",

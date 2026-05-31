@@ -7,6 +7,7 @@ interface UserInterface {
   goal: string;
   isVerified: boolean;
   onBoardingCompleted: boolean;
+  autoLoginEnabled: boolean;
   healthGoals: {
     weight: number;
     water: number;

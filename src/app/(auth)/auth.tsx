@@ -9,8 +9,9 @@ import {
 } from "@react-native-google-signin/google-signin";
 import { LinearGradient } from "expo-linear-gradient";
 import { Redirect, useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import { Eye, EyeOff } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
@@ -27,6 +28,7 @@ import {
   TextInput,
   useTheme,
 } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // TODO: make webClientId a .env variable
 GoogleSignin.configure({
@@ -44,9 +46,36 @@ export default function AuthScreen() {
   const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [policyModalHTML, setPolicyModalHTML] = useState("");
+  const insets = useSafeAreaInsets();
   const theme = useTheme();
-  const { signIn, isLoggedIn, googleSignIn, splashScreenActive } = useAuth();
+  const {
+    signIn,
+    isLoggedIn,
+    googleSignIn,
+    splashScreenActive,
+    loadingUserInfo,
+  } = useAuth();
   const router = useRouter();
+
+  // Auto prompt user to sign in with google
+  useEffect(() => {
+    async function oneTapGoogleSignIn() {
+      const accessToken = await SecureStore.getItemAsync("accessToken");
+      // if an accessToken exists then do nothing let authContext handle it
+      if (accessToken) {
+        console.log(accessToken);
+        return;
+      }
+
+      const signInSilentlyInfo = await GoogleSignin.signInSilently();
+
+      if (signInSilentlyInfo.type === "noSavedCredentialFound") {
+        await handleGoogleSignIn();
+      }
+    }
+
+    oneTapGoogleSignIn();
+  }, []);
 
   async function handleAuth() {
     setIsLoading(true);
@@ -78,10 +107,10 @@ export default function AuthScreen() {
       setIsLoadingGoogle(true);
       const idToken = response.data?.idToken;
       const email = response.data?.user.email;
+      console.log(email);
       if (idToken && email) {
         await googleSignIn(response.data);
       } else {
-        alert("Could not sign in with Google...");
         setIsLoadingGoogle(false);
       }
     } catch (error: any) {
@@ -117,7 +146,6 @@ export default function AuthScreen() {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "padding"}
         style={styles.container}
-        contentContainerStyle={{}}
       >
         <View
           style={{
@@ -125,7 +153,7 @@ export default function AuthScreen() {
             justifyContent: "center",
             paddingHorizontal: 10,
             paddingVertical: 20,
-            gap: 20,
+            gap: 15,
           }}
         >
           {/* Logo and Slogan container */}
@@ -133,14 +161,14 @@ export default function AuthScreen() {
             style={{
               width: "100%",
               padding: 20,
-              gap: 10,
+              gap: 7,
             }}
           >
             <Image
               source={require("@/assets/images/logo_transparent.png")}
               style={{
-                width: 120,
-                height: 120,
+                width: 115,
+                height: 115,
                 alignSelf: "center",
                 borderRadius: 20,
               }}
@@ -154,7 +182,7 @@ export default function AuthScreen() {
                 textAlign: "center",
               }}
             >
-              Thriveon
+              ThriveOn
             </Text>
             <Text
               variant="labelLarge"
@@ -166,7 +194,7 @@ export default function AuthScreen() {
                 textAlign: "center",
               }}
             >
-              Track Grow Thriveon
+              Track Grow ThriveOn
             </Text>
           </View>
 
@@ -328,6 +356,7 @@ export default function AuthScreen() {
             fontSize: 12,
             textAlign: "center",
             paddingHorizontal: 10,
+            paddingBottom: insets.bottom,
           }}
         >
           By signing up, you agree to our{" "}

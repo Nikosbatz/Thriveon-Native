@@ -16,7 +16,8 @@ export async function login(email: string, password: string) {
 
     if (res.status === 200) {
       if (res.data.accessToken) {
-        await SecureStore.setItemAsync("token", res.data.accessToken);
+        await SecureStore.setItemAsync("accessToken", res.data.accessToken);
+        await SecureStore.setItemAsync("refreshToken", res.data.refreshToken);
       } else {
         alert("Server could not create token");
       }
@@ -44,13 +45,15 @@ export async function googleLogin(googleData: any) {
 
     if (res.status === 200 || res.status === 201) {
       if (res.data.accessToken) {
-        await SecureStore.setItemAsync("token", res.data.accessToken);
+        await SecureStore.setItemAsync("accessToken", res.data.accessToken);
+        await SecureStore.setItemAsync("refreshToken", res.data.refreshToken);
       } else {
         throw new Error("Could not create new session...");
       }
       return res.data;
     }
   } catch (error: any) {
+    console.log("googleLogin requests error");
     if (error.status === 401) {
       throw new Error(error.response.data.message);
     } else {
@@ -122,7 +125,8 @@ export async function postEmailVerificationToken(verificationToken: string) {
       },
     );
     if (res.status === 200) {
-      await SecureStore.setItemAsync("token", res.data.accessToken);
+      await SecureStore.setItemAsync("accessToken", res.data.accessToken);
+      await SecureStore.setItemAsync("refreshToken", res.data.refreshToken);
     }
   } catch (error: any) {
     if (error.status === 400) {
@@ -189,19 +193,19 @@ export async function postResetPassword(password: string, token: string) {
 }
 
 export async function postUserInfo(info: Partial<UserInterface>) {
-  const res = await api.post(`${BASE_URI}/user/update-info`, info, {
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json;charset=UTF-8",
-    },
-  });
+  try {
+    const res = await api.post(`${BASE_URI}/user/update-info`, info, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+    });
 
-  if (res.status === 200) {
-    return res.data;
-  } else {
-    throw new Error(
-      "Something went wrong. If the error persists please contact support",
-    );
+    if (res.status === 200) {
+      return res.data;
+    }
+  } catch (error: any) {
+    throw new Error(error.message);
   }
 }
 
@@ -227,14 +231,18 @@ export async function getFoods(path: string, date: string) {
   path = "/foods" to fetch all the foods from the DB
   path = "/foods/userlogs" to fetch the User's food logs (Today currently...)
   */
+
   try {
     const res = await api.get(`${path}/${date}`, {
       headers: { Accept: "application/json" },
     });
+
     if (res.status === 200) {
       return res.data;
     }
   } catch (error: any) {
+    // console.log(error);
+
     throw new Error(`${error.response.data}`);
   }
 }
@@ -424,10 +432,45 @@ export async function getSearchFoods(searchInput: string) {
   }
 }
 
-export async function authToken() {
-  const res = await api.get("/user/auth");
-  if (res.status === 200) {
-    return;
+export async function postRefreshToken() {
+  const refreshToken = await SecureStore.getItemAsync("refreshToken");
+  try {
+    const res = await api.post(
+      `/user/refresh-token`,
+      { refreshToken: refreshToken },
+      {
+        headers: { Accept: "application/json" },
+      },
+    );
+
+    console.log(res.data.accessToken);
+    if (res.status === 201) {
+      await SecureStore.setItemAsync("accessToken", res.data.accessToken);
+      return res.data.accessToken;
+    }
+  } catch (error: any) {
+    console.log(error);
+    if (error.status === 400) {
+      throw new Error("Error 400: Missing refresh token from request");
+    } else if (error.status === 401) {
+      throw new Error("Error 401: Refresh token invalid or expired");
+    } else {
+      throw new Error("Unknown Error...");
+    }
   }
+}
+
+export async function authToken() {
+  try {
+    const res = await api.get("/user/auth");
+    if (res.status === 200) {
+      return true;
+    } else if (res.status === 201) {
+      return res.data.token;
+    }
+  } catch (error) {
+    console.log("authToken error");
+  }
+
   throw new Error();
 }

@@ -7,6 +7,7 @@ import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
 import { Food, mealType } from "@/src/types";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { LinearGradient } from "expo-linear-gradient";
 import { ArrowDown, ArrowUp } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
@@ -27,31 +28,10 @@ export default function CalorieTrackerScreen() {
     useState<string>("search");
   const [showMealSelectionMenu, setShowMealSelectionMenu] =
     useState<boolean>(true);
-  const openSelectioMenuRef = useRef<View>(null);
-  const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
   const bottomSheetRef = useRef<BottomSheet>(null);
   const insets = useSafeAreaInsets();
 
-  // UseEffect for initiail meal selection Menu coordinates calculation
-  // useEffect(() => {
-  //   console.log(openSelectioMenuRef.current !== null);
-  //   if (openSelectioMenuRef.current) {
-  //     openSelectioMenuRef.current?.measure(
-  //       (x, y, width, height, pageX, pageY) => {
-  //         setMenuAnchor({ x: x + 13, y: y + 79 });
-  //         setShowMealSelectionMenu(true);
-  //       },
-  //     );
-  //   }
-  // }, []);
-
   const openMenu = () => {
-    // openSelectioMenuRef.current?.measure(
-    //   (x, y, width, height, pageX, pageY) => {
-    //     setMenuAnchor({ x: x - 9, y: y + 79 });
-    //     setShowMealSelectionMenu(true);
-    //   },
-    // );
     setShowMealSelectionMenu(true);
   };
 
@@ -80,7 +60,9 @@ export default function CalorieTrackerScreen() {
   }));
 
   return (
-    <View
+    <LinearGradient
+      colors={["#02081c99", "#000306a0", "#03102689", "#01061560", "#000000b0"]}
+      locations={[0, 0.05, 0.4, 0.6, 1]}
       style={[
         styles.mainContainer,
         {
@@ -215,7 +197,7 @@ export default function CalorieTrackerScreen() {
         selectedMealType={selectedMealType}
         setSelectedMealType={setselectedMealType}
       />
-    </View>
+    </LinearGradient>
   );
 }
 

@@ -1,3 +1,4 @@
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import {
@@ -41,6 +42,7 @@ type AuthContextType = {
   verifyUserEmail: (verificationCode: string) => void;
   googleSignIn: (googleData: any) => void;
   splashScreenActive: boolean;
+  autoLoginEnabled: boolean;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -56,6 +58,7 @@ export default function AuthContextProvider({
   const [userEmail, setUserEmail] = useState<string>("");
   const [loadingUserInfo, setLoadingUserInfo] = useState<boolean>(false);
   const [splashScreenActive, setSplashScreenActive] = useState<boolean>(false);
+  const [autoLoginEnabled, setAutoLogiEnabled] = useState<boolean>(true);
   const resetLogsStore = useUserLogsStore((state) => state.resetLogs);
   const resetUserStore = useUserStore((state) => state.resetUser);
 
@@ -63,19 +66,22 @@ export default function AuthContextProvider({
   // else do not do anything
   useEffect(() => {
     (async () => {
+      console.log("useEffect in AUTHCONTEXT.TSX");
+
       setLoadingUserInfo(true);
       try {
         setSplashScreenActive(true);
-        const token = await SecureStore.getItemAsync("token");
-
-        if (token) {
+        const accessToken = await SecureStore.getItemAsync("accessToken");
+        if (accessToken) {
           await authToken();
           await fetchUserInfo();
           setIsLoggedIn(true);
         }
-        setTimeout(() => {
-          setSplashScreenActive(false);
-        }, 700);
+
+        // setTimeout(() => {
+        //   setSplashScreenActive(false);
+        // }, 700);
+        setSplashScreenActive(false);
       } catch (err) {
         // ignore errors retrieving token
         setSplashScreenActive(false);
@@ -89,9 +95,10 @@ export default function AuthContextProvider({
   // And keep the reference updated at all times through the [logOut] dependency
   // keep logout handler reference stable
   const logOut = useCallback(async () => {
-    await SecureStore.deleteItemAsync("token");
+    await SecureStore.deleteItemAsync("accessToken");
     resetLogsStore();
     resetUserStore();
+    GoogleSignin.signOut();
     setIsLoggedIn(false);
   }, []);
 
@@ -134,9 +141,10 @@ export default function AuthContextProvider({
       setUser(newUser);
       setLoadingUserInfo(false);
       return;
-    } catch (error) {
+    } catch (error: any) {
       setLoadingUserInfo(false);
-      throw new Error("Could not update user information!");
+      // console.log(error.message);
+      throw new Error(error.message);
     }
   }, []);
 
@@ -171,6 +179,7 @@ export default function AuthContextProvider({
   const googleSignIn = useCallback(async (googleData: any) => {
     try {
       const data = await googleLogin(googleData);
+      console.log(data);
       setIsLoggedIn(true);
       setUser(data.user);
       router.replace("/(tabs)");
@@ -198,6 +207,7 @@ export default function AuthContextProvider({
           verifyUserEmail,
           googleSignIn,
           splashScreenActive,
+          autoLoginEnabled,
         }),
         [
           signIn,
@@ -215,6 +225,7 @@ export default function AuthContextProvider({
           verifyUserEmail,
           googleSignIn,
           splashScreenActive,
+          autoLoginEnabled,
         ],
       )}
     >

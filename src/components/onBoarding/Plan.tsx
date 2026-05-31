@@ -4,11 +4,13 @@ import { useRouter } from "expo-router";
 import { CheckCheck, Edit2, Info } from "lucide-react-native";
 import { StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MacroHealthGoalsCard from "../profile/MacroHealthGoalsCard";
 
 export default function Plan() {
   const router = useRouter();
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
 
   return (
     <View
@@ -18,14 +20,14 @@ export default function Plan() {
         paddingTop: 50,
         paddingHorizontal: 5,
         alignContent: "center",
-        gap: 20,
+        gap: 13,
       }}
     >
       {/* Headline Texts Container */}
       <View>
         <Text
           variant="headlineMedium"
-          style={{ color: colors.lvPrimaryLight, textAlign: "center" }}
+          style={{ color: colors.lvPrimary, textAlign: "center" }}
         >
           Your plan is ready
         </Text>
@@ -46,7 +48,7 @@ export default function Plan() {
       <View
         style={[
           {
-            padding: 20,
+            padding: 10,
             borderRadius: 15,
             marginHorizontal: 10,
             borderWidth: 1,
@@ -59,10 +61,10 @@ export default function Plan() {
         <Text
           variant="labelLarge"
           style={{
-            fontSize: 20,
-            color: colors.lightWhiteText,
+            fontSize: 17,
+            color: "rgb(255, 255, 255)",
             textAlign: "center",
-            lineHeight: 25,
+            lineHeight: 20,
           }}
         >
           Daily Calories Goal
@@ -72,7 +74,8 @@ export default function Plan() {
           style={{
             color: colors.lvPrimary,
             textAlign: "center",
-            fontSize: 32,
+            fontSize: 30,
+            lineHeight: 25,
             padding: 10,
           }}
         >
@@ -120,7 +123,8 @@ export default function Plan() {
         style={{
           backgroundColor: colors.lvPrimary,
           position: "absolute",
-          bottom: 30,
+          bottom: 0,
+          marginBottom: insets.bottom + 5,
           left: "50%",
           transform: [{ translateX: "-50%" }],
           width: "80%",

@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Button, Text, TouchableRipple } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import MedicalDisclaimerModal from "../UI/MedicalDisclaimerModal";
 
@@ -27,6 +28,7 @@ export default function ActivityFreq() {
   const [MedDisclaimerVisible, setMedDisclaimerVisible] = useState(false);
   const [buildingPlan, setBuildingPlan] = useState(false);
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   async function handleFormSubmit() {
     if (selectedActivity === -1) {
@@ -75,16 +77,21 @@ export default function ActivityFreq() {
         alignContent: "center",
       }}
     >
-      <Text style={{ color: "white" }} variant="headlineMedium">
+      <Text
+        style={{ color: colors.lvPrimaryLight, textAlign: "center" }}
+        variant="headlineMedium"
+      >
         What's your activity level?
       </Text>
-      <Text variant="labelLarge" style={{ color: colors.lightWhiteText }}>
+      <Text
+        variant="labelLarge"
+        style={{ color: colors.lightWhiteText, textAlign: "center" }}
+      >
         This helps us calculate your daily calorie need accurately for so we can
         help you achieve your goal
       </Text>
       {/* Activity Freqs Container */}
       <View>
-        <Text variant="labelLarge">Primary Goal</Text>
         {activitiesFreq.map((obj, index) => (
           // Goal Card
           <TouchableRipple
@@ -100,7 +107,7 @@ export default function ActivityFreq() {
                 elevation: 0,
                 borderRadius: 10,
                 marginTop: 5,
-                padding: 10,
+                padding: 9,
                 borderWidth: 1,
                 borderColor:
                   selectedActivity === index
@@ -115,7 +122,7 @@ export default function ActivityFreq() {
                 flexDirection: "row",
                 alignItems: "center",
                 // justifyContent: "space-between",
-                gap: 20,
+                gap: 15,
               }}
             >
               {/* Activity icon container */}
@@ -133,11 +140,11 @@ export default function ActivityFreq() {
               <View>
                 <Text
                   variant="labelLarge"
-                  style={{ color: "white", fontSize: 20, lineHeight: 25 }}
+                  style={{ color: "white", fontSize: 18, lineHeight: 25 }}
                 >
                   {obj.label}
                 </Text>
-                <Text style={{ color: colors.lightWhiteText }}>
+                <Text style={{ color: colors.lightWhiteText, fontSize: 13 }}>
                   {obj.descr}
                 </Text>
               </View>
@@ -243,7 +250,8 @@ export default function ActivityFreq() {
         style={{
           backgroundColor: colors.lvPrimary,
           position: "absolute",
-          bottom: 30,
+          bottom: 0,
+          marginBottom: insets.bottom + 5,
           left: "50%",
           transform: [{ translateX: "-50%" }],
           width: "80%",
@@ -277,7 +285,7 @@ const activitiesFreq = [
   },
   {
     frequency: 3,
-    label: "Very  Active",
+    label: "Very Active",
     descr: "Highly frequent exercises 5-7 a week",
     icon: Activity,
   },
