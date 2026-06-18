@@ -1,7 +1,8 @@
 import { Tooltip } from "@/src/components/UI/ToolTip";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
-import { Food, Recipe } from "@/src/types";
+import { mainStyles } from "@/src/theme/styles";
+import { Food, MyFood } from "@/src/types";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { Plus, Trash2 } from "lucide-react-native";
@@ -16,7 +17,7 @@ import { ActivityIndicator, Menu, Text } from "react-native-paper";
 import Toast from "react-native-toast-message";
 
 type FoodCardProps = {
-  food: Recipe;
+  food: MyFood;
   index: number;
   setSelectedFood: React.Dispatch<React.SetStateAction<Food | null>>;
   bottomSheetRef: React.RefObject<BottomSheet | null>;
@@ -80,7 +81,7 @@ export default function FoodCard({
         onPress={handleOnPress}
         onLongPress={pendingDelete ? undefined : openMenu}
         style={{
-          backgroundColor: colors.lvFoodCardBg,
+          backgroundColor: mainStyles.foodCard.backgroundColor,
           opacity: pendingDelete ? 0.5 : 1,
           borderRadius: 10,
           marginTop: 2,
@@ -97,28 +98,12 @@ export default function FoodCard({
             }}
           >
             <View style={{ flexDirection: "row", maxWidth: "90%" }}>
-              <Text
-                variant="labelLarge"
-                style={{
-                  fontSize: 15,
-                  color: "white",
-                  lineHeight: 19,
-                  // backgroundColor: "red",
-                  textAlign: "left",
-                }}
-              >
+              <Text variant="labelLarge" style={mainStyles.foodCardName}>
                 {food.name}
               </Text>
             </View>
             {food.brands ? (
-              <Text
-                variant="bodyLarge"
-                style={{
-                  fontSize: 14,
-                  color: "rgb(184, 184, 184)",
-                  lineHeight: 20,
-                }}
-              >
+              <Text variant="bodyLarge" style={mainStyles.foodCardBrand}>
                 {food.brands}
               </Text>
             ) : null}
@@ -130,9 +115,9 @@ export default function FoodCard({
               gap: 7,
             }}
           >
-            <Text variant="labelLarge" style={styles.foodMacroValue}>
+            <Text variant="labelLarge" style={mainStyles.foodCardCal}>
               {food.calories} kcal
-              <Text style={styles.foodMacroText} variant="labelLarge">
+              <Text style={mainStyles.foodCardCal} variant="labelLarge">
                 , {quantityText}
               </Text>
             </Text>

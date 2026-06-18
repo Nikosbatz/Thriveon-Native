@@ -31,7 +31,6 @@ type MacroKeys = "fats" | "protein" | "carbs";
 
 type mealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
 
-// 1. The raw building block
 export interface Portion {
   modifier: string;
   amount: number;
@@ -39,7 +38,6 @@ export interface Portion {
   label: string;
 }
 
-// 2. The shared properties (The Source of Truth)
 interface BaseFood {
   name: string;
   calories: number;
@@ -53,8 +51,6 @@ interface BaseFood {
   starred: boolean;
 }
 
-// 3. The "Unified" App Type
-// We make UI-specific fields optional so the compiler knows they *might* be there
 export interface Food extends BaseFood {
   _id?: string;
   __v?: number;
@@ -64,8 +60,16 @@ export interface Food extends BaseFood {
   mealType?: "Breakfast" | "Lunch" | "Dinner" | "Snack";
 }
 
-export interface Recipe extends Food {
+export interface MyFood extends Food {
   ingredients: Food[];
+}
+
+export interface Recipe extends Food {
+  imageLink?: string;
+  description: string;
+  steps: string[];
+  ingredients: string[];
+  time: number;
 }
 
 type userActivity = {

@@ -1,3 +1,4 @@
+import { colors } from "@/src/theme/colors";
 import { Dispatch, SetStateAction } from "react";
 import {
   KeyboardTypeOptions,
@@ -6,7 +7,7 @@ import {
   TextStyle,
   View,
 } from "react-native";
-import { Text } from "react-native-paper";
+import { Divider, Text } from "react-native-paper";
 
 type Props = {
   placeholder: string;
@@ -31,15 +32,25 @@ export default function TextInputWithLabel({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        paddingVertical: 7,
+        backgroundColor: colors.lvFoodCardBg,
+        borderRadius: 10,
+        padding: 10,
       }}
     >
       <Text
         variant="labelLarge"
-        style={{ color: "rgb(197, 197, 197)", fontSize: 16 }}
+        style={{ color: "rgb(255, 255, 255)", fontSize: 16, width: "55%" }}
       >
         {label}
       </Text>
+      <Divider
+        style={{
+          height: "100%",
+          width: 1,
+          backgroundColor: "gray",
+          marginLeft: 10,
+        }}
+      />
       <TextInput
         value={input}
         onChangeText={setInput}
@@ -49,13 +60,13 @@ export default function TextInputWithLabel({
             backgroundColor: "transparent",
             flex: 1,
             textAlign: "right",
-            fontSize: 16,
+            fontSize: 20,
           },
           style,
         ]}
         keyboardType={keyboardType ?? "default"}
         placeholder={placeholder}
-        placeholderTextColor={"white"}
+        placeholderTextColor={"rgb(157, 157, 157)"}
       ></TextInput>
     </View>
   );

@@ -1,6 +1,11 @@
 import { colors } from "@/src/theme/colors";
-import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import {
+  Pressable,
+  TextInput as RNTextInput,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Text, TextInput } from "react-native-paper";
 
 type Props = {
@@ -12,6 +17,7 @@ type Props = {
 };
 export default function CustomNumInput(props: Props) {
   const [isFocused, setIsFocused] = useState(false);
+  const textInputRef = React.useRef<RNTextInput>(null);
   return (
     <View style={{ gap: 5, flexGrow: 1 }}>
       {/* Label */}
@@ -19,7 +25,8 @@ export default function CustomNumInput(props: Props) {
         {props.label}
       </Text>
       {/* TextInput Container */}
-      <View
+      <Pressable
+        onPress={(e) => textInputRef.current?.focus()}
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -31,6 +38,7 @@ export default function CustomNumInput(props: Props) {
         }}
       >
         <TextInput
+          ref={textInputRef}
           keyboardType="numeric"
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -61,7 +69,7 @@ export default function CustomNumInput(props: Props) {
         >
           {props.unit}
         </Text>
-      </View>
+      </Pressable>
     </View>
   );
 }

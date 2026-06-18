@@ -89,7 +89,7 @@ export default function EditUserInfo() {
         <Text style={styles.cardTitle} variant="labelLarge">
           Main Goal
         </Text>
-        <View style={profileStyles.card}>
+        <View style={[profileStyles.card, { gap: 5 }]}>
           {goals.map((goal, index) => (
             <Pressable
               key={index}
@@ -114,7 +114,7 @@ export default function EditUserInfo() {
                   backgroundColor:
                     Number(userInfoInputs?.goal) == index
                       ? colors.lvPrimary
-                      : colors.lvGradientCard,
+                      : colors.lvBackground,
                 }}
               >
                 {goal}

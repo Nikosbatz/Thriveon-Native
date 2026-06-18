@@ -91,6 +91,7 @@ export default function MacrosInfo(props: Props) {
                     fontSize: 15,
                     color: "rgba(225, 225, 225, 1)",
                     alignSelf: "flex-start",
+                    fontFamily: "QuickSandSemiBold",
                   }}
                 >
                   {macrosInfo.macrosLabels[index]}
@@ -117,7 +118,16 @@ export default function MacrosInfo(props: Props) {
                     lineHeight: 25,
                   }}
                 >
-                  {currentMacros[index]}g/{user?.nutritionGoals[macro]}g
+                  {currentMacros[index]}g
+                  <Text
+                    style={{
+                      fontFamily: "QuickSandSemiBold",
+                      color: "rgb(151, 151, 151)",
+                      fontSize: 12,
+                    }}
+                  >
+                    /{user?.nutritionGoals[macro]}g
+                  </Text>
                 </Text>
                 <Text
                   variant="labelLarge"

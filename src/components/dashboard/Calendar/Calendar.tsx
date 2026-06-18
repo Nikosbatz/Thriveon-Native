@@ -14,7 +14,7 @@ export default function CalendarView({}: Props) {
   return (
     <View
       style={{
-        backgroundColor: colors.lvDashboardCardBg,
+        backgroundColor: colors.lvFoodCardBg,
         marginTop: 20,
         borderRadius: 20,
         padding: 5,
@@ -30,8 +30,8 @@ export default function CalendarView({}: Props) {
         }}
         calendarColor={"#6d739e00"}
         calendarHeaderStyle={{ color: "white" }}
-        dateNumberStyle={{ color: "rgb(205, 205, 205)" }}
-        dateNameStyle={{ color: "rgb(205, 205, 205)" }}
+        dateNumberStyle={{ color: "rgb(255, 255, 255)" }}
+        dateNameStyle={{ color: "rgb(255, 255, 255)" }}
         calendarAnimation={{ type: "parallel", duration: 500 }}
         iconLeftStyle={{ tintColor: "white" }}
         iconRightStyle={{ tintColor: "white" }}

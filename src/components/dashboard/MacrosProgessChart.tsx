@@ -1,5 +1,6 @@
 import { useAuth } from "@/src/context/authContext";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
+import { colors } from "@/src/theme/colors";
 import { StyleSheet, View } from "react-native";
 import { ProgressChart } from "react-native-chart-kit";
 import { Text } from "react-native-paper";
@@ -37,7 +38,7 @@ export default function MacrosProgressChart() {
   const data = {
     labels: ["Protein", "Fats", "Carbs"],
     data: macroPercentages,
-    colors: ["rgb(0, 234, 255)", "rgba(0, 115, 255, 1)", "rgb(0, 255, 162)"],
+    colors: [colors.protein, colors.fats, colors.carbs],
   };
 
   return (

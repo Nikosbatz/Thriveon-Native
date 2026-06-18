@@ -1,6 +1,13 @@
+import { colors } from "@/src/theme/colors";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, TouchableRipple } from "react-native-paper";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function CustomTabBar({
@@ -13,7 +20,7 @@ export default function CustomTabBar({
   return (
     <View
       style={{
-        backgroundColor: "rgba(0, 0, 0, 0.86)",
+        backgroundColor: "rgba(0, 0, 0, 0.87)",
         borderWidth: 0,
         borderColor: "rgb(25, 28, 31)",
         position: "absolute",
@@ -21,7 +28,7 @@ export default function CustomTabBar({
         width: "90%",
         alignSelf: "center",
         padding: 5,
-        paddingVertical: 8,
+        paddingVertical: 5,
         borderRadius: 30,
       }}
     >
@@ -70,19 +77,23 @@ export default function CustomTabBar({
               onPress={onPress}
               rippleColor="rgba(164, 165, 165, 0.36)"
               borderless
-              style={{ borderRadius: 30, padding: 0, flex: 1 }}
+              style={{
+                borderRadius: 30,
+                paddingTop: 4,
+                paddingBottom: 0,
+                flex: 1,
+              }}
             >
               <View
                 style={{
                   alignItems: "center",
                   justifyContent: "flex-end",
                   flex: 1,
-                  // backgroundColor: isFocused
-                  //   ? colors.lvPrimaryLight
-                  //   : "transparent",
                   backgroundColor: "transparent",
                 }}
               >
+                <TabIndicator isFocused={isFocused} />
+
                 {renderIcon &&
                   renderIcon({
                     focused: isFocused,
@@ -109,4 +120,36 @@ export default function CustomTabBar({
   );
 }
 
-const styles = StyleSheet.create({});
+interface IndicatorProps {
+  isFocused: boolean;
+}
+
+export function TabIndicator({ isFocused }: IndicatorProps) {
+  const widthValue = useSharedValue(0);
+
+  useEffect(() => {
+    // Grows to 20 when focused, shrinks to 0 when blurred
+    widthValue.value = withTiming(isFocused ? 25 : 0, {
+      duration: 250,
+    });
+  }, [isFocused]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      width: widthValue.value,
+    };
+  });
+
+  return <Animated.View style={[styles.indicator, animatedStyle]} />;
+}
+
+const styles = StyleSheet.create({
+  indicator: {
+    position: "absolute",
+    top: -3,
+    backgroundColor: colors.lvPrimary,
+    height: 3,
+    borderRadius: 10,
+    alignSelf: "center", // Keeps the growing animation perfectly centered
+  },
+});

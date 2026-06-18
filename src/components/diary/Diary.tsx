@@ -1,9 +1,8 @@
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
-import { Food, MacroKeys, mealType } from "@/src/types";
+import { Food, mealType } from "@/src/types";
 import { LinearGradient } from "expo-linear-gradient";
-import { Apple, LucideIcon, Moon, Sun, Utensils } from "lucide-react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -12,9 +11,9 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import { PieChart } from "react-native-chart-kit";
 import { Text, TouchableRipple } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import GoalTextPair from "../profile/GoalTextPair";
 import DiaryFoodCard from "./DiaryFoodCard";
 
 const screenWidth = Dimensions.get("window").width;
@@ -24,6 +23,7 @@ export default function Diary() {
   const todaysFoods: Food[] = useUserLogsStore((s) => s.todaysFoods);
   const [selectedMealType, setselectedMealType] =
     useState<mealType>("Breakfast");
+  const [showEmptyPieChart, setShowEmptyPieChart] = useState(false);
   const scrollX = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -32,8 +32,8 @@ export default function Diary() {
 
     Animated.timing(scrollX, {
       toValue: newOffset,
-      duration: 200, // Speed of transition
-      useNativeDriver: true, // Use hardware acceleration
+      duration: 200,
+      useNativeDriver: true,
     }).start();
   }, [selectedMealType]);
 
@@ -50,6 +50,89 @@ export default function Diary() {
     return grouped;
   }, [todaysFoods]);
 
+  // 1. Calculate totals for the selected meal type
+  const selectedMealFoods = todaysFoodsByMeal[selectedMealType];
+
+  const totalCalories = useMemo(() => {
+    return selectedMealFoods.reduce(
+      (sum, food) => sum + (food.calories || 0),
+      0,
+    );
+  }, [selectedMealFoods]);
+
+  const macroTotals = useMemo(() => {
+    return {
+      protein: selectedMealFoods.reduce(
+        (sum, food) => sum + (food.protein || 0),
+        0,
+      ),
+      carbs: selectedMealFoods.reduce(
+        (sum, food) => sum + (food.carbs || 0),
+        0,
+      ),
+      fats: selectedMealFoods.reduce((sum, food) => sum + (food.fats || 0), 0),
+    };
+  }, [selectedMealFoods]);
+
+  // 2. Format data specifically for react-native-chart-kit
+  const chartData = useMemo(() => {
+    const { protein, carbs, fats } = macroTotals;
+    const totalMacros = protein + carbs + fats;
+
+    if (totalMacros === 0) {
+      setShowEmptyPieChart(true);
+      const emptyLegendColor = "rgba(255, 255, 255, 0.4)";
+
+      return [
+        {
+          name: "Protein (0g)",
+          population: 0,
+          color: colors.protein,
+          legendFontColor: emptyLegendColor,
+          legendFontSize: 14,
+        },
+        {
+          name: "Carbs (0g)",
+          population: 0,
+          color: colors.carbs,
+          legendFontColor: emptyLegendColor,
+          legendFontSize: 14,
+        },
+        {
+          name: "Fats (0g)",
+          population: 0,
+          color: colors.fats,
+          legendFontColor: emptyLegendColor,
+          legendFontSize: 14,
+        },
+      ];
+    }
+
+    return [
+      {
+        name: `Protein (${Math.round(protein)}g)`,
+        population: protein,
+        color: colors.protein,
+        legendFontColor: "#FFF",
+        legendFontSize: 14,
+      },
+      {
+        name: `Carbs (${Math.round(carbs)}g)`,
+        population: carbs,
+        color: colors.carbs,
+        legendFontColor: "#FFF",
+        legendFontSize: 14,
+      },
+      {
+        name: `Fats (${Math.round(fats)}g)`,
+        population: fats,
+        color: colors.fats,
+        legendFontColor: "#FFF",
+        legendFontSize: 14,
+      },
+    ];
+  }, [macroTotals]);
+
   return (
     <LinearGradient
       colors={["#06173b", "#06173b", "#020712", "#020712", "#020712"]}
@@ -63,11 +146,11 @@ export default function Diary() {
         }}
       >
         {/* MealType selection buttons */}
-        <View style={styles.mealTabsContainer}>
+        <View style={[styles.mealTabsContainer]}>
           {mealTypes.map((mealType, index) => (
             <TouchableRipple
               key={index}
-              rippleColor={"rgba(0, 234, 255, 0.52)"}
+              rippleColor={"rgba(51, 52, 52, 0.77)"}
               borderless
               onPress={() => setselectedMealType(mealType)}
               style={{ borderRadius: 10 }}
@@ -76,7 +159,12 @@ export default function Diary() {
                 variant="labelLarge"
                 style={[
                   styles.mealTab,
-                  selectedMealType === mealType ? styles.selectedMealTab : null,
+                  selectedMealType === mealType
+                    ? {
+                        backgroundColor: colors[selectedMealType],
+                        color: "white",
+                      }
+                    : { color: "white" },
                 ]}
               >
                 {mealType}
@@ -85,119 +173,133 @@ export default function Diary() {
           ))}
         </View>
 
-        <ScrollView
-          contentContainerStyle={{
-            gap: 30,
-            paddingBottom: insets.bottom,
-          }}
-          showsVerticalScrollIndicator={true}
+        {/* Dynamic Card Area (Stays static at the top, or shifts data gracefully) */}
+        <View
+          style={[
+            mainStyles.dashboardCard,
+            {
+              marginHorizontal: 10,
+              marginTop: 10,
+              paddingVertical: 15,
+            },
+          ]}
         >
-          {/* Nutrients sum values */}
-          <View
-            style={[
-              mainStyles.dashboardCard,
-              { marginHorizontal: 10, marginTop: 10 },
-            ]}
+          <Text
+            variant="labelLarge"
+            style={{
+              padding: 7,
+              alignSelf: "center",
+              borderRadius: 8,
+              color: "white",
+              fontSize: 20,
+              textAlign: "center",
+              marginBottom: 5,
+            }}
           >
-            <Text
-              variant="labelLarge"
-              style={{
-                color: "rgb(255, 255, 255)",
-                fontSize: 20,
-                textAlign: "center",
+            {selectedMealType} breakdown
+          </Text>
+
+          <Text
+            variant="labelLarge"
+            style={{
+              color: colors.calories,
+              fontSize: 18,
+              textAlign: "center",
+              alignItems: "center",
+            }}
+          >
+            {totalCalories} kcal
+          </Text>
+
+          {/* Render Pie Chart */}
+          <View
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <PieChart
+              data={chartData}
+              width={screenWidth - 22}
+              height={130}
+              chartConfig={{
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
               }}
-            >
-              {selectedMealType} nutrients
-            </Text>
-            <View
-              style={[
-                {
-                  justifyContent: "center",
-                  gap: 10,
-                  flexDirection: "row",
-                },
-              ]}
-            >
-              <GoalTextPair
-                goalKey={"calories"}
-                value={todaysFoodsByMeal[selectedMealType].reduce(
-                  (sum, food) => sum + food.calories,
-                  0,
-                )}
-                unit="kcal"
-              />
-              {macrosKeys.map((macro, index) => (
-                <GoalTextPair
-                  key={index}
-                  goalKey={macro}
-                  value={todaysFoodsByMeal[selectedMealType].reduce(
-                    (sum, food) => sum + food[macro],
-                    0,
-                  )}
-                  unit={"g"}
-                />
-              ))}
-            </View>
+              accessor={"population"}
+              backgroundColor={"transparent"}
+              paddingLeft={"-20"}
+              center={[40, 0]}
+              absolute={false}
+            />
           </View>
-          {/* Foods list container */}
+        </View>
+
+        {/* 
+          Foods Sliding Windows Container 
+          Taking up remaining structural space.
+        */}
+        <View style={{ flex: 1, marginTop: 15 }}>
           <Animated.View
             style={{
               flexDirection: "row",
               width: "400%",
-              marginTop: 0,
+              height: "100%",
               transform: [
                 {
                   translateX: scrollX.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0, -1], // Inverts the direction so it slides left
+                    outputRange: [0, -1],
                   }),
                 },
               ],
             }}
           >
             {Object.entries(todaysFoodsByMeal).map(([mealType, foods]) => {
-              const IconComponent = mealTypeIcons[mealType as mealType];
               return (
-                <View key={mealType} style={{ gap: 3 }}>
-                  {foods.length === 0 ? (
-                    <View
-                      style={{
-                        width: screenWidth,
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text
-                        variant="labelLarge"
-                        style={{
-                          color: "white",
-                          fontSize: 16,
-                          width: "80%",
-                          textAlign: "center",
-                        }}
-                      >
-                        Your {mealType} foods appear here!
-                      </Text>
-                    </View>
-                  ) : null}
-                  {foods.map((food, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        // backgroundColor: colors.lvGradientCard,
-                        borderRadius: 20,
-                        padding: 0,
-                        width: screenWidth,
-                        alignItems: "center",
-                      }}
-                    >
-                      <DiaryFoodCard food={food} />
-                    </View>
-                  ))}
+                <View
+                  key={mealType}
+                  style={{ width: screenWidth, height: "100%" }}
+                >
+                  <ScrollView
+                    contentContainerStyle={{
+                      paddingBottom: insets.bottom + 10,
+                    }}
+                    showsVerticalScrollIndicator={false}
+                  >
+                    {foods.length === 0 ? (
+                      <View style={{ alignItems: "center", marginTop: 40 }}>
+                        <Text
+                          variant="labelLarge"
+                          style={{
+                            color: "white",
+                            fontSize: 16,
+                            width: "80%",
+                            textAlign: "center",
+                            opacity: 0.6,
+                          }}
+                        >
+                          Your {mealType} foods appear here!
+                        </Text>
+                      </View>
+                    ) : (
+                      foods.map((food, index) => (
+                        <View
+                          key={index}
+                          style={{
+                            borderRadius: 20,
+                            alignItems: "center",
+                          }}
+                        >
+                          <DiaryFoodCard food={food} />
+                        </View>
+                      ))
+                    )}
+                  </ScrollView>
                 </View>
               );
             })}
           </Animated.View>
-        </ScrollView>
+        </View>
       </View>
     </LinearGradient>
   );
@@ -227,21 +329,21 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderColor: "gray",
     padding: 10,
-    color: "white",
     borderRadius: 10,
     backgroundColor: "rgba(178, 22, 22, 0)",
   },
-  selectedMealTab: { backgroundColor: colors.lvPrimary, color: "black" },
+
+  macroGramsRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 15,
+    borderTopWidth: 0.5,
+    borderTopColor: "rgba(255,255,255,0.1)",
+    paddingTop: 10,
+  },
 });
 
 const mealTypes: mealType[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
-
-const mealTypeIcons: Record<mealType, LucideIcon> = {
-  Breakfast: Sun,
-  Lunch: Utensils,
-  Dinner: Moon,
-  Snack: Apple,
-};
 
 type todaysFoodsByMealType = {
   Breakfast: Food[];
@@ -249,5 +351,3 @@ type todaysFoodsByMealType = {
   Dinner: Food[];
   Snack: Food[];
 };
-
-const macrosKeys: MacroKeys[] = ["protein", "carbs", "fats"];

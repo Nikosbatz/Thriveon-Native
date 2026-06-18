@@ -1,3 +1,5 @@
+import { UserInterfaceKeys } from "../types";
+
 export const userPropertiesUnits: Partial<Record<UserInterfaceKeys, string>> = {
   age: "years",
   height: "cm",

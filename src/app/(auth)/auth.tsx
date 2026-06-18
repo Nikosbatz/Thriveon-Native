@@ -63,7 +63,6 @@ export default function AuthScreen() {
       const accessToken = await SecureStore.getItemAsync("accessToken");
       // if an accessToken exists then do nothing let authContext handle it
       if (accessToken) {
-        console.log(accessToken);
         return;
       }
 
@@ -107,19 +106,17 @@ export default function AuthScreen() {
       setIsLoadingGoogle(true);
       const idToken = response.data?.idToken;
       const email = response.data?.user.email;
-      console.log(email);
       if (idToken && email) {
         await googleSignIn(response.data);
       } else {
         setIsLoadingGoogle(false);
       }
     } catch (error: any) {
-      console.log(error.message);
       setIsLoadingGoogle(false);
 
       if (isErrorWithCode(error)) {
       } else {
-        alert(error.message);
+        alert(error);
       }
     }
   }

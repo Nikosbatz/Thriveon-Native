@@ -5,9 +5,9 @@ import { Food, mealType } from "@/src/types";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { Info } from "lucide-react-native";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Animated, View } from "react-native";
+import { Search } from "lucide-react-native";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Animated, Pressable, View } from "react-native";
 import { ActivityIndicator, Text, TextInput } from "react-native-paper";
 import FoodCard from "../FoodCard";
 
@@ -25,6 +25,7 @@ export default function SearchTab({
   const [searchInput, setSearchInput] = useState<string>("");
   const [searchEnded, setSearchEnded] = useState<boolean>(false);
   const [filteredFoods, setFilteredFoods] = useState<Food[]>([]);
+  const textInputRef = useRef<any>(null);
 
   const foodHistory: Food[] = useUserLogsStore((s) => s.foodHistory);
 
@@ -48,37 +49,11 @@ export default function SearchTab({
     setSearchEnded(false);
   }
 
-  //   const translateY = useSharedValue(0);
-  //   const opacity = useSharedValue(1);
-  //   const lastContentOffset = useSharedValue(0);
-  //   const scrollHandler = useAnimatedScrollHandler({
-  //     onScroll: (event) => {
-  //       const currentOffset = event.contentOffset.y;
-
-  //       // Ignore small jitters or bounce effects at the top
-  //       if (currentOffset <= 0) {
-  //         translateY.value = withTiming(0);
-  //         return;
-  //       }
-
-  //       if (currentOffset > lastContentOffset.value && currentOffset > 0) {
-  //         // SCROLLING DOWN -> Hide the view
-  //         // translateY.value = withTiming(100, { duration: 100 }); // Adjust -100 to your view's height
-  //         opacity.value = withTiming(0, { duration: 200 });
-  //       } else if (currentOffset < lastContentOffset.value) {
-  //         // SCROLLING UP -> Show the view
-  //         // translateY.value = withTiming(0);
-  //         opacity.value = withTiming(1, { duration: 100 });
-  //       }
-
-  //       lastContentOffset.value = currentOffset;
-  //     },
-  //   });
-
   return (
     <>
       {/* Food search input */}
       <TextInput
+        ref={textInputRef}
         mode="outlined"
         activeOutlineColor={colors.lvPrimary50}
         cursorColor="white"
@@ -89,7 +64,7 @@ export default function SearchTab({
         left={
           <TextInput.Icon
             icon={() => (
-              <MaterialIcons name="search" size={24} color={"white"} />
+              <MaterialIcons name="search" size={21} color={"white"} />
             )}
           />
         }
@@ -104,7 +79,7 @@ export default function SearchTab({
               icon={() => (
                 <Entypo
                   name="circle-with-cross"
-                  size={26}
+                  size={20}
                   color="rgb(255, 103, 103)"
                 />
               )}
@@ -114,7 +89,7 @@ export default function SearchTab({
         value={searchInput}
         onChangeText={handleSearchInputChange}
         style={{
-          fontSize: 17,
+          fontSize: 16,
           padding: 0,
           height: 45,
           marginTop: 10,
@@ -142,7 +117,7 @@ export default function SearchTab({
         <Text
           variant="headlineSmall"
           style={{
-            fontSize: 21,
+            fontSize: 19,
             paddingLeft: 15,
             alignSelf: "flex-start",
             color: colors.lvPrimaryLight,
@@ -183,29 +158,68 @@ export default function SearchTab({
       </View>
       {/* Hint for new users to use search to see the list of foods */}
       {searchInput.length > 2 || foodHistory.length !== 0 ? null : (
-        <View
+        <Pressable
+          onPress={() => textInputRef.current?.focus()}
           style={{
-            backgroundColor: colors.lvFoodCardBg,
-            padding: 15,
-            maxWidth: "90%",
+            alignItems: "center",
             position: "absolute",
             left: "50%",
             top: "50%",
-            transform: [{ translateX: "-50%" }],
-            borderRadius: 10,
-            gap: 10,
-            alignItems: "center",
-            elevation: 5,
+            transform: [{ translateX: "-50%" }, { translateY: "-50%" }],
           }}
         >
-          <Info size={24} color={colors.lvPrimary}></Info>
-          <Text style={{ color: colors.lvPrimaryLight, fontSize: 16 }}>
-            Your logged foods history appears here!
-          </Text>
-          <Text style={{ color: "rgb(214, 214, 214)", textAlign: "center" }}>
-            Try searching for a food and a list of relevant foods will appear!
-          </Text>
-        </View>
+          <View
+            style={{
+              backgroundColor: "rgb(2, 29, 44)",
+              paddingVertical: 26,
+              paddingHorizontal: 24,
+              width: "85%",
+              maxWidth: 340,
+              borderRadius: 20, // Slightly rounder for a modern card look
+              gap: 14,
+              alignItems: "center",
+              borderWidth: 1.5,
+              borderColor: "rgba(34, 197, 159, 0.25)", // Sharp, translucent electric green border
+              // Neon green ambient glow instead of flat black shadow
+              shadowColor: "#039a88",
+              elevation: 10,
+            }}
+          >
+            {/* Icon Wrapper with a glassmorphic green tint */}
+            <View
+              style={{
+                backgroundColor: "rgba(0, 229, 255, 0.1)", // Brighter vivid green backdrop
+                padding: 12,
+                borderRadius: 50,
+                borderWidth: 1,
+                borderColor: "rgba(34, 197, 178, 0.57)",
+              }}
+            >
+              <Search size={26} color="#22a5c5" /> {/* Electric green icon */}
+            </View>
+
+            <Text
+              variant="headlineSmall"
+              style={{
+                color: "#FFFFFF", // Crisp white so it pops instantly
+                textAlign: "center",
+              }}
+            >
+              Your food history appears here
+            </Text>
+            <Text
+              variant="bodyMedium"
+              style={{
+                color: "#A3A3A3", // Lighter bright gray for high legibility
+                textAlign: "center",
+                lineHeight: 20,
+              }}
+            >
+              Try searching for a food and a list of relevant foods will appear!
+              ✨
+            </Text>
+          </View>
+        </Pressable>
       )}
       {/* <FoodOptionsSheet
         bottomSheetRef={bottomSheetRef}

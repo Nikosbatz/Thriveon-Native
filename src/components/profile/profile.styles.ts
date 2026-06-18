@@ -21,7 +21,7 @@ export const profileStyles = StyleSheet.create({
   },
   card: {
     borderRadius: 20,
-    backgroundColor: colors.lvGradientCard,
+    backgroundColor: colors.lvFoodCardBg,
     borderWidth: 0,
     borderColor: "rgba(74, 74, 74, 1)",
     padding: 15,

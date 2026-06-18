@@ -10,24 +10,26 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import { LinearGradient } from "expo-linear-gradient";
 import { ArrowDown, ArrowUp } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Divider, Menu, Text } from "react-native-paper";
+import { Dimensions, StyleSheet, View } from "react-native";
+import { Divider, Menu, Text, TouchableRipple } from "react-native-paper";
 import Animated, {
+  Easing,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
 export default function CalorieTrackerScreen() {
   const [selectedFood, setSelectedFood] = useState<Food | null>(null);
-  const [selectedMealType, setselectedMealType] = useState<
-    mealType | undefined
-  >();
+  const [selectedMealType, setselectedMealType] =
+    useState<mealType>("Breakfast");
   const [selectedActionTabId, setSelectedActionTabId] =
     useState<string>("search");
   const [showMealSelectionMenu, setShowMealSelectionMenu] =
-    useState<boolean>(true);
+    useState<boolean>(false);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const insets = useSafeAreaInsets();
 
@@ -35,34 +37,53 @@ export default function CalorieTrackerScreen() {
     setShowMealSelectionMenu(true);
   };
 
-  // Create shared opacity values for each tab
+  // Re-animated values initialized uniformly
   const searchOpacity = useSharedValue(1);
+  const searchTranslateX = useSharedValue(0);
   const myFoodsOpacity = useSharedValue(0);
+  const myFoodsTranslateX = useSharedValue(SCREEN_WIDTH); // Starts offscreen right
 
-  // Animate the values whenever the active tab ID changes
+  const slidingAnimDuration = 250; // Smoother fluid curve length
+
   useEffect(() => {
-    searchOpacity.value = withTiming(selectedActionTabId === "search" ? 1 : 0, {
-      duration: 200,
-    });
-    myFoodsOpacity.value = withTiming(
-      selectedActionTabId === "myFoods" ? 1 : 0,
-      { duration: 200 },
+    if (selectedActionTabId === "barcodeScanner") return;
+
+    const isActiveSearch = selectedActionTabId === "search";
+    const config = {
+      duration: slidingAnimDuration,
+      easing: Easing.bezier(0.25, 1, 0.5, 1), // Premium ease-out curve
+    };
+
+    // --- Search Tab Animation ---
+    searchOpacity.value = withTiming(isActiveSearch ? 1 : 0, config);
+    searchTranslateX.value = withTiming(
+      isActiveSearch ? 0 : -SCREEN_WIDTH,
+      config,
+    );
+
+    // --- My Foods Tab Animation ---
+    myFoodsOpacity.value = withTiming(!isActiveSearch ? 1 : 0, config);
+    myFoodsTranslateX.value = withTiming(
+      !isActiveSearch ? 0 : SCREEN_WIDTH,
+      config,
     );
   }, [selectedActionTabId]);
 
-  // Create the animated styles
   const searchStyle = useAnimatedStyle(() => ({
     opacity: searchOpacity.value,
+    transform: [{ translateX: searchTranslateX.value }],
   }));
 
   const myFoodsStyle = useAnimatedStyle(() => ({
     opacity: myFoodsOpacity.value,
+    transform: [{ translateX: myFoodsTranslateX.value }],
   }));
 
   return (
     <LinearGradient
-      colors={["#02081c99", "#000306a0", "#03102689", "#01061560", "#000000b0"]}
-      locations={[0, 0.05, 0.4, 0.6, 1]}
+      colors={["#031f3bcc", "#040f20ee", "#010713"]}
+      // colors={["#090F1D", "#090F1D", "#090F1D"]}
+      locations={[0, 0.4, 0.9]}
       style={[
         styles.mainContainer,
         {
@@ -72,82 +93,65 @@ export default function CalorieTrackerScreen() {
     >
       <ProfileHeader />
 
-      <View style={{ backgroundColor: "transparent", alignSelf: "center" }}>
+      {/* Menu dropdown block alignment */}
+      <View style={styles.menuAnchorWrapper}>
         <Menu
           visible={showMealSelectionMenu}
           onDismiss={() =>
             selectedMealType ? setShowMealSelectionMenu(false) : null
           }
-          style={{ alignSelf: "center" }}
           anchor={
-            <TouchableOpacity
-              style={{
-                alignItems: "center",
-                alignSelf: "center",
-                marginBottom: 10,
-              }}
+            <TouchableRipple
+              borderless
+              rippleColor="rgba(255, 255, 255, 0.15)"
+              style={styles.rippleBounds}
               onPress={openMenu}
             >
               <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: 7,
-                  borderRadius: 20,
-                  borderWidth: 1,
-                  borderColor: selectedMealType
-                    ? mealTypeColors[selectedMealType]
-                    : colors.lvPrimary20,
-                  width: 150,
-                }}
+                style={[
+                  styles.dropdownButton,
+                  {
+                    borderColor: selectedMealType
+                      ? mealTypeColors[selectedMealType]
+                      : colors.lvPrimary20 || "rgba(255,255,255,0.2)",
+                  },
+                ]}
               >
-                <Text
-                  variant="labelLarge"
-                  style={{ color: "white", textAlign: "center", fontSize: 14 }}
-                >
+                <Text variant="labelLarge" style={styles.dropdownButtonText}>
                   {selectedMealType ? selectedMealType : "Select meal type"}
                 </Text>
                 {showMealSelectionMenu ? (
-                  <ArrowUp size={22} color={"white"} />
+                  <ArrowUp size={18} color="white" />
                 ) : (
-                  <ArrowDown size={22} color={"white"} />
+                  <ArrowDown size={18} color="white" />
                 )}
               </View>
-            </TouchableOpacity>
+            </TouchableRipple>
           }
-          /* 2. CONTROL THE OFFSET RELATIVE TO THE BUTTON HERE
-        Instead of adding hardcoded pixel numbers to a screen-wide 'y' state,
-        use 'marginTop' to push the menu down exactly relative to your button.
-      */
-          contentStyle={{
-            backgroundColor: colors.lvBackground,
-            borderRadius: 20,
-            borderWidth: 1,
-            borderColor: colors.lvPrimary20,
-            marginTop: 31,
-            alignSelf: "center",
-          }}
+          contentStyle={[
+            styles.menuContent,
+            {
+              backgroundColor: colors.lvBackground || "#161F32",
+              borderColor: colors.lvPrimary20 || "rgba(255,255,255,0.1)",
+            },
+          ]}
         >
-          {mealTypes.map((mealType, index) => (
-            <React.Fragment key={index}>
+          {mealTypes.map((meal, index) => (
+            <React.Fragment key={meal}>
               <Menu.Item
                 onPress={() => {
                   setShowMealSelectionMenu(false);
-                  setselectedMealType(mealType);
+                  setselectedMealType(meal);
                 }}
-                titleStyle={{
-                  color: "white",
-                  fontWeight: "900",
-                  fontFamily: "quicksand",
-                }}
-                title={mealType}
+                titleStyle={styles.menuItemTitle}
+                title={meal}
               />
               {index < mealTypes.length - 1 && (
                 <Divider
                   style={{
-                    backgroundColor: colors.lvPrimary10,
-                    marginHorizontal: 10,
+                    backgroundColor:
+                      colors.lvPrimary10 || "rgba(255,255,255,0.05)",
+                    marginHorizontal: 12,
                   }}
                 />
               )}
@@ -156,15 +160,15 @@ export default function CalorieTrackerScreen() {
         </Menu>
       </View>
 
-      {/* Action selection buttons */}
+      {/* Action Segment Selector */}
       <ActionSelectionBar
         selectedTabId={selectedActionTabId}
         setSelectedTabId={setSelectedActionTabId}
       />
 
-      {/* Search tab goes HERE */}
-      <View style={{ flex: 1 }}>
-        {/* Search Tab Wrapper */}
+      {/* Smooth Sliding View Canvas Stack */}
+      <View style={styles.tabsCanvasContainer}>
+        {/* Search Tab Frame */}
         <Animated.View
           style={[styles.tabOverlay, searchStyle]}
           pointerEvents={selectedActionTabId === "search" ? "auto" : "none"}
@@ -176,7 +180,7 @@ export default function CalorieTrackerScreen() {
           />
         </Animated.View>
 
-        {/* MyFoods Tab Wrapper */}
+        {/* MyFoods Tab Frame */}
         <Animated.View
           style={[styles.tabOverlay, myFoodsStyle]}
           pointerEvents={selectedActionTabId === "myFoods" ? "auto" : "none"}
@@ -189,56 +193,18 @@ export default function CalorieTrackerScreen() {
         </Animated.View>
       </View>
 
-      {/* <AnotherTab /> */}
-
       <FoodOptionsSheet
         bottomSheetRef={bottomSheetRef}
         food={selectedFood}
         selectedMealType={selectedMealType}
         setSelectedMealType={setselectedMealType}
+        snapPoint="86%"
       />
     </LinearGradient>
   );
 }
 
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-  },
-  mealTabsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: colors.lvGradientCard,
-    padding: 4,
-    marginHorizontal: 20,
-    marginVertical: 15,
-    borderRadius: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 4,
-  },
-  mealTab: {
-    fontSize: 15,
-    borderWidth: 0,
-    borderColor: "gray",
-    padding: 10,
-    color: "white",
-    borderRadius: 10,
-    backgroundColor: "rgba(178, 22, 22, 0)",
-  },
-  tabOverlay: {
-    ...StyleSheet.absoluteFillObject, // Stacks them directly on top of each other
-  },
-  selectedMealTab: { backgroundColor: colors.lvPrimary, color: "black" },
-  foodCardsContainer: {
-    paddingHorizontal: 7,
-  },
-  foodCardDivider: {
-    height: 1,
-    backgroundColor: "gray",
-  },
-});
+// --- TYPE MAP MOCKS AND STYLING DECLARATIONS ---
 
 const mealTypes: mealType[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
 
@@ -248,3 +214,60 @@ const mealTypeColors = {
   Dinner: "rgba(11, 3, 232, 0.73)",
   Snack: "rgba(1, 200, 87, 0.73)",
 };
+
+const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+  },
+  menuAnchorWrapper: {
+    backgroundColor: "transparent",
+    alignSelf: "center",
+    zIndex: 50,
+  },
+  rippleBounds: {
+    alignItems: "center",
+    alignSelf: "center",
+    marginBottom: 12,
+    borderRadius: 24,
+  },
+  dropdownButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 24,
+    borderWidth: 1.5,
+    backgroundColor: "rgba(22, 31, 50, 0.5)",
+    width: 170,
+  },
+  dropdownButtonText: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  menuContent: {
+    borderRadius: 16,
+    borderWidth: 1,
+    marginTop: 48,
+    minWidth: 170,
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  menuItemTitle: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 15,
+  },
+  tabsCanvasContainer: {
+    flex: 1,
+    position: "relative",
+    overflow: "hidden", // Keeps components completely masked when out of viewport bounds
+  },
+  tabOverlay: {
+    ...StyleSheet.absoluteFillObject,
+  },
+});

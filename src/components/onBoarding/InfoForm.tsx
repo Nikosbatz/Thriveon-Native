@@ -226,7 +226,7 @@ export default function InfoForm() {
             backgroundColor: colors.lvPrimary,
             position: "absolute",
             bottom: 0,
-            marginBottom: insets.bottom + 5,
+            marginBottom: insets.bottom + 10,
             left: "50%",
             transform: [{ translateX: "-50%" }],
             width: "80%",

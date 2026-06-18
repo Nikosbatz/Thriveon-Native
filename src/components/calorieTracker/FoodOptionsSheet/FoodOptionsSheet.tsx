@@ -22,10 +22,16 @@ import {
   BackHandler,
   TextInput as RNTextInput,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from "react-native";
-import { Button, Divider, Menu, Text, TextInput } from "react-native-paper";
+import {
+  Button,
+  Divider,
+  Menu,
+  Text,
+  TextInput,
+  TouchableRipple,
+} from "react-native-paper";
 import Toast from "react-native-toast-message";
 import { Tooltip } from "../../UI/ToolTip";
 import MacrosInfo from "./MacrosInfo";
@@ -34,7 +40,7 @@ type FoodSheetProps = {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
   food: Food | null;
   selectedMealType: mealType | undefined;
-  setSelectedMealType?: Dispatch<SetStateAction<mealType | undefined>>;
+  setSelectedMealType?: Dispatch<SetStateAction<mealType>>;
   initialIndex?: number;
   enablePanDownToClose?: boolean;
   setFoodLogged?: Dispatch<SetStateAction<boolean>>;
@@ -65,7 +71,7 @@ export default function FoodOptionsSheet({
   const quantityInputRef = useRef<RNTextInput>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [showServingMenu, setShowServingMenu] = useState(false);
-  const snapPoints = useMemo(() => [snapPoint ?? "90%"], []);
+  const snapPoints = useMemo(() => [snapPoint ?? "90%"], [snapPoint]);
   const [prevFood, setPrevFood] = useState<Food | null>(food);
   const [selectedServingIndex, setSelectedServingIndex] = useState(
     food?.selectedServingIndex ?? 0,
@@ -197,7 +203,8 @@ export default function FoodOptionsSheet({
       handleIndicatorStyle={{ backgroundColor: "white" }}
       index={initialIndex ?? -1}
       backgroundStyle={{
-        backgroundColor: colors.lvBackground,
+        // backgroundColor: colors.lvBackground,
+        backgroundColor: "#090F1D",
         elevation: 10,
       }}
       snapPoints={snapPoints}
@@ -270,33 +277,33 @@ export default function FoodOptionsSheet({
         <View style={[styles.flexRowView, {}]}>
           {/* MealType Picker */}
           <View style={{ flex: 1, width: "70%" }}>
-            <Text variant="labelLarge" style={{ color: colors.lightGrayText }}>
+            <Text
+              variant="labelLarge"
+              style={{ color: colors.lightGrayText, fontFamily: "QuickSand" }}
+            >
               Serving
             </Text>
-            {/* <MenuPicker
-              selectedOptionIndex={
-                food?.portions[selectedServingIndex]?.label ?? 0
-              }
-              setSelectedOptionIndex={setSelectedServingIndex}
-              options={food?.portions.map((portion) => portion.label) ?? []}
-            /> */}
             <Menu
               visible={showServingMenu}
               onDismiss={() => setShowServingMenu(false)}
               style={{}}
               contentStyle={{
-                backgroundColor: colors.lvBackground,
+                // backgroundColor: "rgb(29, 32, 43)",
+                backgroundColor: "#161F32",
                 borderRadius: 20,
                 borderWidth: 1,
-                borderColor: colors.lvPrimary20,
+                borderColor: colors.lvPrimary10,
                 marginTop: 37,
               }}
               anchor={
-                <TouchableOpacity
+                <TouchableRipple
+                  borderless
+                  rippleColor="rgba(255, 255, 255, 0.15)"
                   style={{
                     alignItems: "center",
                     alignSelf: "center",
                     marginBottom: 10,
+                    borderRadius: 30,
                   }}
                   onPress={() => setShowServingMenu(true)}
                 >
@@ -304,11 +311,12 @@ export default function FoodOptionsSheet({
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
-                      justifyContent: "center",
+                      justifyContent: "space-between",
                       padding: 10,
-                      borderRadius: 10,
+                      borderRadius: 30,
+                      backgroundColor: "#161F32",
                       borderWidth: 1,
-                      borderColor: colors.lvPrimary50,
+                      borderColor: colors.lvPrimary10,
                       minWidth: "100%",
                     }}
                   >
@@ -316,7 +324,7 @@ export default function FoodOptionsSheet({
                       variant="labelLarge"
                       style={{
                         color: "white",
-                        textAlign: "center",
+                        textAlign: "left",
                         fontSize: 16,
                       }}
                     >
@@ -328,7 +336,7 @@ export default function FoodOptionsSheet({
                       <ArrowDown size={22} color={"white"} />
                     )}
                   </View>
-                </TouchableOpacity>
+                </TouchableRipple>
               }
             >
               {food?.portions.map((portion, index) => (
@@ -340,8 +348,9 @@ export default function FoodOptionsSheet({
                     }}
                     titleStyle={{
                       color: "white",
-                      fontWeight: "900",
+                      fontWeight: "600",
                       fontFamily: "quicksand",
+                      fontSize: 15,
                     }}
                     title={portion.label}
                   />
@@ -359,7 +368,10 @@ export default function FoodOptionsSheet({
           </View>
           {/* Quantity Input */}
           <View style={{ width: "40%" }}>
-            <Text variant="labelLarge" style={{ color: colors.lightGrayText }}>
+            <Text
+              variant="labelLarge"
+              style={{ color: colors.lightGrayText, fontFamily: "QuickSand" }}
+            >
               Quantity
             </Text>
             <TextInput
@@ -370,13 +382,13 @@ export default function FoodOptionsSheet({
               onChangeText={(text) => handleQuantityInputChange(text)}
               placeholder="Quantity"
               style={styles.textInput}
-              outlineColor={colors.lvPrimary50}
-              activeOutlineColor={colors.lvPrimary50}
+              outlineColor={colors.lvPrimary10}
+              activeOutlineColor={colors.lvPrimary10}
               cursorColor="white"
               placeholderTextColor={colors.lightGrayText}
               textColor={"white"}
               maxLength={6}
-              theme={{ roundness: 10 }}
+              theme={{ roundness: 30 }}
             ></TextInput>
           </View>
           {/* <MenuPicker
@@ -385,16 +397,35 @@ export default function FoodOptionsSheet({
             options={mealTypes}
           /> */}
         </View>
-        <View style={{ flexDirection: "row" }}>
-          <Text variant="labelLarge" style={{ color: "white" }}>
-            Grams in total:{" "}
+
+        <Text
+          variant="labelLarge"
+          style={{
+            color: "rgb(171, 171, 171)",
+            backgroundColor: "#161F32",
+            padding: 3,
+            paddingHorizontal: 10,
+            borderRadius: 20,
+            alignSelf: "flex-start",
+            fontFamily: "QuickSand",
+          }}
+        >
+          Grams in total:{" "}
+          <Text
+            variant="labelLarge"
+            style={{
+              color: "white",
+              fontSize: 15,
+              fontFamily: "QuickSandSemiBold",
+            }}
+          >
             {(
               Number(quantityInput) *
               (food?.portions[selectedServingIndex]?.gramWeight ?? 0)
             ).toFixed(1)}
             g
           </Text>
-        </View>
+        </Text>
 
         {/* Macros Values Component */}
         <MacrosInfo
@@ -441,8 +472,6 @@ export default function FoodOptionsSheet({
   );
 }
 
-const mealTypes: mealType[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -464,8 +493,9 @@ const styles = StyleSheet.create({
   textInput: {
     // width: SCREEN_WIDTH / 2 - 25,
     height: 45,
-    backgroundColor: "rgba(45, 61, 69, 0)",
+    backgroundColor: "#161F32",
     fontSize: 18,
+    fontFamily: "QuickSand",
   },
   divider: {
     width: SCREEN_WIDTH - 20,

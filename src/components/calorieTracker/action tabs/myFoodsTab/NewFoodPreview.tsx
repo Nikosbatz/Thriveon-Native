@@ -3,7 +3,7 @@ import { useAuth } from "@/src/context/authContext";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
-import { Food, MacroKeys, Recipe } from "@/src/types";
+import { Food, MacroKeys, MyFood } from "@/src/types";
 import { router, useLocalSearchParams } from "expo-router";
 import { Beef, Droplets, Save, Wheat } from "lucide-react-native";
 import { StyleSheet, View } from "react-native";
@@ -19,7 +19,7 @@ const macrosInfo = {
 export default function NewFoodPreview() {
   const { user } = useAuth();
   const insets = useSafeAreaInsets();
-  const handleUploadRecipe = useUserLogsStore((s) => s.handleUploadRecipe);
+  const handleCreateMyFood = useUserLogsStore((s) => s.handleCreateMyFood);
   const logsLoading = useUserLogsStore((s) => s.logsLoading);
   const { ingredientsList, foodName, servingsInput } = useLocalSearchParams<{
     ingredientsList: string;
@@ -52,7 +52,7 @@ export default function NewFoodPreview() {
   }
 
   async function handleFoodSave() {
-    const recipe: Recipe = {
+    const recipe: MyFood = {
       name: foodName,
       calories: totalCalories,
       protein: totalMacros["protein"],
@@ -79,7 +79,7 @@ export default function NewFoodPreview() {
       ingredients: ingredients,
     };
     try {
-      await handleUploadRecipe(recipe);
+      await handleCreateMyFood(recipe);
       Toast.show({
         type: "success",
         text1: "",

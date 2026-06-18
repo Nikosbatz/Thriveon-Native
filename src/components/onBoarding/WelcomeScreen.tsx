@@ -53,9 +53,7 @@ export default function WelcomeScreen() {
             {
               padding: 20,
               gap: 15,
-              borderWidth: 1,
-              borderColor: colors.cardBorderColor,
-              backgroundColor: colors.lvHeader,
+              backgroundColor: colors.lvFoodCardBg,
             },
           ]}
         >
@@ -82,7 +80,7 @@ export default function WelcomeScreen() {
           backgroundColor: colors.lvPrimary,
           position: "absolute",
           bottom: 0,
-          marginBottom: insets.bottom + 5,
+          marginBottom: insets.bottom + 10,
           left: "50%",
           transform: [{ translateX: "-50%" }],
           width: "80%",

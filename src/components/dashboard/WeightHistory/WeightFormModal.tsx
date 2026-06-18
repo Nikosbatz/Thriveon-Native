@@ -58,6 +58,7 @@ export default function WeightFormModal(props: Props) {
         text1: "",
         text2: "",
       });
+
       props.setVisible(false);
     } catch (error: any) {
       setFormError(error.message);

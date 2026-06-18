@@ -7,7 +7,7 @@ import { router } from "expo-router";
 import { ArrowBigRight, PlusCircle } from "lucide-react-native";
 import React, { useMemo, useRef, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Button, Divider } from "react-native-paper";
+import { Button } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import IngredientFoodCard from "./IngredientFoodCard";
 import SearchSheet from "./SearchSheet";
@@ -56,7 +56,7 @@ export default function CreateFood() {
     >
       <View
         style={{
-          // backgroundColor: colors.lvHeader,
+          backgroundColor: colors.lvBackground,
           padding: 10,
           borderRadius: 15,
           gap: 10,
@@ -67,22 +67,22 @@ export default function CreateFood() {
           <TextInputWithLabel
             label={"Food name"}
             placeholder="Enter here"
-            style={{ fontSize: 17 }}
+            style={{ fontSize: 16 }}
             input={foodName}
             setInput={setFoodName}
           />
-          <Divider />
+          {/* <Divider /> */}
         </View>
         <View>
           <TextInputWithLabel
             label={"How many servings"}
             placeholder="Enter here"
-            style={{ fontSize: 17 }}
+            style={{ fontSize: 16 }}
             keyboardType="number-pad"
             input={servingsInput}
             setInput={setServingsInput}
           />
-          <Divider />
+          {/* <Divider /> */}
         </View>
         <Button
           textColor="white"

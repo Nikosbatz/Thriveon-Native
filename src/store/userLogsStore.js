@@ -78,10 +78,11 @@ export const useUserLogsStore = create((set, get) => ({
       throw new Error(error.message);
     }
   },
+  // Optimistic update
   postWaterIntake: async (water) => {
     try {
+      set({ waterIntake: water });
       const waterIntake = await postUserWaterIntake(water, get().selectedDate);
-      set({ waterIntake: waterIntake });
     } catch (error) {
       throw new Error(error.message);
     }
@@ -203,10 +204,42 @@ export const useUserLogsStore = create((set, get) => ({
       throw new Error(err.message);
     }
   },
-  handleUploadRecipe: async (recipe) => {
+
+  handleLogRecipe: async (recipe, mealType) => {
+    try {
+      const recipeToUpload = {
+        ...recipe,
+        foodId: recipe._id,
+        calories: recipe.calories,
+        protein: recipe.protein,
+        carbs: recipe.carbs,
+        fats: recipe.fats,
+        starred: recipe.starred,
+        mealType: mealType,
+      };
+
+      delete recipeToUpload._id;
+      delete recipeToUpload.__v;
+
+      const res = await postFood(
+        recipeToUpload,
+        "/foods/userlogs",
+        get().selectedDate,
+      );
+
+      set({
+        todaysFoods: res.message,
+      });
+      get().updateTodayMacros();
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
+  handleCreateMyFood: async (myFood) => {
     set({ logsLoading: true });
     try {
-      const myFoods = await postRecipe(recipe);
+      const myFoods = await postRecipe(myFood);
 
       set({ myFoods: myFoods });
       set({ logsLoading: false });

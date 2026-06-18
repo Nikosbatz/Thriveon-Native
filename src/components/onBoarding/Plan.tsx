@@ -83,7 +83,7 @@ export default function Plan() {
         </Text>
         <Text
           variant="labelLarge"
-          style={{ color: colors.lvPrimaryLight, textAlign: "center" }}
+          style={{ color: "white", textAlign: "center" }}
         >
           kcal / day
         </Text>

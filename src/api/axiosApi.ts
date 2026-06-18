@@ -2,9 +2,9 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { triggerLogout } from "./authBridge";
 import { postRefreshToken } from "./requests";
-// export const BASE_URI = "http://192.168.2.5:8080/api";
+export const BASE_URI = "http://192.168.2.5:8080/api";
 // export const BASE_URI = "http://192.168.1.211:8080/api";
-export const BASE_URI = "https://thriveon.fit/api";
+// export const BASE_URI = "https://thriveon.fit/api";
 
 export const api = axios.create({
   baseURL: BASE_URI,
@@ -23,12 +23,10 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    console.log(error);
-
     // Don't intercept if the request has no response, or if it's already a retry
     if (!error.response) return Promise.reject(error);
 
-    // 🛑 CRITICAL: If the refresh token endpoint itself returns a 401, BAIL OUT immediately.
+    // If the refresh token endpoint itself returns a 401, BAIL OUT immediately.
     // Replace "/refresh-token" with whatever your exact backend refresh URL path is.
     if (originalRequest.url.includes("/refresh-token")) {
       triggerLogout();
@@ -44,7 +42,6 @@ api.interceptors.response.use(
       originalRequest._retry = true; // Mark this request as retried to prevent infinite loops
 
       try {
-        console.log("REFRESH TOKEN");
         // Wait for the token refresh API call to complete
         await postRefreshToken();
         const newAccessToken = await SecureStore.getItemAsync("accessToken");

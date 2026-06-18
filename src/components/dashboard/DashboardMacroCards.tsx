@@ -1,5 +1,6 @@
 import { useAuth } from "@/src/context/authContext";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
+import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
 import { Beef, Droplets, Wheat } from "lucide-react-native";
 import { View } from "react-native";
@@ -40,7 +41,7 @@ export default function DashboardMacroCards() {
     labels: ["Protein", "Fats", "Carbs"],
     data: macroPercentages,
     icons: [Beef, Droplets, Wheat],
-    colors: ["rgb(0, 234, 255)", "rgba(0, 115, 255, 1)", "rgb(0, 255, 162)"],
+    colors: [colors.protein, colors.fats, colors.carbs],
   };
 
   return (
@@ -81,12 +82,13 @@ export default function DashboardMacroCards() {
                   variant="labelLarge"
                   style={{
                     // color: data.colors[index],
-                    color: "rgb(210, 210, 210)",
+                    color: "rgb(255, 255, 255)",
                     textAlign: "center",
-                    fontSize: 14,
+                    fontSize: 14.5,
+                    fontFamily: "QuickSandSemiBold",
                   }}
                 >
-                  {label.toUpperCase()}
+                  {label}
                 </Text>
 
                 <Icon
@@ -119,7 +121,10 @@ export default function DashboardMacroCards() {
                   targetValue={targets[index]}
                 />
               </View>
-              <Text variant="labelLarge" style={{ color: "gray" }}>
+              <Text
+                variant="labelLarge"
+                style={{ color: "rgb(176, 176, 176)" }}
+              >
                 Goal: {targets[index]}g
               </Text>
             </View>

@@ -12,8 +12,14 @@ import { mainStyles } from "@/src/theme/styles";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
+import mobileAds, {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from "react-native-google-mobile-ads";
 import { ActivityIndicator } from "react-native-paper";
 import Animated, {
+  FadeInDown, // 1. Import the Layout Animation preset
   useAnimatedScrollHandler,
   useSharedValue,
 } from "react-native-reanimated";
@@ -36,7 +42,15 @@ export default function Dashboard() {
     scrollY.value = event.contentOffset.y;
   });
 
-  // Bootstrap app by fetching all required data
+  useEffect(() => {
+    // Initialize the Google Mobile Ads SDK once at app startup
+    mobileAds()
+      .initialize()
+      .then((adapterStatuses) => {
+        console.log("AdMob SDK Initialized!");
+      });
+  }, []);
+
   useEffect(() => {
     const bootstrap = async () => {
       try {
@@ -57,62 +71,93 @@ export default function Dashboard() {
     bootstrap();
   }, [selectedDate]);
 
+  const adUnitId = __DEV__
+    ? TestIds.BANNER
+    : "ca-app-pub-1585134683654035/3880709294";
+
   return (
     <LinearGradient
-      colors={["#085062", "#073854", "#080722", "#020212", "#020212"]}
+      // colors={["#085062", "#073854", "#081728", "#040c1d", "#020212"]}
+      colors={["#090F1D", "#090F1D", "#090F1D", "#090F1D", "#090F1D"]}
       locations={[0, 0.05, 0.4, 0.5, 1]}
       style={{ flex: 1 }}
     >
       <CustomHeader scrollY={scrollY} />
-      <Animated.ScrollView
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        style={[styles.mainContainer]}
-        contentContainerStyle={{
-          paddingTop: 100,
-          paddingBottom: mainStyles.mainContainer.paddingBottom + insets.bottom,
-        }}
-        showsVerticalScrollIndicator={false}
+
+      {/* 2. Wrap the ScrollView inside an Animated.View with entering prop */}
+      <Animated.View
+        entering={FadeInDown.duration(800)
+          .delay(200)
+          .withInitialValues({
+            transform: [{ translateY: 200 }], // Increase this number to make the slide distance bigger
+            opacity: 1, // Keep opacity starting at 1
+          })}
+        style={{ flex: 1 }}
       >
-        {/* Calendar */}
-        <CalendarView />
+        <Animated.ScrollView
+          onScroll={scrollHandler}
+          scrollEventThrottle={16}
+          style={[styles.mainContainer]}
+          contentContainerStyle={{
+            paddingTop: 100,
+            paddingBottom:
+              mainStyles.mainContainer.paddingBottom + insets.bottom,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Calendar */}
+          <CalendarView />
 
-        {/* Calories Chart */}
-        <View style={[, { width: "100%", alignSelf: "center", maxWidth: 600 }]}>
-          <CaloriesProgressChart></CaloriesProgressChart>
-        </View>
-
-        {/* Cards container (Every card but those from Horizontal ScrollView) */}
-        <View style={styles.cardsContainer}>
-          {/* Macros Cards 3-columns container */}
+          {/* Calories Chart */}
           <View
-            style={{
-              marginTop: 15,
-              maxWidth: 600,
-              width: "100%",
-              alignSelf: "center",
-            }}
+            style={[
+              {
+                marginTop: 15,
+                width: "96%",
+                alignSelf: "center",
+                maxWidth: 600,
+              },
+            ]}
           >
-            <DashboardMacroCards />
+            <CaloriesProgressChart />
           </View>
-          {/* Row 2-Cards Container */}
-          <View style={styles.flexRowCardsContainer}>
+
+          {/* Cards container */}
+          <View style={styles.cardsContainer}>
+            {/* Macros Cards */}
             <View
               style={{
-                flex: 1,
-                maxWidth: "50%",
+                maxWidth: 600,
+                width: "100%",
               }}
             >
-              <ExerciseTrackerCard />
+              <DashboardMacroCards />
             </View>
-            <View style={{ flex: 1, maxWidth: "50%" }}>
-              <WaterCard />
+
+            <BannerAd
+              unitId={adUnitId}
+              size={BannerAdSize.BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: true,
+              }}
+            />
+
+            {/* Row 2-Cards Container */}
+            <View style={styles.flexRowCardsContainer}>
+              <View style={{ flex: 1, maxWidth: "50%" }}>
+                <ExerciseTrackerCard />
+              </View>
+              <View style={{ flex: 1, maxWidth: "50%" }}>
+                <WaterCard />
+              </View>
             </View>
+
+            {/* Weight History Chart Container */}
+            <WeightHistoryChart />
           </View>
-          {/* Weight History Chart Container */}
-          <WeightHistoryChart />
-        </View>
-      </Animated.ScrollView>
+        </Animated.ScrollView>
+      </Animated.View>
+
       {userLogsLoading ? (
         <View
           style={{
@@ -123,18 +168,16 @@ export default function Dashboard() {
           }}
         >
           <ActivityIndicator
-            size={55}
+            size={45}
             color={colors.lvPrimaryLight}
-            style={{
-              flex: 1,
-              alignSelf: "center",
-            }}
+            style={{ flex: 1, alignSelf: "center" }}
           />
         </View>
       ) : null}
     </LinearGradient>
   );
 }
+
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
@@ -143,9 +186,11 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   cardsContainer: {
+    alignItems: "center",
+    marginTop: 20,
     paddingLeft: 15,
     paddingRight: 15,
-    gap: 20,
+    gap: 10,
   },
   flexRowCardsContainer: {
     flexDirection: "row",
@@ -153,21 +198,4 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     justifyContent: "center",
   },
-  // scrollViewCard: {
-  //   padding: 2,
-  //   backgroundColor: colors.lvGradientCard,
-  //   borderRadius: 30,
-  //   marginTop: 10,
-  //   marginLeft: 0,
-  //   marginRight: 0,
-  //   width: SCREEN_WIDTH - 50,
-  //   // iOS shadow
-  //   shadowColor: "#000",
-  //   shadowOffset: { width: 5, height: 4 },
-  //   shadowOpacity: 1,
-  //   shadowRadius: 12,
-  //   // Android shadow
-  //   elevation: 20,
-  //   overflow: "hidden",
-  // },
 });

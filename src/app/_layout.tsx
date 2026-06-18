@@ -33,7 +33,8 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     Quicksand: require("../../assets/fonts/Quicksand-VariableFont_wght.ttf"),
     QuicksandRegular: require("../../assets/fonts/Quicksand-Regular.ttf"),
-    QuicksandBold: require("../../assets/fonts/Quicksand-SemiBold.ttf"),
+    QuickSandSemiBold: require("../../assets/fonts/Quicksand-SemiBold.ttf"),
+    QuickSandBold: require("../../assets/fonts/Quicksand-Bold.ttf"),
   });
 
   React.useEffect(() => {
@@ -66,12 +67,12 @@ const fontConfig = {
   bodyMedium: { fontFamily: "QuicksandRegular" },
   bodySmall: { fontFamily: "QuicksandRegular" },
 
-  headlineLarge: { fontFamily: "QuicksandBold" },
-  headlineMedium: { fontFamily: "QuicksandBold" },
-  headlineSmall: { fontFamily: "QuicksandBold" },
-  labelLarge: { fontFamily: "QuicksandBold" },
-  labelMedium: { fontFamily: "QuicksandBold" },
-  labelSmall: { fontFamily: "QuicksandBold" },
+  headlineLarge: { fontFamily: "QuickSandBold" },
+  headlineMedium: { fontFamily: "QuickSandBold" },
+  headlineSmall: { fontFamily: "QuickSandBold" },
+  labelLarge: { fontFamily: "QuickSandBold" },
+  labelMedium: { fontFamily: "QuickSandBold" },
+  labelSmall: { fontFamily: "QuickSandBold" },
 };
 
 const theme = {

@@ -2,7 +2,7 @@
   "expo": {
     "name": "ThriveOn",
     "slug": "thriveon",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "orientation": "portrait",
     "icon": "./assets/images/logo_outer_blue.png",
     "scheme": "thriveon",
@@ -57,7 +57,13 @@
           }
         }
       ],
-      "@react-native-google-signin/google-signin"
+      "@react-native-google-signin/google-signin",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-1585134683654035~6447990868"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

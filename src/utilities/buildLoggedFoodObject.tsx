@@ -46,6 +46,7 @@ export default function buildLoggedFoodObject({
     protein: protein,
     carbs: carbs,
     fats: fats,
+    starred: food.starred,
     mealType: mealType,
   };
 

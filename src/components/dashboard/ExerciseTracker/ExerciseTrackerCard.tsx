@@ -42,7 +42,7 @@ export default function ExerciseTrackerCard() {
           }}
         >
           <Text variant="headlineSmall" style={[mainStyles.cardTitleSmall]}>
-            EXERCISE
+            Exercise
           </Text>
           <Plus
             size={26}

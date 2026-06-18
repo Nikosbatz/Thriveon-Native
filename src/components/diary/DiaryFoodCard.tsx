@@ -53,7 +53,7 @@ export default function DiaryFoodCard({ food }: Props) {
         paddingHorizontal: 10,
         padding: 8,
         marginTop: 5,
-        backgroundColor: colors.lvFoodCardBg,
+        backgroundColor: colors.lvDiaryCardBg,
       }}
     >
       <View style={{}}>
@@ -69,9 +69,9 @@ export default function DiaryFoodCard({ food }: Props) {
           <Text
             variant="headlineSmall"
             style={{
-              fontSize: 16,
+              fontSize: 14.5,
               color: "white",
-              lineHeight: 23,
+              lineHeight: 16.5,
             }}
           >
             {food.name}
@@ -80,9 +80,10 @@ export default function DiaryFoodCard({ food }: Props) {
             <Text
               variant="headlineSmall"
               style={{
-                fontSize: 15,
+                fontSize: 13,
                 color: "rgb(184, 184, 184)",
                 lineHeight: 20,
+                fontFamily: "QuickSandRegular",
               }}
             >
               {food.brands}
@@ -103,8 +104,9 @@ export default function DiaryFoodCard({ food }: Props) {
             <Text
               style={{
                 color: colors.lightWhiteText,
-                fontSize: 14,
-                marginTop: 5,
+                fontSize: 13,
+                marginTop: 2,
+                fontFamily: "QuickSandRegular",
               }}
               variant="labelLarge"
             >
@@ -121,12 +123,13 @@ export default function DiaryFoodCard({ food }: Props) {
                     backgroundColor: colors.lvBackground,
                     padding: 3,
                     borderRadius: 5,
+                    fontFamily: "QuickSandSemiBold",
                   }}
                 >
                   {macro}:{" "}
                   <Text
                     variant="labelLarge"
-                    style={{ color: colors.lvPrimaryLight, fontSize: 14 }}
+                    style={{ color: colors.lvPrimaryLight, fontSize: 12 }}
                   >
                     {food[macro]}g
                   </Text>
@@ -145,12 +148,12 @@ export default function DiaryFoodCard({ food }: Props) {
           }}
         >
           <Text
-            style={{ fontSize: 18, color: colors.lvPrimaryLight }}
+            style={{ fontSize: 18, color: colors.calories }}
             variant="labelLarge"
           >
             {food.calories}
           </Text>
-          <Text style={{ fontSize: 17, color: "rgb(130, 130, 130)" }}>
+          <Text style={{ fontSize: 15, color: "rgb(130, 130, 130)" }}>
             kcal
           </Text>
         </View>

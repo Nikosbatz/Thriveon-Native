@@ -38,6 +38,7 @@ export default function Layout() {
         options={{
           title: "Create a food",
           headerTitleStyle: { color: "white", fontSize: 17 },
+          animation: "slide_from_right",
         }}
       />
       <Stack.Screen

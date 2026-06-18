@@ -48,7 +48,7 @@ export default function WaterCard() {
             variant="headlineSmall"
             style={[mainStyles.cardTitleSmall, { color: "white" }]}
           >
-            HYDRATION
+            Hydration
           </Text>
           <Plus
             size={26}

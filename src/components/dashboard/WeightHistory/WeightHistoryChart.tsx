@@ -60,18 +60,12 @@ export default function WeightHistoryChart() {
   return (
     <TouchableOpacity activeOpacity={0.4} onPress={handlePress}>
       <View
-        style={{
-          padding: 5,
-          gap: 10,
-          borderWidth: 0,
-          backgroundColor: colors.lvDashboardCardBg,
-          // borderLeftWidth: 1,
-          // borderColor: colors.lvPrimary50,
-          borderColor: "rgb(46, 47, 70)",
-          borderRadius: 20,
-          maxWidth: 600,
-          alignSelf: "center",
-        }}
+        style={[
+          mainStyles.dashboardCard,
+          {
+            gap: 10,
+          },
+        ]}
       >
         {/* Header and Weight Trend texts at the top of the component */}
         <View
@@ -83,7 +77,7 @@ export default function WeightHistoryChart() {
           }}
         >
           <Text variant="headlineSmall" style={mainStyles.cardTitleSmall}>
-            WEIGHT HISTORY
+            Weight history
           </Text>
           <View style={{ alignItems: "center" }}>
             <Plus
@@ -96,7 +90,10 @@ export default function WeightHistoryChart() {
               }}
             ></Plus>
             {/* Weight Text */}
-            <Text variant="headlineSmall" style={{ color: colors.lvPrimary }}>
+            <Text
+              variant="headlineSmall"
+              style={{ color: colors.lvPrimary, marginRight: 30 }}
+            >
               {currentWeight} Kg
             </Text>
 

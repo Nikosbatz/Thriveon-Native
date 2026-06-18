@@ -3,11 +3,11 @@ import { useUserActivitiesStore } from "@/src/store/userActivitiesStore";
 import { useUserLogsStore } from "@/src/store/userLogsStore";
 import { colors } from "@/src/theme/colors";
 import { mainStyles } from "@/src/theme/styles";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Apple, CircleEqual, Flame } from "lucide-react-native";
 import { StyleSheet, View } from "react-native";
 import { ProgressChart } from "react-native-chart-kit";
-import { Divider, Text, TouchableRipple } from "react-native-paper";
+import { Text, TouchableRipple } from "react-native-paper";
 
 type chartInfoItem = {
   title: string;
@@ -39,41 +39,60 @@ export default function CaloriesProgressChart() {
         : 0;
   }
 
-  const chartInfo: chartInfoItem[] = [
-    // {
-    //   title: "Goal",
-    //   Icon: Target,
-    //   value: user?.nutritionGoals.calories ?? 0,
-    //   color: "rgba(222, 222, 222, 1)",
-    // },
-    {
-      title: "Consumed",
-      Icon: Apple,
-      value: todaysMacros.calories,
-      color: "white",
-    },
-    {
-      title: "Burned",
-      Icon: Flame,
-      value: activitiesCaloriesSum,
-      color: "rgb(246, 114, 20)",
-    },
-    {
-      title: "Total",
-      Icon: CircleEqual,
-      value: todaysMacros.calories - activitiesCaloriesSum,
-      color: colors.primary,
-    },
-  ];
-  ("#1c2229b3");
   return (
     <TouchableRipple
       borderless
       rippleColor={"rgba(106, 106, 106, 0.28)"}
       onPress={() => router.navigate("/(tabs)/diaryScreen")}
-      style={[mainStyles.dashboardCard, styles.mainContainer]}
+      style={[
+        mainStyles.dashboardCard,
+        styles.mainContainer,
+        {
+          paddingHorizontal: 3,
+          shadowColor: "rgb(70, 228, 246)",
+          elevation: 8,
+        },
+      ]}
     >
-      <View style={{ gap: 10 }}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        {/* Consumed Text */}
+        <View style={{ width: 80 }}>
+          <View style={{ flexDirection: "column", alignItems: "center" }}>
+            <MaterialCommunityIcons
+              name="food-fork-drink"
+              size={22}
+              color={colors.Snack}
+            />
+            <Text
+              style={{ color: "rgb(255, 255, 255)", fontSize: 13 }}
+              variant="labelLarge"
+            >
+              Consumed
+            </Text>
+          </View>
+
+          <View style={{ flexDirection: "row", gap: 6, alignSelf: "center" }}>
+            <Text
+              variant="labelLarge"
+              style={{
+                textAlign: "center",
+                color: colors.Snack,
+                fontSize: 20,
+              }}
+            >
+              {todaysMacros.calories}
+            </Text>
+            <Text variant="labelLarge" style={{ fontSize: 10, color: "gray" }}>
+              kcal
+            </Text>
+          </View>
+        </View>
         {/* Chart Container */}
         <View
           style={{
@@ -81,16 +100,16 @@ export default function CaloriesProgressChart() {
           }}
         >
           <ProgressChart
-            data={[remainingCalDecimal]}
-            width={160}
-            height={160}
+            data={[remainingCalDecimal > 1 ? 1 : remainingCalDecimal]}
+            width={150}
+            height={150}
             strokeWidth={14}
-            radius={70}
+            radius={65}
             hideLegend={true}
             chartConfig={chartConfig}
             style={
               {
-                //backgroundColor: "rgb(0,0,0)",
+                // backgroundColor: "rgb(0,0,0)",
               }
             }
           />
@@ -107,14 +126,14 @@ export default function CaloriesProgressChart() {
           >
             <Text
               variant="labelLarge"
-              style={{ fontSize: 12, color: "rgb(208, 208, 208)" }}
+              style={{ fontSize: 13, color: "rgb(208, 208, 208)" }}
             >
-              REMAINING
+              Remaining
             </Text>
             <Text
               variant="labelLarge"
               style={{
-                fontSize: 35,
+                fontSize: 33,
                 lineHeight: 35,
                 color: "white",
               }}
@@ -124,16 +143,35 @@ export default function CaloriesProgressChart() {
             <Text style={{ color: "rgb(214, 214, 214)" }}>kcal</Text>
           </View>
         </View>
-        {/* Calories Info texts */}
-        {/* <Divider
-          style={{
-            width: "80%",
-            height: 1,
-            backgroundColor: "rgb(68, 68, 68)",
-            alignSelf: "center",
-          }}
-        ></Divider> */}
-        <View
+        {/* Burned Text */}
+        <View style={{ width: 80 }}>
+          <View style={{ flexDirection: "column", alignItems: "center" }}>
+            <Ionicons name="flame" size={22} color={colors.calories} />
+            <Text
+              style={{ color: "rgb(255, 255, 255)", fontSize: 13 }}
+              variant="labelLarge"
+            >
+              Burned
+            </Text>
+          </View>
+
+          <View style={{ flexDirection: "row", gap: 6, alignSelf: "center" }}>
+            <Text
+              variant="labelLarge"
+              style={{
+                textAlign: "center",
+                color: colors.calories,
+                fontSize: 20,
+              }}
+            >
+              {activitiesCaloriesSum}
+            </Text>
+            <Text variant="labelLarge" style={{ fontSize: 10, color: "gray" }}>
+              kcal
+            </Text>
+          </View>
+        </View>
+        {/* <View
           style={{
             flexDirection: "row",
             justifyContent: "center",
@@ -173,41 +211,6 @@ export default function CaloriesProgressChart() {
                   </Text>
                 </View>
               </View>
-
-              {chartInfo.length - 1 > index ? (
-                <Divider
-                  style={{
-                    backgroundColor: "rgb(48, 48, 48)",
-                    width: 1.1,
-                    height: "100%",
-                    marginHorizontal: 20,
-                  }}
-                ></Divider>
-              ) : null}
-            </View>
-          ))}
-        </View>
-        {/* <View
-          style={{
-            gap: 10,
-            flex: 1,
-          }}
-        >
-          {chartInfo.map((info, index) => (
-            <View
-              key={index}
-              style={{ flexDirection: "row", alignItems: "center" }}
-            >
-              <info.Icon size={24} color={info.color} />
-              <View>
-                <Text style={{ color: "white" }}>{info.title}</Text>
-                <Text
-                  variant="labelLarge"
-                  style={{ fontSize: 15, color: colors.lvPrimary80 }}
-                >
-                  {info.value}
-                </Text>
-              </View>
             </View>
           ))}
         </View> */}
@@ -218,7 +221,6 @@ export default function CaloriesProgressChart() {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    margin: 10,
     justifyContent: "space-around",
     borderRadius: 20,
   },

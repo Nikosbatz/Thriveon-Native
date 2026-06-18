@@ -56,7 +56,7 @@ export default function IngredientFoodCard({
         paddingHorizontal: 10,
         padding: 8,
         marginTop: 5,
-        backgroundColor: colors.lvFoodCardBg,
+        backgroundColor: colors.lvDiaryCardBg,
       }}
     >
       <View style={{}}>
@@ -72,7 +72,7 @@ export default function IngredientFoodCard({
           <Text
             variant="headlineSmall"
             style={{
-              fontSize: 16,
+              fontSize: 15,
               color: "white",
               lineHeight: 23,
             }}

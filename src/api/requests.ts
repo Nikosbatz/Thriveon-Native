@@ -53,7 +53,7 @@ export async function googleLogin(googleData: any) {
       return res.data;
     }
   } catch (error: any) {
-    console.log("googleLogin requests error");
+    console.log(error);
     if (error.status === 401) {
       throw new Error(error.response.data.message);
     } else {
@@ -261,13 +261,14 @@ export async function postFood(data: Food, path: string, date: string) {
       return res.data;
     }
   } catch (error: any) {
+    console.log(error.status);
     throw new Error("Something went wrong while logging your food...");
   }
 }
 
 export async function postRecipe(recipe: Recipe) {
   try {
-    const res = await api.post(`foods/userlogs/recipes`, recipe, {
+    const res = await api.post(`foods/userlogs/myfoods`, recipe, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json;charset=UTF-8",
@@ -284,7 +285,7 @@ export async function postRecipe(recipe: Recipe) {
 
 export async function deleteRecipe(recipe: Recipe) {
   try {
-    const res = await api.delete(`foods/userlogs/recipes/${recipe._id}`, {
+    const res = await api.delete(`foods/userlogs/myfoods/${recipe._id}`, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json;charset=UTF-8",
@@ -429,6 +430,15 @@ export async function getSearchFoods(searchInput: string) {
     return res.data;
   } catch (error: any) {
     throw new Error("Could not complete the search!");
+  }
+}
+
+export async function getRecipes() {
+  try {
+    const res = await api.get(`/foods/recipes`);
+    return res.data;
+  } catch (error) {
+    throw new Error("Could not fetch recipes!");
   }
 }
 

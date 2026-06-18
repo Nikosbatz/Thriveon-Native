@@ -66,8 +66,6 @@ export default function AuthContextProvider({
   // else do not do anything
   useEffect(() => {
     (async () => {
-      console.log("useEffect in AUTHCONTEXT.TSX");
-
       setLoadingUserInfo(true);
       try {
         setSplashScreenActive(true);

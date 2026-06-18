@@ -7,7 +7,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { Redirect, Tabs, useSegments } from "expo-router";
-import { Barcode } from "lucide-react-native";
 import { Image, View } from "react-native";
 import { Text } from "react-native-paper";
 
@@ -167,15 +166,23 @@ export default function TabsLayout() {
         }}
       ></Tabs.Screen>
       <Tabs.Screen
-        name="cameraScreen"
+        name="discover"
         options={{
-          title: "Scanner",
+          title: "Discover",
           headerShown: false,
           tabBarIcon: ({ color, size, focused }) =>
             focused ? (
-              <Barcode size={size} color={color} />
+              <MaterialCommunityIcons
+                name="food-apple"
+                size={size}
+                color={color}
+              />
             ) : (
-              <Barcode size={size} color={color} />
+              <MaterialCommunityIcons
+                name="food-apple-outline"
+                size={size}
+                color={color}
+              />
             ),
         }}
       ></Tabs.Screen>

@@ -1,10 +1,10 @@
 import { colors } from "@/src/theme/colors";
-import { Search, Soup, Sparkles } from "lucide-react-native";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import { router } from "expo-router";
+import { Barcode, Search, Soup } from "lucide-react-native";
+import React, { Dispatch, SetStateAction } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { TouchableRipple } from "react-native-paper";
 
-// Define the structure for our button items
 interface NavItem {
   id: string;
   label: string;
@@ -20,16 +20,20 @@ export default function ActionSelectionBar({
   selectedTabId,
   setSelectedTabId,
 }: Props) {
-  // Track which button is currently selected
-  const [activeTab, setActiveTab] = useState<string>("search");
-
   const navItems: NavItem[] = [
-    // { id: "barcode", label: "Barcode", icon: ScanBarcode },
     { id: "search", label: "Search", icon: Search },
-    { id: "myFoods", label: "My foods", icon: Soup },
-    { id: "quickadd", label: "Coming Soon", icon: Sparkles },
-    // { id: "photo", label: "Photo", icon: Camera },
+    { id: "myFoods", label: "My Foods", icon: Soup },
+    { id: "barcodeScanner", label: "Barcode", icon: Barcode },
   ];
+
+  function handleTabPress(itemId: string) {
+    if (itemId === "barcodeScanner") {
+      router.navigate("/calorieTracker/cameraScreen");
+      return;
+    }
+
+    setSelectedTabId(itemId);
+  }
 
   return (
     <View style={styles.tabContainer}>
@@ -38,34 +42,37 @@ export default function ActionSelectionBar({
         const isActive = selectedTabId === item.id;
 
         return (
-          <TouchableRipple
-            key={item.id}
-            style={styles.buttonWrapper}
-            rippleColor={"#66c2b12a"}
-            borderless
-            onPress={() => setSelectedTabId(item.id)}
-          >
-            <View style={{ alignItems: "center" }}>
-              {/* Icon Container with dynamic background */}
-              <View
-                style={[
-                  styles.iconContainer,
-                  isActive && styles.activeIconContainer,
-                ]}
-              >
-                <IconComponent
-                  size={22}
-                  color={isActive ? colors.lvPrimaryLight : "#e0e0e0"}
-                  strokeWidth={2}
-                />
-              </View>
+          <View key={item.id} style={styles.buttonOuterContainer}>
+            <TouchableRipple
+              borderless
+              rippleColor="rgba(102,194,177,0.15)"
+              style={styles.buttonWrapper}
+              onPress={() => handleTabPress(item.id)}
+            >
+              <View style={styles.innerContent}>
+                <View
+                  style={[
+                    styles.iconContainer,
+                    isActive && styles.activeIconContainer,
+                  ]}
+                >
+                  <IconComponent
+                    size={22}
+                    strokeWidth={isActive ? 2.5 : 2}
+                    color={
+                      isActive
+                        ? colors.lvPrimary80
+                        : "rgba(231, 231, 231, 0.65)"
+                    }
+                  />
+                </View>
 
-              {/* Label text */}
-              <Text style={[styles.label, isActive && styles.activeLabel]}>
-                {item.label}
-              </Text>
-            </View>
-          </TouchableRipple>
+                <Text style={[styles.label, isActive && styles.activeLabel]}>
+                  {item.label}
+                </Text>
+              </View>
+            </TouchableRipple>
+          </View>
         );
       })}
     </View>
@@ -73,50 +80,79 @@ export default function ActionSelectionBar({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#66C2B1", // Matches the teal background color from your image
-  },
   tabContainer: {
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
-    // borderTopLeftRadius: 28,
-    // borderTopRightRadius: 28,
-    borderRadius: 20,
-    // backgroundColor: "rgba(6, 29, 66, 0.32)",
-    marginHorizontal: 5,
-    paddingVertical: 8,
+    backgroundColor: "#040c1d",
+    borderRadius: 24,
+    paddingVertical: 5,
     paddingHorizontal: 8,
-    borderColor: "#66c2b13b",
+    marginHorizontal: 16,
+    borderWidth: 0,
+    borderColor: "rgba(255,255,255,0.06)",
+    shadowColor: "rgba(0, 191, 239, 0.29)",
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 18,
+    elevation: 10,
   },
+
+  buttonOuterContainer: {
+    flex: 1,
+    overflow: "hidden",
+    borderRadius: 18,
+  },
+
   buttonWrapper: {
-    justifyContent: "center",
-    minWidth: 100,
-    borderRadius: 30,
-  },
-  iconContainer: {
-    width: 70,
-    height: 35,
-    borderRadius: 22,
+    paddingVertical: 2,
+    borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
+  },
+
+  innerContent: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  iconContainer: {
+    width: 60,
+    padding: 5,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#333333", // Subtle grey border for inactive states
-    marginBottom: 4,
-    // backgroundColor: colors.lvGradientCard,
+    borderColor: "transparent",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 1,
   },
+
   activeIconContainer: {
-    backgroundColor: "#03576900", // Soft teal/green background tint for the active tab
-    borderColor: colors.lvPrimary80,
+    borderRadius: 20,
+    backgroundColor: "rgba(15, 33, 42, 0.73)",
+    borderWidth: 1,
+    borderColor: "rgba(102, 142, 194, 0.25)",
+    shadowColor: "rgb(159, 178, 251)",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
+
   label: {
     fontSize: 12,
-    fontWeight: "500",
-    color: "#4B5563", // Soft charcoal grey for inactive text
+    color: "rgba(255,255,255,0.55)",
+    fontFamily: "QuickSandBold",
+    letterSpacing: 0.3,
   },
+
   activeLabel: {
-    color: "#ffffff", // Darker text for active tab
-    fontWeight: "700",
+    color: "#FFFFFF",
+    fontFamily: "QuickSandBold",
   },
 });

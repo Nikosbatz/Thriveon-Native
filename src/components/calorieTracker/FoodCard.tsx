@@ -1,4 +1,5 @@
 import { colors } from "@/src/theme/colors";
+import { mainStyles } from "@/src/theme/styles";
 import { Food } from "@/src/types";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import BottomSheet from "@gorhom/bottom-sheet";
@@ -46,9 +47,8 @@ export default function FoodCard({
       underlayColor={"rgba(43, 45, 60, 0.6)"}
       onPress={handleOnPress}
       style={{
-        backgroundColor: colors.lvFoodCardBg,
-        // borderLeftWidth: 0,
-        // borderColor: food.starred ? "rgba(0, 153, 255, 0.5)" : "transparent",
+        // backgroundColor: mainStyles.foodCard.backgroundColor,
+        backgroundColor: "#161F32",
         borderRadius: 10,
         marginTop: 2,
       }}
@@ -64,28 +64,12 @@ export default function FoodCard({
           }}
         >
           <View style={{ flexDirection: "row", maxWidth: "90%" }}>
-            <Text
-              variant="labelLarge"
-              style={{
-                fontSize: 15,
-                color: "white",
-                lineHeight: 19,
-                // backgroundColor: "red",
-                textAlign: "left",
-              }}
-            >
+            <Text variant="headlineLarge" style={mainStyles.foodCardName}>
               {food.name}
             </Text>
           </View>
           {food.brands ? (
-            <Text
-              variant="bodyLarge"
-              style={{
-                fontSize: 14,
-                color: "rgb(184, 184, 184)",
-                lineHeight: 20,
-              }}
-            >
+            <Text variant="bodyLarge" style={mainStyles.foodCardBrand}>
               {food.brands}
             </Text>
           ) : null}
@@ -99,9 +83,9 @@ export default function FoodCard({
             // marginRight: 40,
           }}
         >
-          <Text variant="labelLarge" style={styles.foodMacroValue}>
+          <Text variant="labelLarge" style={mainStyles.foodCardCal}>
             {food.calories} kcal
-            <Text style={styles.foodMacroText} variant="labelLarge">
+            <Text style={mainStyles.foodCardCal} variant="labelLarge">
               , {quantityText}
             </Text>
           </Text>
@@ -137,7 +121,7 @@ export default function FoodCard({
 const styles = StyleSheet.create({
   foodCard: {
     backgroundColor: "transparent",
-    borderRadius: 10,
+    borderRadius: 0,
     elevation: 0,
     padding: 12,
     paddingHorizontal: 10,
@@ -147,11 +131,11 @@ const styles = StyleSheet.create({
   },
   foodMacroText: {
     color: "rgb(167, 167, 167)",
-    fontSize: 13,
+    fontSize: 12,
   },
   foodMacroValue: {
     // color: colors.lvPrimaryLight,
     color: "rgb(176, 176, 176)",
-    fontSize: 13,
+    fontSize: 12,
   },
 });

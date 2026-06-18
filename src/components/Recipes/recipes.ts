@@ -1,0 +1,215 @@
+import { Recipe } from "@/src/types";
+
+export const recipesFromFile: Recipe[] = [
+  {
+    name: "Grilled Citrus Salmon & Asparagus",
+    calories: 420,
+    grams: 350,
+    protein: 42,
+    fats: 18,
+    carbs: 6,
+    starred: true,
+    brands: "Thriveon Kitchen",
+    code: "REC-001",
+    imageLink:
+      "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=600&q=80",
+    description:
+      "A refreshing, macro-friendly dish featuring a flaky salmon fillet glazed with fresh orange juices and served over snap-grilled crisp asparagus spears.",
+    time: 25,
+    ingredients: [
+      "200g Fresh Salmon Fillet",
+      "150g Organic Asparagus spears",
+      "1/2 Fresh Orange (juiced)",
+      "1 tbsp Extra Virgin Olive Oil",
+      "1 clove Garlic (minced)",
+      "Sea salt and black pepper to taste",
+    ],
+    steps: [
+      "Marinate the salmon fillet with fresh orange juice, minced garlic, sea salt, and black pepper for 10 minutes.",
+      "Preheat your grill pan over medium-high heat and brush lightly with half of the olive oil.",
+      "Place the salmon skin-side down on the grill pan. Cook for 4-5 minutes per side until beautifully opaque.",
+      "Toss the asparagus spears in the remaining olive oil, then grill them next to the salmon for 3-4 minutes until lightly charred but still crunchy.",
+      "Plate the grilled asparagus first, rest the salmon fillet over it, and garnish with fresh orange zest before serving.",
+    ],
+    portions: [
+      {
+        modifier: "fillet",
+        amount: 1,
+        gramWeight: 350,
+        label: "1 Standard Fillet with Sides",
+      },
+      {
+        modifier: "g",
+        amount: 100,
+        gramWeight: 100,
+        label: "100 grams",
+      },
+    ],
+  },
+  {
+    name: "High-Protein Chicken Avocado Bowl",
+    calories: 540,
+    grams: 400,
+    protein: 48,
+    fats: 22,
+    carbs: 12,
+    starred: false,
+    brands: "Thriveon Kitchen",
+    code: "REC-002",
+    imageLink:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80",
+    description:
+      "A nutrient-dense, high-protein fuel container packing seasoned grilled chicken breast, half an avocado, and a bed of nutrient-rich greens.",
+    time: 20,
+    ingredients: [
+      "180g Lean Chicken Breast",
+      "1/2 Medium Hass Avocado (sliced)",
+      "100g Mixed Baby Salad Greens",
+      "50g Cherry Tomatoes (halved)",
+      "1 tbsp Apple Cider Vinegar dressing",
+      "Pinch of Smoked Paprika and Onion Powder",
+    ],
+    steps: [
+      "Season the clean chicken breast evenly on both sides with smoked paprika, onion powder, salt, and pepper.",
+      "Heat a non-stick skillet over medium heat and cook the chicken for roughly 6-7 minutes on each side until fully done.",
+      "Let the cooked chicken breast rest for 3 minutes on a cutting board, then slice it into bite-sized strips.",
+      "Assemble the salad bowl base using the mixed greens and halved cherry tomatoes.",
+      "Arrange the sliced chicken strips and fresh avocado slices over the top, then drizzle with the apple cider vinegar dressing.",
+    ],
+    portions: [
+      {
+        modifier: "bowl",
+        amount: 1,
+        gramWeight: 400,
+        label: "Standard Meal Prep Container",
+      },
+      {
+        modifier: "g",
+        amount: 100,
+        gramWeight: 100,
+        label: "100 grams",
+      },
+    ],
+  },
+  {
+    name: "Low-Carb Turkey Lettuce Wraps",
+    calories: 310,
+    grams: 280,
+    protein: 35,
+    fats: 10,
+    carbs: 5,
+    starred: true,
+    brands: "Thriveon Kitchen",
+    code: "REC-003",
+    imageLink:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80",
+    description:
+      "Crisp and satisfying lean turkey wraps that completely swap out heavy carb shells for fresh, crunchy butter lettuce pockets.",
+    time: 15,
+    ingredients: [
+      "150g Lean Ground Turkey",
+      "3 Large Crisp Butter Lettuce Leaves",
+      "30g Red Bell Pepper (finely diced)",
+      "1 tbsp Low-Sodium Soy Sauce",
+      "1 tsp Fresh Ginger (grated)",
+      "1 Green Onion (sliced)",
+    ],
+    steps: [
+      "Heat a skillet over medium-high heat and brown the lean ground turkey, breaking it apart with a wooden spoon as it cooks.",
+      "When the turkey is halfway cooked, add the diced bell peppers, grated ginger, and minced garlic.",
+      "Pour the low-sodium soy sauce into the pan and stir fry for 3-4 minutes until the turkey is fully cooked through.",
+      "Wash and carefully dry three large butter lettuce leaves to act as your wrap shells.",
+      "Spoon the turkey mixture evenly into the lettuce pockets and top with fresh green onions.",
+    ],
+    portions: [
+      {
+        modifier: "plate",
+        amount: 1,
+        gramWeight: 280,
+        label: "Full Plate (3 Large Wraps)",
+      },
+      {
+        modifier: "wrap",
+        amount: 1,
+        gramWeight: 93.3,
+        label: "Single Lettuce Wrap",
+      },
+    ],
+  },
+  {
+    name: "Lean Beef & Broccoli Stir-Fry",
+    calories: 460,
+    grams: 380,
+    protein: 38,
+    fats: 14,
+    carbs: 15,
+    starred: false,
+    brands: "Thriveon Kitchen",
+    code: "REC-004",
+    imageLink:
+      "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=600&q=80",
+    description:
+      "A fast, muscle-building stir-fry mixing tender strips of lean flank beef and fresh broccoli florets tossed in a light garlic-savory sauce.",
+    time: 18,
+    ingredients: [
+      "150g Lean Flank Steak (thinly sliced)",
+      "150g Broccoli Florets",
+      "1 tsp Sesame Oil",
+      "2 cloves Garlic (crushed)",
+      "1 tbsp Coconut Aminos or Teriyaki Glaze",
+      "1 tsp Sesame Seeds",
+    ],
+    steps: [
+      "Heat sesame oil in a large wok or deep skillet over high heat.",
+      "Add the thin beef slices and stir-fry aggressively for 2-3 minutes until the pink hue disappears, then remove the beef temporarily.",
+      "Add the broccoli florets and crushed garlic into the same hot wok with 2 tablespoons of water. Cover and steam for 2 minutes.",
+      "Return the cooked beef strips to the wok and pour the coconut aminos over the entire mixture.",
+      "Toss everything together for an additional minute until hot, then finish with a sprinkle of toasted sesame seeds.",
+    ],
+    portions: [
+      {
+        modifier: "serving",
+        amount: 1,
+        gramWeight: 380,
+        label: "Standard Serving",
+      },
+    ],
+  },
+  {
+    name: "Greek Yogurt Berry Parfait",
+    calories: 280,
+    grams: 250,
+    protein: 24,
+    fats: 4,
+    carbs: 22,
+    starred: false,
+    brands: "Thriveon Snacks",
+    code: "REC-005",
+    imageLink:
+      "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=600&q=80",
+    description:
+      "A high-volume sweet treat layering thick non-fat Greek yogurt, mixed antioxidant-rich berries, and a sprinkle of rolled oats for crunch.",
+    time: 5,
+    ingredients: [
+      "200g Non-Fat Authentic Greek Yogurt",
+      "40g Mixed Fresh Berries (Strawberries/Blueberries)",
+      "10g Rolled Oats",
+      "3-4 drops Liquid Stevia or Natural Vanilla Extract",
+    ],
+    steps: [
+      "Place your Greek yogurt into a small bowl and mix in the liquid stevia or vanilla extract until smooth.",
+      "Take a clean glass cup and spoon half of your sweetened Greek yogurt into the base.",
+      "Create a layer using half of your washed, fresh mixed berries.",
+      "Spoon the remaining Greek yogurt over the berry layer, then top with the rest of the berries.",
+      "Garnish with raw rolled oats right before digging in to maintain a perfect texture.",
+    ],
+    portions: [
+      {
+        modifier: "cup",
+        amount: 1,
+        gramWeight: 250,
+        label: "1 Glass Cup Layered",
+      },
+    ],
+  },
+];
